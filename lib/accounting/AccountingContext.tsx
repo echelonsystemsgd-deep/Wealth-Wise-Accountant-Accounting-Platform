@@ -43,7 +43,7 @@ interface AccountingContextType {
 
   // Actions
   createInvoice: (inv: Omit<SalesInvoice, "id" | "status" | "amountPaidPence" | "amountDuePence">) => SalesInvoice;
-  payInvoice: (invoiceId: string, paidDate?: string) => void;
+  payInvoice: (invoiceId: string, paymentAmountPence?: number, paidDate?: string) => void;
   reconcileBankLine: (lineId: string, matchedType?: "INVOICE" | "BILL" | "RULE" | "MANUAL") => void;
   postJournalEntry: (entry: Omit<JournalEntry, "id" | "status" | "totalPence" | "postedAt">) => JournalEntry;
   reverseJournalEntry: (targetId: string, reversedBy: string) => JournalEntry;
@@ -108,6 +108,11 @@ export function AccountingProvider({ children }: { children: React.ReactNode }) 
   const createInvoice = (
     invData: Omit<SalesInvoice, "id" | "status" | "amountPaidPence" | "amountDuePence">
   ): SalesInvoice => {
+    // Prevent duplicate invoice numbers
+    if (invoices.some((i) => i.invoiceNumber.toLowerCase() === invData.invoiceNumber.toLowerCase())) {
+      throw new Error(`Invoice with number ${invData.invoiceNumber} already exists.`);
+    }
+
     const invId = `inv-${Date.now()}`;
     const newInvoice: SalesInvoice = {
       ...invData,
@@ -163,10 +168,16 @@ export function AccountingProvider({ children }: { children: React.ReactNode }) 
     return newInvoice;
   };
 
-  // Pay Invoice and post settlement journal
-  const payInvoice = (invoiceId: string, paidDate?: string) => {
+  // Pay Invoice and post settlement journal (supports partial payments)
+  const payInvoice = (invoiceId: string, paymentAmountPence?: number, paidDate?: string) => {
     const target = invoices.find((i) => i.id === invoiceId);
     if (!target || target.status === "PAID") return;
+
+    const paymentPence = paymentAmountPence !== undefined 
+      ? Math.min(paymentAmountPence, target.amountDuePence)
+      : target.amountDuePence;
+
+    if (paymentPence <= 0) return;
 
     // DEBIT: 1000 Bank Current Account (Money In)
     // CREDIT: 1100 Trade Debtors (Clear Receivable)
@@ -174,7 +185,7 @@ export function AccountingProvider({ children }: { children: React.ReactNode }) 
       {
         id: `jl-${Date.now()}-1`,
         accountCode: "1000",
-        debitPence: target.amountDuePence,
+        debitPence: paymentPence,
         creditPence: 0,
         description: `Payment received for ${target.invoiceNumber}`,
       },
@@ -182,7 +193,7 @@ export function AccountingProvider({ children }: { children: React.ReactNode }) 
         id: `jl-${Date.now()}-2`,
         accountCode: "1100",
         debitPence: 0,
-        creditPence: target.amountDuePence,
+        creditPence: paymentPence,
         description: `Settlement of ${target.invoiceNumber}`,
       },
     ];
@@ -197,14 +208,18 @@ export function AccountingProvider({ children }: { children: React.ReactNode }) 
       postedBy: "System Bank Feed",
     });
 
+    const newAmountPaid = target.amountPaidPence + paymentPence;
+    const newAmountDue = target.totalPence - newAmountPaid;
+    const newStatus = newAmountDue === 0 ? "PAID" as const : "PARTIALLY_PAID" as const;
+
     setInvoices((prev) =>
       prev.map((inv) =>
         inv.id === invoiceId
           ? {
               ...inv,
-              status: "PAID" as const,
-              amountPaidPence: inv.totalPence,
-              amountDuePence: 0,
+              status: newStatus,
+              amountPaidPence: newAmountPaid,
+              amountDuePence: newAmountDue,
             }
           : inv
       )
@@ -220,7 +235,7 @@ export function AccountingProvider({ children }: { children: React.ReactNode }) 
     if (matchedType === "INVOICE" && line.suggestedMatch?.targetReference) {
       const inv = invoices.find((i) => i.invoiceNumber === line.suggestedMatch?.targetReference);
       if (inv && inv.status !== "PAID") {
-        payInvoice(inv.id, line.transactionDate);
+        payInvoice(inv.id, undefined, line.transactionDate);
       }
     }
 

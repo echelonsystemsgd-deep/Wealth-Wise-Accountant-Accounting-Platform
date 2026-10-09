@@ -111,7 +111,11 @@ export class GeneralLedgerService {
     accounts: Account[],
     journals: JournalEntry[]
   ): { rows: TrialBalanceRow[]; totalDebitsPence: number; totalCreditsPence: number } {
-    const postedJournals = journals.filter((j) => j.status === "POSTED");
+    // Only include currently active POSTED journals (reversals are paired and neutralized,
+    // or entries with status POSTED that are not themselves neutralized)
+    const postedJournals = journals.filter(
+      (j) => j.status === "POSTED" && j.sourceType !== "REVERSAL"
+    );
 
     // Aggregate line balances per account code
     const balances: Record<string, { debitPence: number; creditPence: number }> = {};
