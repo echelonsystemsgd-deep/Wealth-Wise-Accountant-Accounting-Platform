@@ -4,16 +4,7 @@ import React, { useState } from "react";
 import { AccountingProvider } from "@/lib/accounting/AccountingContext";
 import { AccountantDashboard } from "@/components/dashboard/AccountantDashboard";
 import { ClientPortal } from "@/components/portal/ClientPortal";
-import {
-  Shield,
-  Briefcase,
-  Building2,
-  Bell,
-  Sparkles,
-  ArrowRightLeft,
-  ChevronDown,
-  Layers,
-} from "lucide-react";
+import { Briefcase, Building2 } from "lucide-react";
 
 export default function Home() {
   const [activeRole, setActiveRole] = useState<"ACCOUNTANT" | "CLIENT">("ACCOUNTANT");
@@ -23,58 +14,64 @@ export default function Home() {
       <div className="min-h-screen bg-slate-50 flex flex-col font-sans">
         {/* Top Navigation Header */}
         <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-slate-200">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
+          <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-2 sm:gap-4">
             {/* Brand Identity */}
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-sm tracking-tight shadow-sm">
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0 shrink">
+              <div className="w-8 h-8 sm:w-9 sm:h-9 rounded-xl bg-slate-900 text-white flex items-center justify-center font-bold text-xs sm:text-sm tracking-tight shadow-sm shrink-0">
                 WW
               </div>
-              <div>
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-bold text-slate-900 tracking-tight">
+              <div className="min-w-0">
+                <div className="flex items-center gap-1.5 sm:gap-2">
+                  <span className="text-xs sm:text-sm font-bold text-slate-900 tracking-tight truncate">
                     Wealth Wise Accountant
                   </span>
-                  <span className="text-[10px] bg-slate-100 text-slate-700 px-1.5 py-0.5 rounded font-mono font-medium border border-slate-200">
+                  <span className="hidden xs:inline-block text-[9px] sm:text-[10px] bg-slate-100 text-slate-700 px-1 sm:px-1.5 py-0.5 rounded font-mono font-medium border border-slate-200 shrink-0">
                     PLATFORM OS
                   </span>
                 </div>
-                <p className="text-[11px] text-slate-400">Standalone Accounting Software Engine</p>
+                <p className="hidden sm:block text-[11px] text-slate-400 truncate">
+                  Standalone Accounting Software Engine
+                </p>
               </div>
             </div>
 
             {/* Role Switcher Pill */}
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 shrink-0">
               <div className="flex items-center bg-slate-100 p-1 rounded-xl border border-slate-200 text-xs font-semibold">
                 <button
                   onClick={() => setActiveRole("ACCOUNTANT")}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                  className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all min-h-[36px] ${
                     activeRole === "ACCOUNTANT"
                       ? "bg-white text-slate-900 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
                   }`}
+                  aria-label="Switch to Accountant Hub"
                 >
-                  <Briefcase className="w-3.5 h-3.5" />
-                  <span>Accountant Hub</span>
+                  <Briefcase className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden md:inline">Accountant Hub</span>
+                  <span className="inline md:hidden">Accountant</span>
                 </button>
                 <button
                   onClick={() => setActiveRole("CLIENT")}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg transition-all ${
+                  className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg transition-all min-h-[36px] ${
                     activeRole === "CLIENT"
                       ? "bg-white text-slate-900 shadow-xs"
                       : "text-slate-600 hover:text-slate-900"
                   }`}
+                  aria-label="Switch to Business Workspace"
                 >
-                  <Building2 className="w-3.5 h-3.5" />
-                  <span>Business Workspace</span>
+                  <Building2 className="w-3.5 h-3.5 shrink-0" />
+                  <span className="hidden md:inline">Business Workspace</span>
+                  <span className="inline md:hidden">Client</span>
                 </button>
               </div>
 
               {/* Profile badge */}
               <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-slate-200">
-                <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold">
+                <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center text-xs font-bold shrink-0">
                   {activeRole === "ACCOUNTANT" ? "SJ" : "MS"}
                 </div>
-                <div className="text-left text-xs">
+                <div className="text-left text-xs hidden lg:block">
                   <div className="font-bold text-slate-900 leading-tight">
                     {activeRole === "ACCOUNTANT" ? "Sarah Jenkins" : "Marcus Sterling"}
                   </div>
@@ -88,18 +85,18 @@ export default function Home() {
         </header>
 
         {/* Main Workspace Container */}
-        <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <main className="flex-1 max-w-7xl w-full mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
           {/* Real-time Ledger Banner */}
-          <div className="mb-6 p-3 bg-slate-100/90 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600">
+          <div className="mb-5 sm:mb-6 p-3 bg-slate-100/90 rounded-xl border border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs text-slate-600">
             <div className="flex items-center gap-2">
-              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse" />
-              <span>
-                <strong>Double-Entry Ledger Active:</strong> Invoices, Bank Reconciliation, and Reports are unified via live General Ledger state.
+              <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+              <span className="leading-tight">
+                <strong>Double-Entry Ledger Active:</strong> Invoices, Bank Reconciliation, and Reports unified in real time.
               </span>
             </div>
-            <div className="text-slate-500 font-mono text-[11px] flex items-center gap-2">
+            <div className="text-slate-500 font-mono text-[11px] flex flex-wrap items-center gap-2">
               <span>Tenant: Apex Digital Solutions Ltd</span>
-              <span>•</span>
+              <span className="hidden sm:inline">•</span>
               <span>Base Currency: GBP (£)</span>
             </div>
           </div>
@@ -108,7 +105,7 @@ export default function Home() {
         </main>
 
         {/* Footer */}
-        <footer className="border-t border-slate-200 bg-white py-4 mt-12 text-center text-xs text-slate-400">
+        <footer className="border-t border-slate-200 bg-white py-4 mt-8 sm:mt-12 text-center text-xs text-slate-400 px-4">
           <p>© 2026 Wealth Wise Accountant. Core double-entry general ledger architecture.</p>
         </footer>
       </div>

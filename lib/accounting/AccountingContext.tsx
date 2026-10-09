@@ -1,6 +1,6 @@
 "use client";
 
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState } from "react";
 import {
   Account,
   JournalEntry,
@@ -53,10 +53,10 @@ const AccountingContext = createContext<AccountingContextType | undefined>(undef
 
 export function AccountingProvider({ children }: { children: React.ReactNode }) {
   const [accounts] = useState<Account[]>(DEFAULT_UK_CHART_OF_ACCOUNTS);
-  const [contacts, setContacts] = useState<Contact[]>(INITIAL_CONTACTS);
+  const [contacts] = useState<Contact[]>(INITIAL_CONTACTS);
   const [journals, setJournals] = useState<JournalEntry[]>(INITIAL_JOURNAL_ENTRIES);
   const [invoices, setInvoices] = useState<SalesInvoice[]>(INITIAL_INVOICES);
-  const [bills, setBills] = useState<SupplierBill[]>(INITIAL_BILLS);
+  const [bills] = useState<SupplierBill[]>(INITIAL_BILLS);
   const [bankStatements, setBankStatements] = useState<BankStatementLine[]>(INITIAL_BANK_STATEMENT_LINES);
 
   // Compute live Trial Balance

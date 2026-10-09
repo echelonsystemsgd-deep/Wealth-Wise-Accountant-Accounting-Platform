@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
+  <!-- Rounded Background Container -->
+  <rect width="128" height="128" rx="28" fill="#0f172a" />
+  
+  <!-- Subtle inner gradient border -->
+  <rect x="2" y="2" width="124" height="124" rx="26" stroke="#334155" stroke-width="2" fill="none" opacity="0.6"/>
+  
+  <!-- Warm Gold Precision Accent Dot -->
+  <circle cx="102" cy="26" r="6" fill="#d97706" />
+  
+  <!-- Geometric Interlocking "WW" Monogram -->
+  <path d="M26 42 L38 86 L50 50 L64 86 L78 50 L90 86 L102 42" 
+        stroke="#ffffff" 
+        stroke-width="7" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" />
+  
+  <!-- Gold Accent Horizon Line representing balanced double-entry ledger -->
+  <line x1="30" y1="96" x2="98" y2="96" stroke="#d97706" stroke-width="4" stroke-linecap="round"/>
+</svg>

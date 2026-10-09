@@ -1,5 +1,4 @@
 import { JournalEntry, SalesInvoice, SupplierBill, BankStatementLine, Contact } from "./types";
-import { DEFAULT_UK_CHART_OF_ACCOUNTS } from "./chartOfAccounts";
 
 export const INITIAL_CONTACTS: Contact[] = [
   {

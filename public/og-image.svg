@@ -1,0 +1,70 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 630" width="1200" height="630">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#090d16" />
+      <stop offset="50%" stop-color="#0f172a" />
+      <stop offset="100%" stop-color="#1e293b" />
+    </linearGradient>
+    <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#d97706" />
+      <stop offset="100%" stop-color="#fbbf24" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1200" height="630" fill="url(#bg)" />
+
+  <!-- Grid overlay -->
+  <g opacity="0.07" stroke="#94a3b8" stroke-width="1">
+    <line x1="100" y1="0" x2="100" y2="630" />
+    <line x1="300" y1="0" x2="300" y2="630" />
+    <line x1="500" y1="0" x2="500" y2="630" />
+    <line x1="700" y1="0" x2="700" y2="630" />
+    <line x1="900" y1="0" x2="900" y2="630" />
+    <line x1="1100" y1="0" x2="1100" y2="630" />
+    <line x1="0" y1="105" x2="1200" y2="105" />
+    <line x1="0" y1="210" x2="1200" y2="210" />
+    <line x1="0" y1="315" x2="1200" y2="315" />
+    <line x1="0" y1="420" x2="1200" y2="420" />
+    <line x1="0" y1="525" x2="1200" y2="525" />
+  </g>
+
+  <!-- Brand Emblem -->
+  <g transform="translate(100, 110)">
+    <rect width="90" height="90" rx="22" fill="#1e293b" stroke="#334155" stroke-width="2" />
+    <circle cx="72" cy="18" r="5" fill="#d97706" />
+    <path d="M18 30 L27 62 L36 36 L45 62 L54 36 L63 62 L72 30" stroke="#ffffff" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" />
+    <line x1="22" y1="70" x2="68" y2="70" stroke="#d97706" stroke-width="3" stroke-linecap="round" />
+  </g>
+
+  <!-- Platform Badge -->
+  <g transform="translate(210, 142)">
+    <rect width="180" height="28" rx="6" fill="#1e293b" stroke="#334155" stroke-width="1" />
+    <text x="90" y="19" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="700" fill="#94a3b8" letter-spacing="2" text-anchor="middle">PLATFORM OS</text>
+  </g>
+
+  <!-- Main Title -->
+  <text x="100" y="270" font-family="system-ui, -apple-system, sans-serif" font-size="52" font-weight="800" fill="#ffffff" letter-spacing="-1">
+    Wealth Wise Accountant
+  </text>
+  <text x="100" y="325" font-family="system-ui, -apple-system, sans-serif" font-size="28" font-weight="500" fill="url(#goldGrad)">
+    Intelligent Financial Platform &amp; Client Workspace
+  </text>
+
+  <!-- Value propositions -->
+  <text x="100" y="410" font-family="system-ui, -apple-system, sans-serif" font-size="19" fill="#94a3b8" font-weight="400">
+    • Real-Time Double-Entry General Ledger Engine (Integer minor units)
+  </text>
+  <text x="100" y="445" font-family="system-ui, -apple-system, sans-serif" font-size="19" fill="#94a3b8" font-weight="400">
+    • Client Collaboration Portal with OCR Document Ingestion Sandbox
+  </text>
+  <text x="100" y="480" font-family="system-ui, -apple-system, sans-serif" font-size="19" fill="#94a3b8" font-weight="400">
+    • Automated Bank Feed Reconciliation &amp; HMRC MTD VAT Ready
+  </text>
+
+  <!-- Bottom Bar -->
+  <line x1="100" y1="535" x2="1100" y2="535" stroke="#334155" stroke-width="1" />
+  <text x="100" y="565" font-family="system-ui, -apple-system, sans-serif" font-size="14" fill="#64748b" font-weight="600">
+    PROPRIETARY PRACTICE ENGINE • ACCA COMPLIANT AUDIT TRAIL • ZERO EXTERNAL VENDOR DEPENDENCIES
+  </text>
+</svg>

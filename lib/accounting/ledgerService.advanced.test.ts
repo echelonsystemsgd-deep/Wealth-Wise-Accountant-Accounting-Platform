@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import { GeneralLedgerService } from "./ledgerService";
 import { DEFAULT_UK_CHART_OF_ACCOUNTS } from "./chartOfAccounts";
-import { JournalEntry, SalesInvoice } from "./types";
+import { JournalEntry } from "./types";
 import { calculateVatPence } from "../utils";
 
 describe("Accounting Engine — Expanded Invariant & Audit Verification", () => {
@@ -118,6 +118,7 @@ describe("Accounting Engine — Expanded Invariant & Audit Verification", () => 
       initialJournal,
       errorJournal,
     ]);
+    expect(reversalEntry.totalPence).toBe(120000);
 
     // Compute Trial Balance including original + reversal
     const tbAfter = GeneralLedgerService.computeTrialBalance(accounts, updatedJournals);

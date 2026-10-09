@@ -47,12 +47,12 @@ export function HighPrecisionFinancialChart({ data }: AreaChartProps) {
   return (
     <div className="relative w-full overflow-hidden select-none">
       {/* Tooltip Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-2">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 mb-2 gap-2">
         <div>
           <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Period</span>
           <p className="text-sm font-bold text-slate-900">{activePoint.month} 2026</p>
         </div>
-        <div className="flex items-center gap-4">
+        <div className="flex flex-wrap items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-1.5">
             <span className="w-2.5 h-2.5 rounded-full bg-slate-900 inline-block" />
             <span className="text-xs text-slate-600 font-medium">Revenue:</span>
@@ -128,6 +128,7 @@ export function HighPrecisionFinancialChart({ data }: AreaChartProps) {
               fill="transparent"
               className="cursor-pointer"
               onMouseEnter={() => setHoveredIndex(i)}
+              onTouchStart={() => setHoveredIndex(i)}
             />
           ))}
 

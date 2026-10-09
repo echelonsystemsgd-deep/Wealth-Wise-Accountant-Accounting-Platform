@@ -76,20 +76,20 @@ export function InvoicesView() {
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="relative">
+        <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2.5 w-full sm:w-auto">
+          <div className="relative w-full sm:w-48">
             <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               placeholder="Search invoices..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-xs bg-slate-50 border border-slate-200 rounded-lg w-full sm:w-48"
+              className="pl-8 pr-3 py-2 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg w-full min-h-[38px] focus:outline-none focus:ring-1 focus:ring-slate-900"
             />
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-3.5 py-1.5 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap"
+            className="px-3.5 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap min-h-[38px]"
           >
             <Plus className="w-3.5 h-3.5" />
             Create & Post Invoice
@@ -98,8 +98,8 @@ export function InvoicesView() {
       </div>
 
       {/* Invoice Table */}
-      <div className="overflow-x-auto">
-        <table className="w-full text-left border-collapse">
+      <div className="overflow-x-auto -mx-5 px-5 sm:mx-0 sm:px-0">
+        <table className="w-full text-left border-collapse min-w-[640px]">
           <thead>
             <tr className="border-b border-slate-200 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
               <th className="pb-3 pl-2">Invoice #</th>
@@ -170,16 +170,17 @@ export function InvoicesView() {
 
       {/* Modal for Invoice Creation */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-xs flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-md w-full p-5 space-y-4">
+        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-md w-full p-4 sm:p-5 space-y-4 my-auto max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <FileCheck className="w-4 h-4 text-slate-700" />
-                Create Sales Invoice & Post to Ledger
+                <FileCheck className="w-4 h-4 text-slate-700 shrink-0" />
+                <span>Create Sales Invoice & Post to Ledger</span>
               </h4>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-slate-600 text-sm"
+                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+                aria-label="Close modal"
               >
                 ✕
               </button>
@@ -194,7 +195,7 @@ export function InvoicesView() {
                   placeholder="e.g. Acme Tech Solutions Ltd"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full p-2.5 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
                 />
               </div>
 
@@ -206,11 +207,11 @@ export function InvoicesView() {
                   placeholder="e.g. Monthly Retainer & Consulting"
                   value={itemDesc}
                   onChange={(e) => setItemDesc(e.target.value)}
-                  className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full p-2.5 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-slate-600 block mb-1 font-medium">Net Amount (£)</label>
                   <input
@@ -219,7 +220,7 @@ export function InvoicesView() {
                     required
                     value={netAmountPounds}
                     onChange={(e) => setNetAmountPounds(Number(e.target.value))}
-                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
+                    className="w-full p-2.5 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
                   />
                 </div>
                 <div>
@@ -227,7 +228,7 @@ export function InvoicesView() {
                   <select
                     value={vatTreatment}
                     onChange={(e) => setVatTreatment(e.target.value as typeof vatTreatment)}
-                    className="w-full p-2 bg-slate-50 border border-slate-200 rounded text-slate-900 text-xs"
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs min-h-[38px]"
                   >
                     <option value="STANDARD_20">UK Standard (20%)</option>
                     <option value="REDUCED_5">UK Reduced (5%)</option>

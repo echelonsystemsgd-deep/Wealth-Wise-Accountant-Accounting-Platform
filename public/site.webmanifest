@@ -1,0 +1,22 @@
+{
+  "name": "Wealth Wise Accountant Platform OS",
+  "short_name": "WealthWise",
+  "description": "Proprietary UK Accounting Platform, General Ledger Engine & Client Workspace",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#0f172a",
+  "icons": [
+    {
+      "src": "/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-icon.svg",
+      "sizes": "180x180",
+      "type": "image/svg+xml"
+    }
+  ]
+}

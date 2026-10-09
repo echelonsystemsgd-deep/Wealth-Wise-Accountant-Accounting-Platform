@@ -18,11 +18,7 @@ import {
   ArrowUpRight,
   TrendingUp,
   ShieldCheck,
-  Building2,
   DollarSign,
-  Briefcase,
-  ChevronRight,
-  BookOpen,
 } from "lucide-react";
 
 export function AccountantDashboard() {
@@ -54,7 +50,7 @@ export function AccountantDashboard() {
   return (
     <div className="space-y-6">
       {/* Navigation tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-200">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200 scrollbar-none touch-pan-x -mx-1 px-1">
         {[
           { id: "OVERVIEW", label: "Executive Overview" },
           { id: "LEDGER", label: `General Ledger (${journals.length} Journals)` },
@@ -66,7 +62,7 @@ export function AccountantDashboard() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+            className={`px-3 sm:px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap min-h-[38px] ${
               activeTab === tab.id
                 ? "bg-slate-900 text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"

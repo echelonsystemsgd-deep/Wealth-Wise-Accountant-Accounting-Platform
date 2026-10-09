@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useAccounting } from "@/lib/accounting/AccountingContext";
 import { formatGBP } from "@/lib/utils";
-import { Download, Calendar, Layers, Scale } from "lucide-react";
+import { Download, Calendar } from "lucide-react";
 
 export function FinancialReportsView() {
   const { trialBalance, financialSummary } = useAccounting();
@@ -37,10 +37,10 @@ export function FinancialReportsView() {
   const totalEquity = equityRows.reduce((sum, r) => sum + r.creditPence, 0) + netProfit;
 
   return (
-    <div className="card-surface p-5 space-y-5">
+    <div className="card-surface p-4 sm:p-5 space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-base font-bold text-slate-900 tracking-tight">
               Financial Statements & Statutory Accounts
             </h3>
@@ -52,11 +52,11 @@ export function FinancialReportsView() {
             Real-time financial reports calculated dynamically from posted double-entry journal lines.
           </p>
         </div>
-        <div className="flex items-center gap-2">
-          <div className="flex bg-slate-100 p-0.5 rounded-lg text-xs font-semibold">
+        <div className="flex items-center gap-2 self-start sm:self-auto">
+          <div className="flex flex-wrap bg-slate-100 p-0.5 rounded-lg text-xs font-semibold gap-1 sm:gap-0">
             <button
               onClick={() => setReportType("PNL")}
-              className={`px-3 py-1 rounded-md transition-all ${
+              className={`px-3 py-1.5 rounded-md transition-all min-h-[32px] ${
                 reportType === "PNL" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -64,7 +64,7 @@ export function FinancialReportsView() {
             </button>
             <button
               onClick={() => setReportType("BALANCE_SHEET")}
-              className={`px-3 py-1 rounded-md transition-all ${
+              className={`px-3 py-1.5 rounded-md transition-all min-h-[32px] ${
                 reportType === "BALANCE_SHEET" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -72,14 +72,17 @@ export function FinancialReportsView() {
             </button>
             <button
               onClick={() => setReportType("TAX_SUMMARY")}
-              className={`px-3 py-1 rounded-md transition-all ${
+              className={`px-3 py-1.5 rounded-md transition-all min-h-[32px] ${
                 reportType === "TAX_SUMMARY" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
               }`}
             >
               VAT & MTD
             </button>
           </div>
-          <button className="p-1.5 text-slate-600 hover:bg-slate-100 rounded border border-slate-200">
+          <button
+            className="p-1.5 text-slate-600 hover:bg-slate-100 rounded border border-slate-200 min-h-[32px] min-w-[32px] flex items-center justify-center"
+            aria-label="Download statement report"
+          >
             <Download className="w-4 h-4" />
           </button>
         </div>
@@ -87,12 +90,12 @@ export function FinancialReportsView() {
 
       {reportType === "PNL" && (
         <div className="space-y-4">
-          <div className="flex items-center justify-between text-xs text-slate-500">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 gap-1">
             <span className="flex items-center gap-1 font-medium">
               <Calendar className="w-3.5 h-3.5 text-slate-400" />
               Reporting Period: Year-to-Date (Financial Year 2026/27)
             </span>
-            <span className="bg-slate-50 border border-slate-200 px-2 py-0.5 rounded font-mono text-[11px]">
+            <span className="bg-slate-50 border border-slate-200 px-2 py-0.5 rounded font-mono text-[11px] self-start sm:self-auto">
               Currency: GBP (£)
             </span>
           </div>
@@ -169,7 +172,7 @@ export function FinancialReportsView() {
 
       {reportType === "BALANCE_SHEET" && (
         <div className="space-y-4 text-xs">
-          <div className="flex justify-between items-center text-slate-500 pb-2">
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-slate-500 pb-2 gap-1">
             <span>Accounting Equation: Net Assets = Total Equity</span>
             <span className="font-mono text-[11px] text-emerald-700 font-bold">
               Ledger State: In Balance
@@ -217,8 +220,31 @@ export function FinancialReportsView() {
 
             {/* Net Assets */}
             <div className="p-3 bg-slate-900 text-white rounded flex justify-between font-bold text-xs">
-              <span>Total Net Assets (Equity Equivalent)</span>
+              <span>Total Net Assets</span>
               <span className="font-mono">{formatGBP(netAssets)}</span>
+            </div>
+
+            {/* Total Equity */}
+            <div className="p-3 bg-slate-50 rounded border border-slate-200 space-y-2">
+              <span className="font-bold text-slate-900 uppercase text-[11px] block">
+                Capital &amp; Reserves / Equity (Cr)
+              </span>
+              {equityRows.map((r) => (
+                <div key={r.accountCode} className="flex justify-between text-slate-700">
+                  <span>
+                    {r.accountCode} - {r.accountName}
+                  </span>
+                  <span className="font-mono font-medium">{formatGBP(r.creditPence)}</span>
+                </div>
+              ))}
+              <div className="flex justify-between text-slate-700">
+                <span>Retained Profit (Current Period)</span>
+                <span className="font-mono font-medium">{formatGBP(netProfit)}</span>
+              </div>
+              <div className="pt-2 border-t border-slate-200 font-bold flex justify-between text-slate-900">
+                <span>Total Equity Balance</span>
+                <span className="font-mono">{formatGBP(totalEquity)}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -227,11 +253,11 @@ export function FinancialReportsView() {
       {reportType === "TAX_SUMMARY" && (
         <div className="space-y-4 text-xs">
           <div className="p-4 bg-emerald-50/50 border border-emerald-200/80 rounded-lg">
-            <div className="flex items-center justify-between mb-2">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-1">
               <span className="font-bold text-emerald-950 text-sm">
                 HMRC Making Tax Digital (VAT Account 2200)
               </span>
-              <span className="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">
+              <span className="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded self-start sm:self-auto">
                 Draft VAT Return
               </span>
             </div>

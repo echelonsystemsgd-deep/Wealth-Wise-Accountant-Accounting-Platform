@@ -11,17 +11,12 @@ import {
   ArrowDownLeft,
   ArrowUpRight,
   Receipt,
-  FileText,
   AlertCircle,
-  MessageSquare,
-  CheckCircle2,
-  Calendar,
   Send,
-  Building2,
 } from "lucide-react";
 
 export function ClientPortal() {
-  const { invoices, bills, financialSummary, bankStatements } = useAccounting();
+  const { invoices, financialSummary } = useAccounting();
   const [activeTab, setActiveTab] = useState<"OVERVIEW" | "INVOICES" | "DOCUMENTS" | "REPORTS" | "MESSAGES">("OVERVIEW");
   const [messageText, setMessageText] = useState("");
   const [messages, setMessages] = useState([
@@ -61,7 +56,7 @@ export function ClientPortal() {
   return (
     <div className="space-y-6">
       {/* Sub-nav tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-200">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-slate-200 scrollbar-none touch-pan-x -mx-1 px-1">
         {[
           { id: "OVERVIEW", label: "My Business Overview" },
           { id: "INVOICES", label: `Sales & Invoicing (${invoices.length})` },
@@ -72,7 +67,7 @@ export function ClientPortal() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            className={`px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap ${
+            className={`px-3 sm:px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap min-h-[38px] ${
               activeTab === tab.id
                 ? "bg-slate-900 text-white shadow-xs"
                 : "text-slate-600 hover:text-slate-900 hover:bg-slate-100"
@@ -86,7 +81,7 @@ export function ClientPortal() {
       {activeTab === "OVERVIEW" && (
         <div className="space-y-6">
           {/* Welcome Banner */}
-          <div className="p-4 bg-slate-900 text-white rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-3 shadow-sm">
+          <div className="p-4 sm:p-5 bg-slate-900 text-white rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-sm">
             <div>
               <span className="text-xs text-slate-400 font-medium">Client Business Portal</span>
               <h2 className="text-lg font-bold">Apex Digital Solutions Ltd</h2>
@@ -94,16 +89,16 @@ export function ClientPortal() {
                 Financial records synchronised with Wealth Wise Accountant general ledger.
               </p>
             </div>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 self-start sm:self-center">
               <button
                 onClick={() => setActiveTab("DOCUMENTS")}
-                className="px-3 py-1.5 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-slate-100 transition-colors shadow-xs"
+                className="px-3.5 py-2 bg-white text-slate-900 text-xs font-bold rounded-lg hover:bg-slate-100 transition-colors shadow-xs min-h-[36px]"
               >
                 Upload Receipt
               </button>
               <button
                 onClick={() => setActiveTab("INVOICES")}
-                className="px-3 py-1.5 bg-slate-800 text-white text-xs font-semibold rounded-lg hover:bg-slate-700 transition-colors border border-slate-700"
+                className="px-3.5 py-2 bg-slate-800 text-white text-xs font-semibold rounded-lg hover:bg-slate-700 transition-colors border border-slate-700 min-h-[36px]"
               >
                 + New Invoice
               </button>
@@ -174,13 +169,13 @@ export function ClientPortal() {
           </div>
 
           {/* Action items required from client */}
-          <div className="card-surface p-5 space-y-3">
-            <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="card-surface p-4 sm:p-5 space-y-3">
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-3 border-b border-slate-100 gap-2">
               <h3 className="text-sm font-bold text-slate-900 flex items-center gap-2">
-                <AlertCircle className="w-4 h-4 text-amber-600" />
+                <AlertCircle className="w-4 h-4 text-amber-600 shrink-0" />
                 Urgent Actions Requested by Your Accountant
               </h3>
-              <span className="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200">
+              <span className="text-xs font-bold text-amber-700 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 self-start sm:self-auto">
                 2 Pending Items
               </span>
             </div>
@@ -197,7 +192,7 @@ export function ClientPortal() {
                 </div>
                 <button
                   onClick={() => setActiveTab("DOCUMENTS")}
-                  className="px-3 py-1 font-bold text-white bg-slate-900 rounded hover:bg-slate-800 self-start sm:self-center"
+                  className="px-3 py-1.5 font-bold text-white bg-slate-900 rounded-lg hover:bg-slate-800 self-start sm:self-center min-h-[34px]"
                 >
                   Upload File
                 </button>
@@ -214,7 +209,7 @@ export function ClientPortal() {
                 </div>
                 <button
                   onClick={() => setActiveTab("MESSAGES")}
-                  className="px-3 py-1 font-semibold text-slate-700 bg-white border border-slate-200 rounded hover:bg-slate-50 self-start sm:self-center"
+                  className="px-3 py-1.5 font-semibold text-slate-700 bg-white border border-slate-200 rounded-lg hover:bg-slate-50 self-start sm:self-center min-h-[34px]"
                 >
                   Reply to Sarah
                 </button>
@@ -229,20 +224,20 @@ export function ClientPortal() {
       {activeTab === "REPORTS" && <FinancialReportsView />}
 
       {activeTab === "MESSAGES" && (
-        <div className="card-surface p-5 space-y-4">
-          <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
+        <div className="card-surface p-4 sm:p-5 space-y-4">
+          <div className="pb-3 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center justify-between gap-2">
             <div>
               <h3 className="text-sm font-bold text-slate-900">Direct Accountant Secure Messenger</h3>
               <p className="text-xs text-slate-500">
                 Direct client-to-accountant correspondence linked to business books.
               </p>
             </div>
-            <span className="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded font-medium border border-emerald-200">
+            <span className="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded font-medium border border-emerald-200 self-start sm:self-auto">
               Assigned: Sarah Jenkins, ACCA
             </span>
           </div>
 
-          <div className="space-y-3 max-h-[360px] overflow-y-auto p-2">
+          <div className="space-y-3 max-h-[360px] overflow-y-auto p-1 sm:p-2">
             {messages.map((m, i) => (
               <div
                 key={i}
@@ -252,26 +247,26 @@ export function ClientPortal() {
                     : "bg-slate-900 text-white ml-auto"
                 }`}
               >
-                <div className="flex items-center justify-between mb-1 opacity-70 text-[11px]">
-                  <span>{m.sender}</span>
-                  <span>{m.time}</span>
+                <div className="flex items-center justify-between mb-1 opacity-70 text-[11px] gap-2">
+                  <span className="truncate">{m.sender}</span>
+                  <span className="shrink-0">{m.time}</span>
                 </div>
                 <p className="leading-relaxed">{m.content}</p>
               </div>
             ))}
           </div>
 
-          <form onSubmit={handleSendMessage} className="flex gap-2 pt-2 border-t border-slate-100">
+          <form onSubmit={handleSendMessage} className="flex flex-col sm:flex-row gap-2 pt-2 border-t border-slate-100">
             <input
               type="text"
               placeholder="Type your message to your accountant..."
               value={messageText}
               onChange={(e) => setMessageText(e.target.value)}
-              className="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:bg-white"
+              className="flex-1 p-2 bg-slate-50 border border-slate-200 rounded-lg text-base sm:text-xs text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 focus:bg-white min-h-[40px]"
             />
             <button
               type="submit"
-              className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold hover:bg-slate-800 transition-colors flex items-center gap-1.5 shadow-sm"
+              className="px-4 py-2 bg-slate-900 text-white rounded-lg text-xs font-bold hover:bg-slate-800 transition-colors flex items-center justify-center gap-1.5 shadow-sm min-h-[40px]"
             >
               <Send className="w-3.5 h-3.5" /> Send
             </button>
