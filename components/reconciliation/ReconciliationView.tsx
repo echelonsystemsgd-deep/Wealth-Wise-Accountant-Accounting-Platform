@@ -1,10 +1,7 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  SYNTHETIC_TRANSACTIONS,
-  BankTransaction,
-} from "@/lib/synthetic-data";
+import { useAccounting } from "@/lib/accounting/AccountingContext";
 import { formatGBP } from "@/lib/utils";
 import {
   CheckCircle2,
@@ -13,24 +10,17 @@ import {
   ArrowRight,
   Split,
   Search,
+  Check,
 } from "lucide-react";
 
 export function ReconciliationView() {
-  const [transactions, setTransactions] = useState<BankTransaction[]>(
-    SYNTHETIC_TRANSACTIONS
-  );
-  const [selectedTxId, setSelectedTxId] = useState<string>(transactions[0]?.id || "");
+  const { bankStatements, reconcileBankLine, accounts } = useAccounting();
+  const [selectedTxId, setSelectedTxId] = useState<string>(bankStatements[0]?.id || "");
   const [searchQuery, setSearchQuery] = useState("");
 
-  const handleReconcile = (id: string) => {
-    setTransactions((prev) =>
-      prev.map((t) => (t.id === id ? { ...t, status: "RECONCILED" } : t))
-    );
-  };
+  const selectedTx = bankStatements.find((t) => t.id === selectedTxId);
 
-  const selectedTx = transactions.find((t) => t.id === selectedTxId);
-
-  const filteredTx = transactions.filter((t) =>
+  const filteredTx = bankStatements.filter((t) =>
     t.description.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -80,7 +70,7 @@ export function ReconciliationView() {
               >
                 <div className="flex items-center justify-between">
                   <span className="text-[11px] font-medium text-slate-500 font-mono">
-                    {tx.date}
+                    {tx.transactionDate}
                   </span>
                   <span
                     className={`text-xs font-bold font-mono ${
@@ -96,15 +86,15 @@ export function ReconciliationView() {
                 </div>
                 <div className="flex items-center justify-between mt-2 pt-2 border-t border-slate-100">
                   <span className="text-[11px] text-slate-500">
-                    {tx.category || "Uncategorised"}
+                    Account: 1000 Barclays
                   </span>
-                  {tx.status === "RECONCILED" ? (
+                  {tx.isReconciled ? (
                     <span className="flex items-center gap-1 text-[11px] font-bold text-emerald-700">
                       <CheckCircle2 className="w-3 h-3" /> Reconciled
                     </span>
                   ) : tx.suggestedMatch ? (
                     <span className="flex items-center gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-1.5 py-0.5 rounded border border-amber-200">
-                      <Sparkles className="w-2.5 h-2.5" /> Match {tx.suggestedMatch.confidence}%
+                      <Sparkles className="w-2.5 h-2.5" /> Match {tx.suggestedMatch.confidencePercent}%
                     </span>
                   ) : (
                     <span className="flex items-center gap-1 text-[11px] text-slate-500">
@@ -124,7 +114,7 @@ export function ReconciliationView() {
               <div className="flex items-center justify-between pb-3 border-b border-slate-200/80">
                 <div>
                   <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">
-                    Selected Transaction
+                    Selected Statement Line
                   </span>
                   <h4 className="text-sm font-bold text-slate-900 mt-0.5">
                     {selectedTx.description}
@@ -134,20 +124,20 @@ export function ReconciliationView() {
                   <div className="text-base font-bold font-mono text-slate-900">
                     {formatGBP(selectedTx.amountPence)}
                   </div>
-                  <span className="text-xs text-slate-500">{selectedTx.date}</span>
+                  <span className="text-xs text-slate-500">{selectedTx.transactionDate}</span>
                 </div>
               </div>
 
-              {selectedTx.status === "RECONCILED" ? (
+              {selectedTx.isReconciled ? (
                 <div className="p-8 text-center my-6">
                   <div className="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center mx-auto mb-3">
                     <CheckCircle2 className="w-6 h-6" />
                   </div>
                   <h5 className="text-sm font-bold text-slate-900">
-                    Transaction Fully Reconciled
+                    Transaction Fully Reconciled to General Ledger
                   </h5>
                   <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-                    This bank record has been paired to ledger reference and cleared from the unallocated queue.
+                    This bank statement line has been paired and reconciled. Cash balances and Trial Balance accounts are fully aligned.
                   </p>
                 </div>
               ) : selectedTx.suggestedMatch ? (
@@ -159,7 +149,7 @@ export function ReconciliationView() {
                         Suggested Ledger Match
                       </span>
                       <span className="text-xs bg-emerald-50 text-emerald-700 font-bold px-2 py-0.5 rounded border border-emerald-200">
-                        {selectedTx.suggestedMatch.confidence}% Confidence
+                        {selectedTx.suggestedMatch.confidencePercent}% Confidence
                       </span>
                     </div>
 
@@ -167,13 +157,13 @@ export function ReconciliationView() {
                       <div>
                         <span className="text-slate-400">Target Entity:</span>
                         <p className="font-semibold text-slate-900">
-                          {selectedTx.suggestedMatch.targetName}
+                          {selectedTx.suggestedMatch.entityName}
                         </p>
                       </div>
                       <div>
                         <span className="text-slate-400">Reference:</span>
                         <p className="font-mono font-semibold text-slate-900">
-                          {selectedTx.suggestedMatch.reference}
+                          {selectedTx.suggestedMatch.targetReference}
                         </p>
                       </div>
                     </div>
@@ -183,10 +173,10 @@ export function ReconciliationView() {
                         <Split className="w-3 h-3" /> Split Line
                       </button>
                       <button
-                        onClick={() => handleReconcile(selectedTx.id)}
+                        onClick={() => reconcileBankLine(selectedTx.id, "INVOICE")}
                         className="px-4 py-1.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-md transition-colors flex items-center gap-1.5 shadow-sm"
                       >
-                        Accept Match & Reconcile
+                        Accept Match & Post Settlement
                         <ArrowRight className="w-3 h-3" />
                       </button>
                     </div>
@@ -222,7 +212,7 @@ export function ReconciliationView() {
                   </div>
                   <div className="pt-2 flex justify-end">
                     <button
-                      onClick={() => handleReconcile(selectedTx.id)}
+                      onClick={() => reconcileBankLine(selectedTx.id, "MANUAL")}
                       className="px-4 py-1.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-md transition-colors"
                     >
                       Post to Ledger & Match
@@ -232,7 +222,7 @@ export function ReconciliationView() {
               )}
 
               <div className="text-[11px] text-slate-400 bg-slate-100/60 p-2.5 rounded border border-slate-200/50 mt-4">
-                <strong>Accounting Rule:</strong> Bank reconciliations link verified cleared statement items directly to double-entry general ledger transactions. Reconciled balances update cash flow and trial balances instantly.
+                <strong>Accounting Rule:</strong> Bank reconciliations trigger double-entry journal postings (e.g. Dr Bank Account, Cr Trade Debtors). All ledger balances and Trial Balance accounts update dynamically upon match acceptance.
               </div>
             </div>
           ) : (

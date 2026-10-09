@@ -1,9 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
+import { useAccounting } from "@/lib/accounting/AccountingContext";
 import { formatGBP } from "@/lib/utils";
 import { DocumentVaultView } from "@/components/documents/DocumentVaultView";
 import { InvoicesView } from "@/components/invoices/InvoicesView";
+import { FinancialReportsView } from "@/components/reports/FinancialReportsView";
 import {
   Wallet,
   ArrowDownLeft,
@@ -15,14 +17,16 @@ import {
   CheckCircle2,
   Calendar,
   Send,
+  Building2,
 } from "lucide-react";
 
 export function ClientPortal() {
-  const [activeTab, setActiveTab] = useState<"OVERVIEW" | "INVOICES" | "DOCUMENTS" | "MESSAGES">("OVERVIEW");
+  const { invoices, bills, financialSummary, bankStatements } = useAccounting();
+  const [activeTab, setActiveTab] = useState<"OVERVIEW" | "INVOICES" | "DOCUMENTS" | "REPORTS" | "MESSAGES">("OVERVIEW");
   const [messageText, setMessageText] = useState("");
   const [messages, setMessages] = useState([
     {
-      sender: "Wealth Wise Accountant (Sarah Jenkins)",
+      sender: "Wealth Wise Accountant (Sarah Jenkins, ACCA)",
       time: "Yesterday, 16:30",
       content: "Hi Marcus, please upload the receipt for the £2,499 Apple Store payment from 07 Oct so we can reclaim the VAT.",
       isAccountant: true,
@@ -50,15 +54,20 @@ export function ClientPortal() {
     setMessageText("");
   };
 
+  // Outstanding unpaid invoices
+  const unpaidInvoices = invoices.filter((i) => i.status !== "PAID");
+  const unpaidInvoicesTotalPence = unpaidInvoices.reduce((sum, i) => sum + i.amountDuePence, 0);
+
   return (
     <div className="space-y-6">
       {/* Sub-nav tabs */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-1 border-b border-slate-200">
         {[
           { id: "OVERVIEW", label: "My Business Overview" },
-          { id: "INVOICES", label: "Invoices & Billing" },
+          { id: "INVOICES", label: `Sales & Invoicing (${invoices.length})` },
           { id: "DOCUMENTS", label: "Upload Receipts & Bills" },
-          { id: "MESSAGES", label: "Accountant Direct Messages (2)" },
+          { id: "REPORTS", label: "Financial Reports & P&L" },
+          { id: "MESSAGES", label: "Accountant Direct Messages" },
         ].map((tab) => (
           <button
             key={tab.id}
@@ -82,7 +91,7 @@ export function ClientPortal() {
               <span className="text-xs text-slate-400 font-medium">Client Business Portal</span>
               <h2 className="text-lg font-bold">Apex Digital Solutions Ltd</h2>
               <p className="text-xs text-slate-300 mt-0.5">
-                Managed by Wealth Wise Accountant • Dedicated Accountant: Sarah Jenkins, ACCA
+                Financial records synchronised with Wealth Wise Accountant general ledger.
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -101,7 +110,7 @@ export function ClientPortal() {
             </div>
           </div>
 
-          {/* Core financial metrics */}
+          {/* Core financial metrics connected to AccountingContext */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
             <div className="card-surface p-4">
               <div className="flex items-center justify-between text-slate-500 mb-2">
@@ -110,9 +119,11 @@ export function ClientPortal() {
                   <Wallet className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-bold font-mono text-slate-900">£64,200.00</div>
+              <div className="text-2xl font-bold font-mono text-slate-900">
+                {formatGBP(financialSummary.cashBalancePence)}
+              </div>
               <div className="text-[11px] text-slate-400 mt-2 pt-2 border-t border-slate-100">
-                Barclays Current (verified cleared)
+                Barclays Current (General Ledger Acc 1000)
               </div>
             </div>
 
@@ -123,9 +134,11 @@ export function ClientPortal() {
                   <ArrowDownLeft className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-bold font-mono text-slate-900">£4,350.00</div>
+              <div className="text-2xl font-bold font-mono text-slate-900">
+                {formatGBP(unpaidInvoicesTotalPence)}
+              </div>
               <div className="text-[11px] text-slate-400 mt-2 pt-2 border-t border-slate-100">
-                1 customer invoice due in 3 days
+                {unpaidInvoices.length} unpaid customer invoices
               </div>
             </div>
 
@@ -136,9 +149,11 @@ export function ClientPortal() {
                   <ArrowUpRight className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-bold font-mono text-slate-900">£1,490.00</div>
+              <div className="text-2xl font-bold font-mono text-slate-900">
+                {formatGBP(financialSummary.accountsPayablePence || 74500)}
+              </div>
               <div className="text-[11px] text-slate-400 mt-2 pt-2 border-t border-slate-100">
-                2 supplier invoices due by month-end
+                Accounts Payable (Acc 2000)
               </div>
             </div>
 
@@ -149,9 +164,11 @@ export function ClientPortal() {
                   <Receipt className="w-4 h-4" />
                 </div>
               </div>
-              <div className="text-2xl font-bold font-mono text-slate-900">£4,820.00</div>
+              <div className="text-2xl font-bold font-mono text-slate-900">
+                {formatGBP(financialSummary.netVatLiabilityPence)}
+              </div>
               <div className="text-[11px] text-slate-400 mt-2 pt-2 border-t border-slate-100">
-                Q2 return due 07 Nov 2026
+                Q2 MTD VAT return due 07 Nov 2026
               </div>
             </div>
           </div>
@@ -209,6 +226,7 @@ export function ClientPortal() {
 
       {activeTab === "INVOICES" && <InvoicesView />}
       {activeTab === "DOCUMENTS" && <DocumentVaultView />}
+      {activeTab === "REPORTS" && <FinancialReportsView />}
 
       {activeTab === "MESSAGES" && (
         <div className="card-surface p-5 space-y-4">
@@ -216,7 +234,7 @@ export function ClientPortal() {
             <div>
               <h3 className="text-sm font-bold text-slate-900">Direct Accountant Secure Messenger</h3>
               <p className="text-xs text-slate-500">
-                Encrypted correspondence directly linked to your company general ledger records.
+                Direct client-to-accountant correspondence linked to business books.
               </p>
             </div>
             <span className="text-xs text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded font-medium border border-emerald-200">
