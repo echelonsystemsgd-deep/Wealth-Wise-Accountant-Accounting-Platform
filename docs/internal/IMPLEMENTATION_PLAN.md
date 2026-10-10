@@ -67,27 +67,47 @@ Wealth Wise Accountant is transitioning from a high-fidelity interactive prototy
 
 ---
 
-## 3. What Needs Implementing Next (Phases 2 to 5)
+## 3. Detailed Phase Deliverables & Roadmap
 
-### Phase 2: Multi-Tenant Auth & Access Control
-- [ ] Connect production auth provider (Supabase Auth, Auth0, or Clerk).
-- [ ] Implement JWT / session middleware extracting `organisationId` and `userRole`.
-- [ ] Role-based UI guards (Practice Admin vs. Bookkeeper vs. Client Director).
+### Phase 1: Data Architecture & Production DAL (COMPLETED ✅)
+- PostgreSQL 15+ schema with strict integer pence (`BIGINT`), multi-tenancy hierarchy, and Row-Level Security.
+- Mathematical double-entry ledger invariants ($\sum \text{Debits} == \sum \text{Credits}$) and immutable reversals.
+- 20 / 20 passing tests across DAL and ledger services.
 
-### Phase 3: Banking Rails & Real-Time Open Banking
-- [ ] Connect Open Banking aggregator API (Truelayer / Yapily / Plaid).
-- [ ] Automated daily bank statement sync via scheduled webhooks.
-- [ ] Rule-based reconciliation engine for recurring subscriptions and client transfers.
+### Phase 2: Multi-Tenant Auth, Session RLS & Practice CRM (COMPLETED ✅)
+- **Branch:** `phase-2-auth-crm` (24 / 24 passing tests).
+- Unified session provider (`lib/auth/AuthContext.tsx`) with Role-Based Access Control (RBAC):
+  - `PRACTICE_ADMIN` / `SENIOR_ACCOUNTANT` / `BOOKKEEPER`: Practice portfolio, client switcher, ledger postings, filing status.
+  - `CLIENT_DIRECTOR`: Sandboxed strictly to single company CRN, direct accountant messages, and missing document alerts.
+- Multi-Tenant Client Workspace Switcher (`ClientWorkspaceSwitcher.tsx`) in sticky header.
+- Practice CRM Portfolio Hub (`PracticeCrmView.tsx`) with automatic statutory filing deadlines (Nov 07 VAT, Companies House Year-End), monthly retainer analytics (£1,190/mo), and self-serve SaaS fee tracking.
+- Explicit bi-directional attention checklists for both accountant and client.
 
-### Phase 4: Document Vault & Production OCR
-- [ ] Connect S3-compatible cloud storage (Supabase Storage / AWS S3) for PDF and receipt images.
-- [ ] Connect live OCR extraction API (Mindee / AWS Textract / Google Cloud Document AI).
-- [ ] Confidence threshold routing: documents with >95% confidence auto-populate drafts; others flag for bookkeeper review.
+### Phase 3: Banking Rails & Real-Time Open Banking (Next Up ⏳)
+- **Target Branch:** `phase-3-bank-feeds`
+- **Zero-Maintenance Flow:**
+  - Self-serve UK Open Banking OAuth journey (Truelayer / Yapily / Plaid) for Barclays, NatWest, HSBC, Lloyds, Monzo, Revolut.
+  - Webhook-driven automated nightly bank statement sync into `bank_statement_lines`.
+  - 2-Column interactive smart matching engine with confidence scoring (99% green match badge).
+  - Accountant user-defined reconciliation rules (e.g. *"If description contains Adobe, debit 7040 Computer Software"*).
+  - One-click reconciliation auto-posting double-entry general ledger journals.
 
-### Phase 5: Invoicing Payments & HMRC MTD Filing
-- [ ] Connect Stripe Connect for client invoice checkout links ("Pay by Card" / "Apple Pay").
-- [ ] HMRC Making Tax Digital (MTD) Sandbox API connection for VAT Return Form 100 XML/JSON generation and filing receipts.
-- [ ] Automated statutory accounts export (Companies House micro-entity format).
+### Phase 4: Document Vault, Real OCR & Receipt Extraction (In Architecture ⏳)
+- **Target Branch:** `phase-4-document-ocr`
+- **Zero-Maintenance Flow:**
+  - Mobile receipt camera capture and desktop drag-and-drop PDF dropzone.
+  - Private encrypted S3 / Supabase storage with 15-minute expiring signed URLs.
+  - Real-time OCR financial extraction pipeline (Mindee / AWS Textract / Cloud Vision) parsing Supplier, Date, Gross, Net, and VAT.
+  - Automatic nominal account code suggestion based on historical supplier behavior.
+  - Automated missing receipt chase: unmatched bank debits auto-trigger alerts in the client's mobile portal.
+
+### Phase 5: Invoicing Payments, HMRC MTD & Statutory Filing (In Architecture ⏳)
+- **Target Branch:** `phase-5-invoicing-hmrc`
+- **Zero-Maintenance Flow:**
+  - Sales invoice generator with instant Stripe Connect payment link ("Pay Online via Card / Apple Pay").
+  - Automated payment settlement: Stripe webhook triggers instant invoice status transition to `PAID` and posts ledger journal.
+  - UK HMRC Making Tax Digital (MTD) Gateway integration for automated 9-Box VAT Return (Form 100) generation and digital filing receipts.
+  - One-click statutory accounts export (Companies House micro-entity FRS 105 format).
 
 ---
 

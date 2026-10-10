@@ -1,101 +1,130 @@
-# Wealth Wise Accountant — Proprietary "Personalised Xero" Architecture Blueprint
+# Wealth Wise Accountant — End-to-End Autonomous Replacement Blueprint for Xero
 
-**Document Version:** 1.0.0  
-**Target:** A 100% Owned, Dedicated UK Cloud Accounting Platform for Wealth Wise Accountant  
-**Core Technologies:** Next.js (App Router), TypeScript, Tailwind CSS, Supabase (PostgreSQL 15+, Auth, Storage, RLS), Stripe Billing  
+**Document Target:** Complete, 100% Owned Financial Operating System replacing Xero, QuickBooks & Dext  
+**Autonomous Operation Target:** Zero Developer Maintenance — Fully Operated by Wealth Wise Accountants & Client Directors  
+**Version:** 3.0.0 (Phases 1 & 2 Complete; Comprehensive Architecture for Phases 3, 4 & 5)
 
 ---
 
-## 1. Executive Vision & Strategic Purpose
+## 1. The Autonomous "Zero Developer Intervention" Paradigm
 
-Wealth Wise Accountant does not want to remain a perpetual reseller or dependent licensee of third-party software vendors like Xero, QuickBooks, and Dext. 
+To ensure Wealth Wise Accountant and their business clients can operate, analyze, reconcile, and file without needing ongoing developer assistance, the entire application is architected around self-healing, automated workflows:
 
-### The Strategic Shift
 ```
-OLD MODEL (Third-Party SaaS Reseller):
-Client ──► Pays Wealth Wise (Accountancy Fee)
-             │
-             └──► Wealth Wise bleeds £30–£50/mo per client to Xero & Dext
-                  (For 100 clients: £36,000 – £60,000/year lost in software fees)
-
-NEW MODEL (Wealth Wise Proprietary OS):
-Client ──► Interacts with Wealth Wise's own branded web & mobile platform
-             │
-             ├──► 100% of software margin retained by Wealth Wise
-             ├──► Built-in direct messenger & receipt vault (no WhatsApp chasing)
-             └──► Optional recurring SaaS income from self-serve clients
+┌────────────────────────────────────────────────────────────────────────────────────────┐
+│                        WEALTH WISE FINANCIAL OPERATING SYSTEM                          │
+├────────────────────────────────┬───────────────────────────────────────────────────────┤
+│    PRACTICE TEAM (Accountants) │ Multi-Client Portfolio, Tax Deadlines, Auto-Rules,     │
+│                                │ MTD VAT Filing, Companies House Statutory Accounts    │
+├────────────────────────────────┼───────────────────────────────────────────────────────┤
+│    CLIENT DIRECTORS (SMEs)     │ Mobile Receipt Dropzone, Sales Invoicing, Card Links, │
+│                                │ Live Bank Position, Direct Accountant Queries         │
+├────────────────────────────────┼───────────────────────────────────────────────────────┤
+│    AUTONOMOUS BACKGROUND RAILS │ • Open Banking Webhooks (Daily Bank Sync)              │
+│                                │ • AI OCR Pipeline (Auto-Drafts Invoices & Bills)      │
+│                                │ • Invariant Validation (No Corrupted Ledgers Possible) │
+│                                │ • Stripe Payment Webhooks (Instant Ledger Settlement)  │
+│                                │ • HMRC MTD Gateway (One-Click Digital Return Box 1-9) │
+└────────────────────────────────┴───────────────────────────────────────────────────────┘
 ```
 
 ---
 
-## 2. Supabase Cloud Architecture
+## 2. Detailed Breakdown: What Each Phase Delivers for 100% Independence
 
-Supabase is the ideal backend backbone for this platform, providing enterprise-grade infrastructure without requiring multi-engineer DevOps overhead:
+### Phase 1: Canonical Double-Entry General Ledger (COMPLETED ✅)
+- **Status:** Fully functional in memory and PostgreSQL with 20/20 tests passing.
+- **Why No Developer Intervention is Needed:**
+  - $\sum \text{Debits} = \sum \text{Credits}$ is mathematically enforced by code. It is impossible for an accountant or client to create an out-of-balance transaction or corrupt the trial balance.
+  - Transactions cannot be destructively deleted; corrections automatically generate double-entry reversing journals (`REVERSAL`), preserving an unbroken audit log required by UK ICAEW/ACCA standards.
 
-### A. Supabase Database & Multi-Tenancy (PostgreSQL 15+)
-* **Row-Level Security (RLS):** Every query is filtered by the user's active tenant session (`app.current_org_id = ...`). Client A cannot view or tamper with Client B's records under any circumstance.
-* **ACID Transactions:** Posting general ledger entries runs inside an atomic transaction where $\sum \text{Debits} = \sum \text{Credits}$ is enforced before committing.
-* **Integer Minor Units:** All monetary columns (`total_pence`, `debit_pence`, `credit_pence`) are `BIGINT` in minor units (pence) to eliminate float drift.
-
-### B. Supabase Auth & Access Control
-* **Authentication Options:** Magic links, Email/Password, and Google Workspace OAuth.
-* **JWT Custom Claims:** Upon login, the user's JWT includes:
-  ```json
-  {
-    "user_id": "usr-sarah-1",
-    "practice_id": "prac-ww-1",
-    "organisation_id": "org-apex-1",
-    "role": "SENIOR_ACCOUNTANT"
-  }
-  ```
-* **Role Hierarchy:**
-  1. `PRACTICE_ADMIN`: Senior leadership at Wealth Wise; can access all practice clients and practice metrics.
-  2. `SENIOR_ACCOUNTANT`: Qualified accountant managing client portfolios and signing off filings.
-  3. `BOOKKEEPER`: Reconciles bank lines, approves OCR drafts, chases missing receipts.
-  4. `CLIENT_DIRECTOR`: Company director viewing their own business cash, invoices, and reports.
-  5. `READ_ONLY`: Auditor or investor access.
-
-### C. Supabase Storage (Client Receipt Vault)
-* **Bucket: `client-vault` (Private):** Stores uploaded invoices, expense receipts, and bank PDFs.
-* **Signed URLs:** Files are served via time-limited 15-minute signed URLs, preventing public exposure of sensitive business receipts.
+### Phase 2: Multi-Tenant Auth, Session RLS & Practice CRM (COMPLETED ✅)
+- **Status:** Implemented on `phase-2-auth-crm` with 24/24 tests passing.
+- **Why No Developer Intervention is Needed:**
+  - Dynamic Client Workspace Switcher allows accountants to switch between 10, 50, or 500 client companies in real time without developer database queries.
+  - Role-Based Access Control (RBAC) automatically prevents client directors from accessing practice data or other clients' confidential books.
+  - Practice CRM surfaces all statutory deadlines (VAT Return due dates, Companies House Year-End dates) automatically based on company incorporation profiles.
 
 ---
 
-## 3. Commercial Monetization Engine
+### Phase 3: Banking Rails, Open Banking & Automated Statement Reconciliation
+*Direct Replacement for: **Xero Bank Feeds & Bank Reconciliation Engine***
 
-Wealth Wise can operate this platform under three distinct commercial models:
-
-### Model 1: Free Bundled Perk (The Ultimate Client Retention Moat)
-* **Pricing to Client:** **£0 / month extra**
-* **Value Pitch:** *"When you work with Wealth Wise Accountant, you receive our proprietary financial operating system for free. No £45/mo Xero bill, no separate Dext subscription."*
-* **Commercial Impact:** Drastically increases client retention (churn drops near 0%) and saves Wealth Wise £36k–£60k/year in third-party software subscriptions.
-
-### Model 2: Standalone SaaS Tiers (Direct Software Monetization)
-Wealth Wise bills clients directly for software access (via Stripe Billing):
-
-| Plan | Target Audience | Wealth Wise Price | Xero Direct Price | Wealth Wise Advantage |
-| :--- | :--- | :--- | :--- | :--- |
-| **Starter Sole Trader** | Freelancers, contractors, sole traders | **£9 / month** | £16 – £33 / month | 50% cheaper, zero clutter |
-| **Growth Limited Company** | Active UK Ltd companies | **£19 / month** | £33 – £45 / month | Full GL, bank matching, unlimited invoices |
-| **Scale & CFO Advisory** | High-growth firms, multi-directors | **£39 / month** | £55+ / month | Management accounts, cash flow forecasting |
-
-*With 100 clients on Growth Ltd, Wealth Wise generates **£22,800/year in pure recurring SaaS profit**.*
-
-### Model 3: Hybrid Practice Model (Recommended)
-* Included for all accounting retainer clients paying £150+/month.
-* Charged at £9–£19/month for self-serve clients who only need bookkeeping software until they upgrade to full annual accounts and tax filing.
+#### How It Works Autonomously (Without Developer Help):
+1. **Client Connects Their Bank (Self-Serve):**
+   - Company Director clicks *"Connect Bank Feed"*, selects Barclays, NatWest, HSBC, Revolut, Monzo, or Lloyds via the Truelayer/Yapily Open Banking consent journey.
+   - Bank feeds automatically renew every 90 days via standard UK Open Banking consent prompts.
+2. **Automated Daily Feed Sync (Hands-Free):**
+   - Webhooks ingest statement transactions nightly into `bank_statement_lines`.
+   - No CSV exports or manual uploads required (though drag-and-drop CSV import is included as a fallback).
+3. **Smart Matching Engine (2-Column Interactive Match):**
+   - **Exact Match:** When statement line (£1,200 from Acme Corp) matches outstanding invoice #INV-1042 (£1,200), the system scores a **99% Confidence Green Badge**.
+   - **One-Click "OK" Match:** The accountant clicks "OK" or enables "Auto-Match" for rules.
+   - **Rule Creation:** Accountants can define persistent rules directly in the UI (e.g. *"If description contains Adobe, debit 7040 Computer Software with 20% VAT"*). Once saved, the engine applies this rule to all future transactions autonomously.
+4. **General Ledger Settlement:**
+   - Approving a reconciliation line automatically posts the double-entry journal (Dr 1000 Bank, Cr 1100 Debtors or Cr 4000 Sales) in real time.
 
 ---
 
-## 4. Feature Matrix: Wealth Wise OS vs. Xero UK
+### Phase 4: Document Vault, Receipt AI OCR & Missing Document Chase Engine
+*Direct Replacement for: **Dext Prepare, AutoEntry, and Hubdoc***
 
-| Feature | Xero UK | Wealth Wise Accountant OS |
+#### How It Works Autonomously (Without Developer Help):
+1. **Client Mobile Capture & Upload:**
+   - Client Director snaps a photo of a fuel receipt or drops a PDF invoice into the app on their phone or desktop.
+   - Files are stored encrypted in private object storage with temporary 15-minute signed URLs.
+2. **AI Vision / OCR Ingestion Pipeline:**
+   - Document runs through financial document extraction (Mindee / AWS Textract / Cloud Vision).
+   - Extracted fields: **Supplier Name**, **Invoice Date**, **Invoice Number**, **Total Gross**, **Net Amount**, and **VAT Rate (Standard 20%, Reduced 5%, Zero 0%)**.
+   - Automatic Account Suggestion: Matches the supplier to past history (e.g., "Shell" -> Nominal Code 7030 Motor Vehicle Expenses).
+3. **Confidence Routing:**
+   - Documents with **>95% confidence** are pre-populated into the Draft Bills Queue.
+   - Documents with low clarity flag for a bookkeeper review with side-by-side image zoom.
+4. **Autonomous Receipt Chase:**
+   - When a bank line is imported with no matching receipt (e.g., £85.00 card payment at Apple Store), the system automatically flags this in the Client Portal under *"Action Required by Client"*, eliminating manual email or WhatsApp chasing by the accountant.
+
+---
+
+### Phase 5: Invoicing Card Payments, Stripe & UK HMRC MTD Statutory Filing
+*Direct Replacement for: **Xero Invoicing + Stripe add-on + Xero Tax/VAT Filing***
+
+#### How It Works Autonomously (Without Developer Help):
+1. **Sales Invoicing & Online Payment Links:**
+   - Client creates an invoice, selects customer, adds line items with automatic 20% VAT calculation.
+   - System generates a professional PDF with embedded *"Pay by Card / Apple Pay"* link powered by Stripe Connect.
+   - When the customer pays online, Stripe sends an instant webhook: the invoice status flips to `PAID`, and the payment journal posts to the General Ledger automatically.
+2. **HMRC Making Tax Digital (MTD) VAT Filing (Form 100):**
+   - Every sales invoice, expense bill, and bank transaction automatically feeds into the standard UK 9-Box VAT return:
+     - Box 1: VAT due on sales
+     - Box 4: VAT reclaimed on purchases
+     - Box 5: Net VAT to be paid to HMRC or reclaimed
+   - The accountant reviews the live Box 1–9 computation, clicks **"Submit VAT Return to HMRC"**, and the system transmits the digitally sealed payload to HMRC MTD Sandbox/Production API.
+   - HMRC returns a digital receipt reference, automatically archived into the immutable audit log.
+3. **Statutory Accounts Export (Companies House):**
+   - Automatically generates the standard Balance Sheet and Notes formatted for UK Micro-Entity (FRS 105) and Small Company (FRS 102 Section 1A) filings.
+
+---
+
+## 3. Commercial Moat & Financial Advantage
+
+| Feature | Xero UK + Add-Ons | Wealth Wise Proprietary OS |
 | :--- | :--- | :--- |
-| **Double-Entry General Ledger** | Standard cloud ledger | Strict mathematical invariant check ($\sum \text{Debits} = \sum \text{Credits}$) with immutable reversals |
-| **Bank Reconciliation** | 2-column rule matching | 2-column interactive matching with confidence scoring |
-| **Receipt Capture** | Requires Hubdoc / Dext add-on | Native in-app upload sandbox with OCR extraction |
-| **Client Communication** | Email / Xero Ask | Built-in direct messenger between accountant & director |
-| **Invoicing & Payments** | Invoicing + Stripe add-on | Invoicing with partial payment allocation & GL linking |
-| **MTD VAT Compliance** | Form 100 digital submission | Real-time Box 1-9 summaries calculated from ledger |
-| **Brand Identity** | Xero branding | 100% Wealth Wise proprietary branding |
-| **Software Fee to Wealth Wise** | £30–£50/month per client | **£0 per client** (100% owned asset) |
+| **Software Fee to Wealth Wise** | £30–£50 / month / client (lost revenue) | **£0 / month / client** (100% owned software asset) |
+| **Annual Cost for 100 Clients** | **£36,000 – £60,000 / year paid to Xero** | **£0 paid to competitors** |
+| **Direct SaaS Revenue Opportunity** | None (Xero collects the fees) | **£9–£19/mo** collected directly from self-serve clients |
+| **Receipt Capture (Dext/Hubdoc)** | Requires extra subscription | **Built directly into the platform** |
+| **Client Brand Perception** | Client logs into third-party Xero | Client logs into **Wealth Wise Accountant's own platform** |
+| **Client Churn & Retention** | High (client can take their Xero elsewhere) | **Near zero** (clients love their bespoke free software) |
+| **Maintenance Burden** | Reliant on vendor pricing hikes | Fully owned; no developer needed once rails are live |
+
+---
+
+## 4. Phase Verification Matrix
+
+| Phase | Core Capability | Test Status | Developer Need After Launch |
+| :--- | :--- | :--- | :--- |
+| **Phase 1** | Schema, DAL & Double-Entry Ledger Invariants | 20 / 20 Tests Passing | **Zero** (Mathematical invariants prevent errors) |
+| **Phase 2** | Multi-Tenant Auth, Session RLS & Practice CRM | 24 / 24 Tests Passing | **Zero** (Self-serve client switching & onboarding) |
+| **Phase 3** | Bank Feeds & Automated Statement Sync | In Architecture | **Zero** (Self-serve Open Banking OAuth & rules) |
+| **Phase 4** | Document Vault & AI OCR Receipt Extraction | In Architecture | **Zero** (Automated camera upload & AI extraction) |
+| **Phase 5** | Stripe Payments & HMRC MTD VAT Submission | In Architecture | **Zero** (Client card checkout & one-click filing) |
