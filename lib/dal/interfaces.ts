@@ -17,12 +17,32 @@ import {
   BankStatementLineRecord,
   AuditLogRecord,
   TrialBalanceReport,
+  EntityType,
+  SubscriptionTier,
+  BillingModel,
+  SubscriptionStatus,
 } from "./types";
+
+export interface CreateOrganisationParams {
+  legalName: string;
+  tradingName?: string;
+  companyNumber: string;
+  vatNumber?: string;
+  entityType: EntityType;
+  financialYearEnd: string;
+  baseCurrency?: string;
+  subscriptionTier?: SubscriptionTier;
+  billingModel?: BillingModel;
+  monthlyPricePence?: number;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  subscriptionStatus?: SubscriptionStatus;
+}
 
 export interface IOrganizationDal {
   createPractice(data: Omit<PracticeRecord, "id" | "createdAt" | "updatedAt">): Promise<PracticeRecord>;
   getPracticeById(practiceId: string): Promise<PracticeRecord | null>;
-  createOrganisation(ctx: RequestContext, data: Omit<ClientOrganisationRecord, "id" | "practiceId" | "createdAt" | "updatedAt">): Promise<ClientOrganisationRecord>;
+  createOrganisation(ctx: RequestContext, data: CreateOrganisationParams): Promise<ClientOrganisationRecord>;
   getOrganisationById(ctx: RequestContext, orgId: string): Promise<ClientOrganisationRecord | null>;
   listOrganisationsByPractice(practiceId: string): Promise<ClientOrganisationRecord[]>;
   createUser(data: Omit<UserRecord, "id" | "createdAt">): Promise<UserRecord>;

@@ -65,6 +65,24 @@ export interface PracticeRecord {
   updatedAt: string;
 }
 
+export type SubscriptionTier =
+  | "FREE_INCLUDED"
+  | "STARTER_SOLE_TRADER"
+  | "PRO_LTD"
+  | "SCALE_ENTERPRISE";
+
+export type BillingModel =
+  | "INCLUDED_IN_RETAINER"
+  | "DIRECT_CLIENT_BILLED"
+  | "PRACTICE_SUBSIDIZED";
+
+export type SubscriptionStatus =
+  | "TRIAL"
+  | "ACTIVE"
+  | "PAST_DUE"
+  | "CANCELLED"
+  | "EXEMPT";
+
 export interface ClientOrganisationRecord {
   id: string;
   practiceId: string;
@@ -75,6 +93,12 @@ export interface ClientOrganisationRecord {
   entityType: EntityType;
   financialYearEnd: string;
   baseCurrency: string;
+  subscriptionTier: SubscriptionTier;
+  billingModel: BillingModel;
+  monthlyPricePence: number;
+  stripeCustomerId?: string;
+  stripeSubscriptionId?: string;
+  subscriptionStatus: SubscriptionStatus;
   createdAt: string;
   updatedAt: string;
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useState } from "react";
 import {
   ShieldCheck,
   ArrowRight,
@@ -16,6 +16,8 @@ import {
   Briefcase,
   ChevronRight,
   Calculator,
+  Check,
+  Zap,
 } from "lucide-react";
 
 interface LandingPageProps {
@@ -24,6 +26,8 @@ interface LandingPageProps {
 }
 
 export function LandingPage({ onEnterApp, onOpenLogin }: LandingPageProps) {
+  const [pricingMode, setPricingMode] = useState<"INCLUDED_RETAINER" | "STANDALONE_SAAS">("INCLUDED_RETAINER");
+
   return (
     <div className="min-h-screen bg-slate-50 text-slate-900 font-sans selection:bg-slate-900 selection:text-white">
       {/* Top Marketing Navigation */}
@@ -262,6 +266,210 @@ export function LandingPage({ onEnterApp, onOpenLogin }: LandingPageProps) {
               <p className="text-xs text-slate-500 leading-relaxed">
                 Practice-wide client portfolio health monitoring, filing deadline trackers, and direct in-app messaging to eliminate messy communication.
               </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing & Flexible Practice Monetization Section */}
+      <section className="py-16 bg-white border-b border-slate-200">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-10">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-emerald-50 border border-emerald-200 text-xs font-bold text-emerald-800 mb-3">
+              <Zap className="w-3.5 h-3.5" />
+              <span>Flexible Monetization Engine</span>
+            </div>
+            <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900">
+              Charge Clients Directly Or Bundle for Free
+            </h2>
+            <p className="text-sm text-slate-600 mt-2">
+              Wealth Wise has complete control: provide this software as an included perk to retain clients, or bill clients monthly to build a lucrative recurring revenue stream.
+            </p>
+
+            {/* Pricing Mode Toggle */}
+            <div className="mt-6 inline-flex items-center p-1 bg-slate-100 rounded-xl border border-slate-200 text-xs font-semibold">
+              <button
+                onClick={() => setPricingMode("INCLUDED_RETAINER")}
+                className={`px-4 py-2 rounded-lg transition-all min-h-[38px] ${
+                  pricingMode === "INCLUDED_RETAINER"
+                    ? "bg-slate-900 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Option A: Included in Accountancy Retainer (£0 extra)
+              </button>
+              <button
+                onClick={() => setPricingMode("STANDALONE_SAAS")}
+                className={`px-4 py-2 rounded-lg transition-all min-h-[38px] ${
+                  pricingMode === "STANDALONE_SAAS"
+                    ? "bg-slate-900 text-white shadow-xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Option B: Direct Client SaaS Tiers
+              </button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            {/* Starter Sole Trader */}
+            <div className="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 hover:border-slate-300 transition-all flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  Tier 1: Sole Trader
+                </span>
+                <h3 className="text-lg font-bold text-slate-900 mt-1">Starter Business</h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  For self-employed professionals, freelancers and simple sole trader books.
+                </p>
+
+                <div className="my-5">
+                  <div className="text-3xl font-extrabold text-slate-900">
+                    {pricingMode === "INCLUDED_RETAINER" ? "£0" : "£9"}
+                    <span className="text-xs font-normal text-slate-500"> / month</span>
+                  </div>
+                  <p className="text-[11px] text-emerald-700 font-medium mt-1">
+                    {pricingMode === "INCLUDED_RETAINER"
+                      ? "✓ Included in Wealth Wise accounting fees"
+                      : "50% cheaper than Xero Early Plan"}
+                  </p>
+                </div>
+
+                <ul className="space-y-2 text-xs text-slate-700 pt-2 border-t border-slate-200">
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Simple Cash P&L & Tax Estimation</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Receipt Upload Vault (Up to 50/mo)</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>1 Connected Business Bank Feed</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Direct Accountant Messaging</span>
+                  </li>
+                </ul>
+              </div>
+
+              <button
+                onClick={() => onEnterApp("CLIENT")}
+                className="mt-6 w-full py-2.5 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-lg border border-slate-200 shadow-2xs transition-colors min-h-[42px]"
+              >
+                Choose Starter
+              </button>
+            </div>
+
+            {/* Growth Limited Company (Hero) */}
+            <div className="p-6 rounded-2xl border-2 border-slate-900 bg-white shadow-md relative flex flex-col justify-between">
+              <div className="absolute -top-3 right-6 bg-slate-900 text-white text-[10px] font-bold px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+                Most Popular
+              </div>
+              <div>
+                <span className="text-xs font-bold text-emerald-700 uppercase tracking-wider">
+                  Tier 2: Limited Company
+                </span>
+                <h3 className="text-lg font-bold text-slate-900 mt-1">Growth Ltd Workspace</h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  Complete operating system for active UK Ltd directors & businesses.
+                </p>
+
+                <div className="my-5">
+                  <div className="text-3xl font-extrabold text-slate-900">
+                    {pricingMode === "INCLUDED_RETAINER" ? "£0" : "£19"}
+                    <span className="text-xs font-normal text-slate-500"> / month</span>
+                  </div>
+                  <p className="text-[11px] text-emerald-700 font-medium mt-1">
+                    {pricingMode === "INCLUDED_RETAINER"
+                      ? "✓ Included for all Ltd retainer clients"
+                      : "Saves £200+/year compared to Xero Growing"}
+                  </p>
+                </div>
+
+                <ul className="space-y-2 text-xs text-slate-700 pt-2 border-t border-slate-200">
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Full Double-Entry General Ledger</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Interactive Bank Reconciliation</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Unlimited Sales Invoices & Partial Payments</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>MTD VAT Form 100 Return Preparation</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Director Loan Account (2100) Ledger</span>
+                  </li>
+                </ul>
+              </div>
+
+              <button
+                onClick={() => onEnterApp("CLIENT")}
+                className="mt-6 w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs rounded-lg shadow-sm transition-colors min-h-[42px]"
+              >
+                Launch Growth Ltd
+              </button>
+            </div>
+
+            {/* Scale & CFO Practice */}
+            <div className="p-6 rounded-2xl border border-slate-200 bg-slate-50/50 hover:border-slate-300 transition-all flex flex-col justify-between">
+              <div>
+                <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
+                  Tier 3: Enterprise / CFO
+                </span>
+                <h3 className="text-lg font-bold text-slate-900 mt-1">Scale & Advisory</h3>
+                <p className="text-xs text-slate-500 mt-1">
+                  For multi-director firms, group entities and fractional CFO clients.
+                </p>
+
+                <div className="my-5">
+                  <div className="text-3xl font-extrabold text-slate-900">
+                    {pricingMode === "INCLUDED_RETAINER" ? "£0" : "£39"}
+                    <span className="text-xs font-normal text-slate-500"> / month</span>
+                  </div>
+                  <p className="text-[11px] text-emerald-700 font-medium mt-1">
+                    {pricingMode === "INCLUDED_RETAINER"
+                      ? "✓ Included in Premium CFO engagements"
+                      : "Multi-entity consolidation included"}
+                  </p>
+                </div>
+
+                <ul className="space-y-2 text-xs text-slate-700 pt-2 border-t border-slate-200">
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Everything in Growth Ltd</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Monthly Statutory Management Accounts</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Cash Velocity & Horizon Runway Charting</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <Check className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+                    <span>Priority ACCA Senior Partner Review</span>
+                  </li>
+                </ul>
+              </div>
+
+              <button
+                onClick={() => onEnterApp("ACCOUNTANT")}
+                className="mt-6 w-full py-2.5 bg-white hover:bg-slate-100 text-slate-900 font-bold text-xs rounded-lg border border-slate-200 shadow-2xs transition-colors min-h-[42px]"
+              >
+                Explore Scale CFO
+              </button>
             </div>
           </div>
         </div>

@@ -40,6 +40,24 @@ describe("Production Data Access Layer (DAL)", () => {
       );
     });
 
+    it("should support practice monetization tiers and client billing models", async () => {
+      const orgSoleTrader = await dal.orgs.createOrganisation(orgBContext, {
+        legalName: "Miller Design Studio",
+        companyNumber: "ST-88912",
+        entityType: "SOLE_TRADER",
+        financialYearEnd: "05 April",
+        baseCurrency: "GBP",
+        subscriptionTier: "STARTER_SOLE_TRADER",
+        billingModel: "DIRECT_CLIENT_BILLED",
+        monthlyPricePence: 900, // £9.00 / month
+      });
+
+      expect(orgSoleTrader.subscriptionTier).toBe("STARTER_SOLE_TRADER");
+      expect(orgSoleTrader.billingModel).toBe("DIRECT_CLIENT_BILLED");
+      expect(orgSoleTrader.monthlyPricePence).toBe(900);
+      expect(orgSoleTrader.subscriptionStatus).toBe("ACTIVE");
+    });
+
     it("should strictly partition Chart of Accounts and Journals between organisations", async () => {
       // Create Org B
       const orgB = await dal.orgs.createOrganisation(orgBContext, {

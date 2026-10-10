@@ -43,9 +43,10 @@ Wealth Wise Accountant is transitioning from a high-fidelity interactive prototy
 5. **`lib/dal/index.ts`**: Central DAL singleton factory (`getDal()`).
 
 ### C. Automated Test Suite (`lib/dal/dal.test.ts`)
-- **19 passing tests** across 4 suites (`lib/dal/dal.test.ts`, `lib/accounting/ledgerService.test.ts`, `lib/accounting/ledgerService.advanced.test.ts`, `lib/utils.test.ts`).
+- **20 passing tests** across 4 suites (`lib/dal/dal.test.ts`, `lib/accounting/ledgerService.test.ts`, `lib/accounting/ledgerService.advanced.test.ts`, `lib/utils.test.ts`).
 - Verification includes:
   - Cross-tenant isolation enforcement (Org A cannot access Org B records).
+  - Practice monetization tiers & client billing model assignment (`STARTER_SOLE_TRADER`, `PRO_LTD`, `INCLUDED_IN_RETAINER`).
   - Double-entry imbalance rejection (`DoubleEntryImbalanceError`).
   - Immutable reversal math & Trial Balance neutrality.
   - Invoice creation with automatic ledger posting.
@@ -58,6 +59,11 @@ Wealth Wise Accountant is transitioning from a high-fidelity interactive prototy
 - **Touch-Friendly Controls**: Minimum 40–44px touch targets across all buttons and inputs.
 - **iOS Safari Auto-Zoom Prevention**: Inputs styled with `text-base sm:text-xs` to prevent unwanted auto-zooming on focus.
 - **Mobile Smooth Scrolling**: `-webkit-overflow-scrolling: touch` with `scrollbar-none` and zero horizontal page overflow.
+
+### E. Flexible Commercial Monetization Engine (`LandingPage.tsx` & `LoginModal.tsx`)
+- **Interactive Pricing Matrix**: Demonstrates both Option A (Bundled £0 with practice retainer) and Option B (Direct Client SaaS: £9/mo Sole Trader, £19/mo Ltd, £39/mo Enterprise).
+- **Client Onboarding & Sign-Up Modal**: Interactive workflow allowing prospective clients to register their company, choose an entity structure, and provision a workspace.
+- **Proprietary Alternative Blueprint**: See [`implementation/PROPRIETARY_XERO_ALTERNATIVE_BLUEPRINT.md`](./PROPRIETARY_XERO_ALTERNATIVE_BLUEPRINT.md).
 
 ---
 
