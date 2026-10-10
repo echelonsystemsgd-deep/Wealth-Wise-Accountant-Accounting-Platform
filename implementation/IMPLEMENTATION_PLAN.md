@@ -1,119 +1,107 @@
-# Wealth Wise Accountant — Implementation Plan
+# Wealth Wise Accountant — Master Implementation Plan
 
-**Document Version:** 1.0.0  
-**Status:** Discovery & Technical Architecture Baseline  
-**Project:** Wealth Wise Accountant Operating System & Accounting Platform  
-**Target Architecture:** Next.js (App Router), TypeScript, Tailwind CSS, PostgreSQL, Strict Ledger Boundaries  
-
----
-
-## 1. Project Vision
-
-Wealth Wise Accountant aims to build a modern, high-trust accounting ecosystem. While the long-term aspiration is a comprehensive platform comparable to established tools such as Xero, the strategic path forward is to start where the firm experiences the greatest operational friction:
-1. **The Accountant Practice Hub:** A single-pane control centre across all client engagements, missing document queues, and regulatory filing deadlines.
-2. **The Client Collaboration Workspace:** A modern, low-friction portal for business owners to upload receipts, clear action items, review draft invoices, and communicate securely without messy WhatsApp/email threads.
-3. **The Core Financial & Bookkeeping Engine (Progressive):** A strict, double-entry general ledger operating on integer minor units (pence), automated bank reconciliation, and MTD-ready VAT tracking, designed with deterministic correctness rather than improvised logic.
+**Document Version:** 2.0.0  
+**Status:** Phase 1 Complete (0 Coding Errors, 19/19 Tests Passing, Full Mobile Optimization)  
+**Branch:** `feat/production-core`  
+**Live Prototype Reference:** [https://wealth-wise-platform-sigma.vercel.app/](https://wealth-wise-platform-sigma.vercel.app/)  
+**Target Architecture:** Next.js (App Router), TypeScript, Tailwind CSS, PostgreSQL 15+ (with RLS), Production Data Access Layer (DAL), Canonical Double-Entry General Ledger  
 
 ---
 
-## 2. Known Facts vs. Working Assumptions
+## 1. Executive Summary & Phased Progress
 
-### Confirmed Facts
-* Wealth Wise Accountant is an operating accounting practice (UK-focused).
-* Initial discovery originated from social outreach (TikTok/WhatsApp); conversations centered on lead capture, turnaround times, and reducing manual client administration.
-* Wealth Wise launched a website where mobile usability was flagged and acknowledged by their technical team.
-* The leadership expressed ambition for an accounting platform "like Xero".
-* No existing production application or database exists in this workspace (greenfield repository with initial commit).
+Wealth Wise Accountant is transitioning from a high-fidelity interactive prototype to a standalone, production-grade financial operating system capable of competing with Xero, QuickBooks, and Dext.
 
-### Working Assumptions
-* **Jurisdiction:** United Kingdom (HMRC compliance, UK VAT rules: Standard 20%, Reduced 5%, Zero 0%, Exempt).
-* **Current Operational Stack:** Wealth Wise currently relies on a combination of third-party software (e.g., Xero, Dext/ReceiptBank, WhatsApp, email, spreadsheets) to service clients.
-* **Primary Bottleneck:** Client document chasing, receipt categorisation delays, and lack of visibility into daily priorities across the client portfolio.
-* **Target Users:** 
-  * Practice Administrators / Senior Accountants
-  * Bookkeepers / Junior Staff
-  * Small Business Owner Clients (sole traders, micro-entities, Ltd directors)
+### Phase Status Overview
+
+| Phase | Description | Status | Test Coverage | Mobile Verified | External Connections Needed |
+| :--- | :--- | :--- | :--- | :--- | :--- |
+| **Phase 1** | **Data Architecture & Production DAL** | **COMPLETED ✅** | 19 / 19 Tests Passed | **YES (Cards, Touch 44px, Safe Viewports)** | Database (`DATABASE_URL`) |
+| **Phase 2** | Multi-Tenant Auth, Session RLS & Practice CRM | Next Up ⏳ | Pending | Ready for integration | Supabase Auth / Clerk / NextAuth |
+| **Phase 3** | Bank Feeds & Automated Statement Sync | In Architecture ⏳ | Pending | Ready for integration | Truelayer / Plaid / Yapily Open Banking |
+| **Phase 4** | Document Vault, Real OCR & Receipt Extraction | In Architecture ⏳ | Pending | Ready for integration | AWS S3 / Mindee / Google Cloud Document AI |
+| **Phase 5** | Invoicing Payments, HMRC MTD & Statutory Filing | In Architecture ⏳ | Pending | Ready for integration | HMRC MTD Sandbox & Stripe Connect |
 
 ---
 
-## 3. Unanswered Discovery Questions
+## 2. Phase 1 Deliverables (Completed & Verified)
 
-These questions must be answered by Wealth Wise leadership before advancing to production phases:
-1. **Primary Immediate Goal:** Is this tool intended first to optimise internal practice efficiency (Client Portal + Practice CRM), or is replacing their actual general ledger (Xero/QuickBooks) an immediate day-one mandate?
-2. **Current System of Record:** Which software currently holds their clients' authoritative general ledgers? Will the platform initially ingest/export to that system, or run in parallel?
-3. **Client Demographics:** How many active clients does Wealth Wise support? What proportion are VAT-registered limited companies vs. sole traders?
-4. **Licensing & Commercial Endgame:** Is the ultimate vision an exclusive proprietary competitive moat for Wealth Wise, or a white-label multi-tenant SaaS to be sold to peer accountancy firms?
+### A. Production Database Schema (`lib/dal/schema.sql`)
+- PostgreSQL 15+ compatible with `uuid-ossp` and `pgcrypto`.
+- Multi-tenant hierarchy: `practices` -> `client_organisations` -> `users`.
+- General Ledger: `chart_of_accounts`, `journal_entries`, `journal_lines` with strict integer pence (`BIGINT`) storage.
+- Accounts Receivable: `contacts`, `sales_invoices`, `invoice_items`.
+- Banking & Cash: `bank_accounts`, `bank_statement_lines`.
+- Immutable Audit Trail: `audit_logs` capturing actor, action, table, entity ID, metadata JSON, and timestamp.
+- Row-Level Security (RLS) policies configured for all tenant tables (`app.current_org_id`).
 
----
+### B. Production Data Access Layer (DAL) (`lib/dal/`)
+1. **`lib/dal/types.ts`**: Complete domain model types, RequestContext, Trial Balance report types, enums.
+2. **`lib/dal/interfaces.ts`**: Strict repository contracts for `IOrganizationDal`, `ILedgerDal`, `IInvoiceDal`, `IBankDal`, `IAuditDal`.
+3. **`lib/dal/memoryRepository.ts`**: High-performance in-memory transactional DAL with full multi-tenancy enforcement, debit/credit invariant validation ($\sum \text{Debits} == \sum \text{Credits}$), immutable reversal entries, partial/full invoice payment allocation, and audit log generation.
+4. **`lib/dal/postgresConnector.ts`**: PostgreSQL query abstraction supporting session-level RLS context (`SET LOCAL app.current_org_id = ...`).
+5. **`lib/dal/index.ts`**: Central DAL singleton factory (`getDal()`).
 
-## 4. Target Personas & Problem Register
+### C. Automated Test Suite (`lib/dal/dal.test.ts`)
+- **19 passing tests** across 4 suites (`lib/dal/dal.test.ts`, `lib/accounting/ledgerService.test.ts`, `lib/accounting/ledgerService.advanced.test.ts`, `lib/utils.test.ts`).
+- Verification includes:
+  - Cross-tenant isolation enforcement (Org A cannot access Org B records).
+  - Double-entry imbalance rejection (`DoubleEntryImbalanceError`).
+  - Immutable reversal math & Trial Balance neutrality.
+  - Invoice creation with automatic ledger posting.
+  - Partial and full payment settlement state transitions.
+  - Bank line reconciliation and tamper-evident audit trail logging.
 
-| Persona | Daily Frustrations | Desired Outcome |
-| :--- | :--- | :--- |
-| **Practice Director (Senior Accountant)** | Fragmented client status, surprise filing deadlines, unbillable hours spent on administrative coordination. | Instant executive visibility: which returns are due, what revenue is unbilled, and where workflows are blocked. |
-| **Operational Bookkeeper** | Crumpled receipts, missing VAT breakdowns, manual transcription from bank statements, repeated back-and-forth emails. | Automated OCR drafts, suggested nominal categorisation, 1-click client information requests, and matched reconciliation queues. |
-| **SME Client / Director** | Intimidated by complex accounting software (Xero/QBO), forgets deadlines, sends receipts piecemeal via WhatsApp. | Streamlined, mobile-first workspace: 3 buttons ("Upload Receipt", "Approve Invoice", "Message Accountant") and crystal-clear cash visibility. |
-
----
-
-## 5. Scope & Explicit Exclusions
-
-### In-Scope (Phase 1 Prototype & Phase 2 Pilot)
-* Role-based workspace switching (Accountant Command Centre vs. Client Portal).
-* Practice Portfolio Dashboard with client health status, filing deadlines, and outstanding requests.
-* Client Onboarding & Secure Document Vault.
-* Invoice & Bill Lifecycle (Draft, Issued, Paid, Overdue) with synthetic financial integrity.
-* Synthetic Bank Statement Reconciliation Queue with automated matching suggestions.
-* AI Document Intake & OCR Draft Extraction Sandbox (simulated with full user-approval controls).
-* Executive Financial Summary (P&L, Balance Sheet, Cash Flow) derived directly from underlying mock ledger transactions.
-
-### Explicit Exclusions (Out of Scope for Initial Phases)
-* Live HMRC Making Tax Digital (MTD) API submissions (requires HMRC developer credentials, production sandbox sign-off, and fraud prevention headers).
-* Live Open Banking Feed connections (Plaid/Yapily/Truelayer production credentials and FCA agent registration).
-* Full UK Payroll & Real-Time Information (RTI) filing engine.
-* Multi-currency foreign exchange revaluation.
-* Direct debit or automated payment gateway settlement (Stripe/GoCardless live charges).
+### D. Mobile Usability & Ergonomics Optimization
+- **Responsive Dual-View Invoicing (`InvoicesView.tsx`)**: Native mobile card list on `< sm` viewports with quick "Record Payment" buttons; spreadsheet table view on `sm:` and up.
+- **Responsive Journal Inspector (`GeneralLedgerView.tsx`)**: Itemized mobile debit/credit cards on `< sm` viewports; comprehensive spreadsheet ledger table on `sm:` and up.
+- **Touch-Friendly Controls**: Minimum 40–44px touch targets across all buttons and inputs.
+- **iOS Safari Auto-Zoom Prevention**: Inputs styled with `text-base sm:text-xs` to prevent unwanted auto-zooming on focus.
+- **Mobile Smooth Scrolling**: `-webkit-overflow-scrolling: touch` with `scrollbar-none` and zero horizontal page overflow.
 
 ---
 
-## 6. Accounting-Domain Invariants (Non-Negotiable Engineering Rules)
+## 3. What Needs Implementing Next (Phases 2 to 5)
 
-To ensure financial correctness, the codebase must adhere to the following invariants:
-1. **Monetary Representation:** Financial amounts must NEVER be stored or calculated as floating-point numbers (`0.1 + 0.2 !== 0.3`). All amounts must be represented in **Integer Minor Units (Pence)** (e.g. `£150.25` stored as `15025`) or PostgreSQL `NUMERIC(19, 4)` for multi-rate tax fractions.
-2. **Double-Entry Balance Constraint:** Every journal entry must satisfy:
-   $$\sum \text{Debits} - \sum \text{Credits} = 0$$
-   Unbalanced postings are rejected at the database transaction boundary.
-3. **Immutable Ledger & Audit Trail:** Posted general ledger records are never updated or deleted (`NO SILENT OVERWRITES`). Corrections require an explicit reversing journal entry linked to the original posting ID, author ID, and timestamp.
-4. **Deterministic Derivation:** Financial dashboards and reports (Trial Balance, P&L, Balance Sheet) must be computed directly from posted general ledger line items, never from independent cache counters or AI hallucinations.
-5. **Human-in-the-Loop AI Boundary:** AI/LLMs/OCR extractors are strictly confined to the `DraftIngestionQueue`. AI never writes directly to the General Ledger.
+### Phase 2: Multi-Tenant Auth & Access Control
+- [ ] Connect production auth provider (Supabase Auth, Auth0, or Clerk).
+- [ ] Implement JWT / session middleware extracting `organisationId` and `userRole`.
+- [ ] Role-based UI guards (Practice Admin vs. Bookkeeper vs. Client Director).
 
----
+### Phase 3: Banking Rails & Real-Time Open Banking
+- [ ] Connect Open Banking aggregator API (Truelayer / Yapily / Plaid).
+- [ ] Automated daily bank statement sync via scheduled webhooks.
+- [ ] Rule-based reconciliation engine for recurring subscriptions and client transfers.
 
-## 7. Phased Implementation Roadmap
+### Phase 4: Document Vault & Production OCR
+- [ ] Connect S3-compatible cloud storage (Supabase Storage / AWS S3) for PDF and receipt images.
+- [ ] Connect live OCR extraction API (Mindee / AWS Textract / Google Cloud Document AI).
+- [ ] Confidence threshold routing: documents with >95% confidence auto-populate drafts; others flag for bookkeeper review.
 
-```
-Phase 0: Discovery, Architecture & Invariant Definition (Current)
-   │
-Phase 1: High-Fidelity Interactive Prototype (Synthetic Data & Believable Workflows)
-   │
-Phase 2: Secure Internal Pilot (Auth, Tenant Isolation, Client Document Vault & Requests)
-   │
-Phase 3: Core Bookkeeping & Double-Entry Ledger (Journals, Chart of Accounts, Bank CSVs)
-   │
-Phase 4: Integrations (Open Banking Rails, HMRC MTD VAT Drafts, OCR pipelines)
-   │
-Phase 5: Commercial SaaS & Practice White-Labelling (Multi-tenancy, Subscription Engine)
-```
+### Phase 5: Invoicing Payments & HMRC MTD Filing
+- [ ] Connect Stripe Connect for client invoice checkout links ("Pay by Card" / "Apple Pay").
+- [ ] HMRC Making Tax Digital (MTD) Sandbox API connection for VAT Return Form 100 XML/JSON generation and filing receipts.
+- [ ] Automated statutory accounts export (Companies House micro-entity format).
 
 ---
 
-## 8. Definition of Done (Phase 1 Prototype)
+## 4. Connections & Credentials Checklist for Wealth Wise
 
-1. Zero console errors, fully responsive across desktop and mobile viewports.
-2. Seamless, instant role switching between Accountant Command Centre and Client Portal.
-3. Working interactive workflows:
-   * Document upload -> simulated OCR extraction -> draft transaction creation -> accountant approval.
-   * Client invoice generation with automatic VAT (20%) calculation and state transitions (Draft -> Sent -> Paid).
-   * Bank reconciliation interface demonstrating suggested matches and split transactions.
-   * Financial statements (P&L, Balance Sheet) that remain mathematically consistent with ledger transactions.
-4. Clear labelling: Synthetic demonstration data and mock indicators clearly noted.
+To transition from the current DAL simulation to live connected services, the following API credentials and accounts will need to be configured:
+
+1. **Database & Storage:**
+   - Provider: Supabase (or AWS RDS PostgreSQL)
+   - Connection string: `DATABASE_URL=postgresql://...`
+   - Storage bucket credentials for receipt uploads.
+2. **Open Banking Aggregator:**
+   - Provider: Truelayer or Plaid UK
+   - Credentials: `TRUELAYER_CLIENT_ID`, `TRUELAYER_CLIENT_SECRET`
+3. **Receipt OCR Engine:**
+   - Provider: Mindee Financial Document API or Google Document AI
+   - Credentials: `MINDEE_API_KEY`
+4. **HMRC Developer Hub:**
+   - Account: Registered on HMRC Developer Portal
+   - Credentials: `HMRC_CLIENT_ID`, `HMRC_CLIENT_SECRET`, `HMRC_SERVER_TOKEN`
+5. **Invoice Card Payments:**
+   - Provider: Stripe
+   - Credentials: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`

@@ -40,10 +40,10 @@ export function GeneralLedgerView() {
         </div>
 
         {/* Tab switch */}
-        <div className="flex flex-wrap bg-slate-100 p-1 rounded-lg text-xs font-semibold gap-1 sm:gap-0">
+        <div className="flex items-center overflow-x-auto bg-slate-100 p-1 rounded-xl text-xs font-semibold gap-1 scrollbar-none w-full sm:w-auto">
           <button
             onClick={() => setActiveTab("JOURNALS")}
-            className={`px-3 py-1.5 rounded-md transition-all min-h-[34px] ${
+            className={`px-3 py-2 sm:py-1.5 rounded-lg transition-all min-h-[38px] sm:min-h-[34px] whitespace-nowrap ${
               activeTab === "JOURNALS" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -51,7 +51,7 @@ export function GeneralLedgerView() {
           </button>
           <button
             onClick={() => setActiveTab("TRIAL_BALANCE")}
-            className={`px-3 py-1.5 rounded-md transition-all min-h-[34px] ${
+            className={`px-3 py-2 sm:py-1.5 rounded-lg transition-all min-h-[38px] sm:min-h-[34px] whitespace-nowrap ${
               activeTab === "TRIAL_BALANCE" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -59,7 +59,7 @@ export function GeneralLedgerView() {
           </button>
           <button
             onClick={() => setActiveTab("CHART_OF_ACCOUNTS")}
-            className={`px-3 py-1.5 rounded-md transition-all min-h-[34px] ${
+            className={`px-3 py-2 sm:py-1.5 rounded-lg transition-all min-h-[38px] sm:min-h-[34px] whitespace-nowrap ${
               activeTab === "CHART_OF_ACCOUNTS" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
             }`}
           >
@@ -78,10 +78,10 @@ export function GeneralLedgerView() {
                 placeholder="Search reference or description..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-8 pr-3 py-2 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg w-full min-h-[38px] focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="pl-8 pr-3 py-2 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg w-full min-h-[40px] focus:outline-none focus:ring-1 focus:ring-slate-900"
               />
             </div>
-            <div className="text-xs text-slate-500 font-mono">
+            <div className="text-[11px] sm:text-xs text-slate-500 font-mono">
               Invariants: Σ Debits = Σ Credits enforced at post
             </div>
           </div>
@@ -90,40 +90,44 @@ export function GeneralLedgerView() {
             {filteredJournals.map((journal) => (
               <div
                 key={journal.id}
-                className="border border-slate-200 rounded-lg bg-white overflow-hidden shadow-2xs hover:border-slate-300 transition-colors"
+                className="border border-slate-200 rounded-xl bg-white overflow-hidden shadow-2xs hover:border-slate-300 transition-colors"
               >
-                <div className="p-3 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-xs">
+                <div className="p-3.5 sm:p-3 bg-slate-50/70 border-b border-slate-200 flex flex-col sm:flex-row sm:items-center justify-between gap-2.5 text-xs">
                   <div className="flex flex-wrap items-center gap-2">
-                    <span className="font-mono font-bold text-slate-900">{journal.reference}</span>
-                    <span className="text-slate-400">•</span>
-                    <span className="text-slate-500 flex items-center gap-1 font-mono">
-                      <Calendar className="w-3 h-3" /> {journal.entryDate}
+                    <span className="font-mono font-bold text-slate-900 text-sm sm:text-xs">
+                      {journal.reference}
                     </span>
-                    <span className="text-slate-400">•</span>
-                    <span className="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.2 rounded font-semibold">
+                    <span className="text-slate-300">•</span>
+                    <span className="text-slate-500 flex items-center gap-1 font-mono text-[11px]">
+                      <Calendar className="w-3 h-3 text-slate-400" /> {journal.entryDate}
+                    </span>
+                    <span className="text-slate-300">•</span>
+                    <span className="text-[10px] bg-slate-200/70 text-slate-700 px-1.5 py-0.5 rounded font-semibold">
                       {journal.sourceType}
                     </span>
                   </div>
 
-                  <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-                    {journal.status === "POSTED" ? (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
-                        <CheckCircle2 className="w-3 h-3" /> Posted
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
-                        <RotateCcw className="w-3 h-3" /> Reversed
-                      </span>
-                    )}
+                  <div className="flex items-center justify-between sm:justify-end gap-2.5 sm:gap-3 pt-1 sm:pt-0 border-t border-slate-200/50 sm:border-0">
+                    <div className="flex items-center gap-2">
+                      {journal.status === "POSTED" ? (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-emerald-700 bg-emerald-50 px-2 py-0.5 rounded border border-emerald-200">
+                          <CheckCircle2 className="w-3 h-3" /> Posted
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center gap-1 text-[11px] font-bold text-rose-700 bg-rose-50 px-2 py-0.5 rounded border border-rose-200">
+                          <RotateCcw className="w-3 h-3" /> Reversed
+                        </span>
+                      )}
 
-                    <span className="font-mono font-bold text-slate-900">
-                      Total: {formatGBP(journal.totalPence)}
-                    </span>
+                      <span className="font-mono font-bold text-slate-900 text-xs">
+                        {formatGBP(journal.totalPence)}
+                      </span>
+                    </div>
 
                     {journal.status === "POSTED" && journal.sourceType !== "REVERSAL" && (
                       <button
                         onClick={() => reverseJournalEntry(journal.id, "Accountant Audit")}
-                        className="px-2.5 py-1 text-[11px] font-semibold text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded border border-rose-200 transition-colors flex items-center gap-1 min-h-[30px]"
+                        className="px-2.5 py-1 text-[11px] font-semibold text-rose-600 hover:text-rose-800 hover:bg-rose-50 rounded border border-rose-200 transition-colors flex items-center gap-1 min-h-[32px]"
                         title="Post reversing journal entry"
                       >
                         <RotateCcw className="w-3 h-3" /> Reverse
@@ -132,8 +136,34 @@ export function GeneralLedgerView() {
                   </div>
                 </div>
 
-                {/* Journal lines table */}
-                <div className="overflow-x-auto">
+                {/* Mobile Journal Lines (< sm screens) */}
+                <div className="block sm:hidden divide-y divide-slate-100 p-2 text-xs font-mono">
+                  {journal.lines.map((line) => (
+                    <div key={line.id} className="py-2.5 px-2 flex items-start justify-between gap-3">
+                      <div className="min-w-0 font-sans">
+                        <span className="font-mono font-bold text-slate-900 block text-xs">
+                          {line.accountCode} -{" "}
+                          {accounts.find((a) => a.code === line.accountCode)?.name || "Nominal"}
+                        </span>
+                        <p className="text-[11px] text-slate-500 mt-0.5 truncate">{line.description}</p>
+                      </div>
+                      <div className="text-right shrink-0">
+                        {line.debitPence > 0 ? (
+                          <span className="inline-block px-1.5 py-0.5 bg-slate-900 text-white rounded text-[10px] font-bold">
+                            Dr {formatGBP(line.debitPence)}
+                          </span>
+                        ) : (
+                          <span className="inline-block px-1.5 py-0.5 bg-slate-100 text-slate-800 rounded text-[10px] font-bold border border-slate-200">
+                            Cr {formatGBP(line.creditPence)}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Desktop Journal lines table (>= sm screens) */}
+                <div className="hidden sm:block overflow-x-auto">
                   <table className="w-full text-left text-xs divide-y divide-slate-100 min-w-[500px]">
                     <thead>
                       <tr className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider bg-slate-50/20">
@@ -170,7 +200,7 @@ export function GeneralLedgerView() {
 
       {activeTab === "TRIAL_BALANCE" && (
         <div className="space-y-4">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3 bg-emerald-50/60 border border-emerald-200/80 rounded-lg text-xs text-emerald-900 gap-2">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between p-3.5 bg-emerald-50/60 border border-emerald-200/80 rounded-xl text-xs text-emerald-900 gap-2">
             <div className="flex items-center gap-2">
               <Scale className="w-4 h-4 text-emerald-700 shrink-0" />
               <span>
@@ -182,7 +212,7 @@ export function GeneralLedgerView() {
             </span>
           </div>
 
-          <div className="overflow-x-auto border border-slate-200 rounded-lg">
+          <div className="overflow-x-auto border border-slate-200 rounded-xl">
             <table className="w-full text-left text-xs divide-y divide-slate-200 min-w-[500px]">
               <thead>
                 <tr className="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-50">
@@ -225,7 +255,7 @@ export function GeneralLedgerView() {
       )}
 
       {activeTab === "CHART_OF_ACCOUNTS" && (
-        <div className="overflow-x-auto border border-slate-200 rounded-lg">
+        <div className="overflow-x-auto border border-slate-200 rounded-xl">
           <table className="w-full text-left text-xs divide-y divide-slate-200 min-w-[540px]">
             <thead>
               <tr className="text-[11px] font-bold text-slate-500 uppercase tracking-wider bg-slate-50">

@@ -1,0 +1,177 @@
+"use client";
+
+import React, { useState } from "react";
+import { Briefcase, Building2, Lock, Mail, ArrowRight, ShieldCheck, X } from "lucide-react";
+
+interface LoginModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  onLogin: (role: "ACCOUNTANT" | "CLIENT", email?: string) => void;
+}
+
+export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [selectedRole, setSelectedRole] = useState<"ACCOUNTANT" | "CLIENT">("ACCOUNTANT");
+
+  if (!isOpen) return null;
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    onLogin(selectedRole, email || (selectedRole === "ACCOUNTANT" ? "sarah@wealthwiseaccountant.co.uk" : "marcus@apexdigital.co.uk"));
+    onClose();
+  };
+
+  const handleQuickDemoLogin = (role: "ACCOUNTANT" | "CLIENT") => {
+    onLogin(role);
+    onClose();
+  };
+
+  return (
+    <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-2xl max-w-md w-full p-5 sm:p-6 space-y-5 my-auto max-h-[95vh] overflow-y-auto">
+        <div className="flex items-center justify-between pb-3 border-b border-slate-100">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-slate-900 text-white flex items-center justify-center font-bold text-xs">
+              WW
+            </div>
+            <div>
+              <h3 className="text-sm font-bold text-slate-900">Sign in to Platform OS</h3>
+              <p className="text-[11px] text-slate-400">Wealth Wise Accountant Practice & Client Gateway</p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg text-sm"
+            aria-label="Close modal"
+          >
+            <X className="w-4 h-4" />
+          </button>
+        </div>
+
+        {/* Instant Persona Demo Picker */}
+        <div className="space-y-2">
+          <span className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block">
+            Instant Demo Sign-In
+          </span>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+            <button
+              type="button"
+              onClick={() => handleQuickDemoLogin("ACCOUNTANT")}
+              className="p-3 rounded-xl border border-slate-200 hover:border-slate-900 hover:bg-slate-50/80 text-left transition-all group flex flex-col justify-between"
+            >
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="w-6 h-6 rounded bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                  <Briefcase className="w-3.5 h-3.5" />
+                </div>
+                <span className="text-xs font-bold text-slate-900">Sarah Jenkins</span>
+              </div>
+              <p className="text-[10px] text-slate-500">ACCA Senior Partner (Accountant Hub)</p>
+            </button>
+
+            <button
+              type="button"
+              onClick={() => handleQuickDemoLogin("CLIENT")}
+              className="p-3 rounded-xl border border-slate-200 hover:border-slate-900 hover:bg-slate-50/80 text-left transition-all group flex flex-col justify-between"
+            >
+              <div className="flex items-center gap-2 mb-1.5">
+                <div className="w-6 h-6 rounded bg-slate-100 text-slate-700 flex items-center justify-center group-hover:bg-slate-900 group-hover:text-white transition-colors">
+                  <Building2 className="w-3.5 h-3.5" />
+                </div>
+                <span className="text-xs font-bold text-slate-900">Marcus Sterling</span>
+              </div>
+              <p className="text-[10px] text-slate-500">Director, Apex Ltd (Client Portal)</p>
+            </button>
+          </div>
+        </div>
+
+        <div className="relative my-3">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200" />
+          </div>
+          <div className="relative flex justify-center text-[10px] uppercase font-semibold text-slate-400">
+            <span className="bg-white px-2">Or enter credentials</span>
+          </div>
+        </div>
+
+        {/* Credentials Form */}
+        <form onSubmit={handleSubmit} className="space-y-3 text-xs">
+          <div>
+            <label className="text-slate-700 block mb-1 font-semibold">Account Role</label>
+            <div className="grid grid-cols-2 gap-2 p-1 bg-slate-100 rounded-lg">
+              <button
+                type="button"
+                onClick={() => setSelectedRole("ACCOUNTANT")}
+                className={`py-1.5 text-xs font-bold rounded-md transition-all ${
+                  selectedRole === "ACCOUNTANT"
+                    ? "bg-white text-slate-900 shadow-2xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Accountant Staff
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedRole("CLIENT")}
+                className={`py-1.5 text-xs font-bold rounded-md transition-all ${
+                  selectedRole === "CLIENT"
+                    ? "bg-white text-slate-900 shadow-2xs"
+                    : "text-slate-600 hover:text-slate-900"
+                }`}
+              >
+                Business Client
+              </button>
+            </div>
+          </div>
+
+          <div>
+            <label className="text-slate-700 block mb-1 font-semibold">Work Email</label>
+            <div className="relative">
+              <Mail className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="email"
+                placeholder={
+                  selectedRole === "ACCOUNTANT"
+                    ? "sarah@wealthwiseaccountant.co.uk"
+                    : "marcus@apexdigital.co.uk"
+                }
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                className="w-full pl-8 pr-3 py-2 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 min-h-[42px] sm:min-h-[38px]"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label className="text-slate-700 block mb-1 font-semibold">Password</label>
+            <div className="relative">
+              <Lock className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+              <input
+                type="password"
+                placeholder="••••••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                className="w-full pl-8 pr-3 py-2 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 min-h-[42px] sm:min-h-[38px]"
+              />
+            </div>
+          </div>
+
+          <div className="p-2.5 bg-slate-50 rounded-lg border border-slate-200 text-[10px] text-slate-500 flex items-center gap-1.5">
+            <ShieldCheck className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span>Encrypted with TLS 1.3 & Row-Level Security tenant isolation.</span>
+          </div>
+
+          <div className="pt-2">
+            <button
+              type="submit"
+              className="w-full py-2.5 bg-slate-900 hover:bg-slate-800 text-white font-bold rounded-lg transition-colors flex items-center justify-center gap-2 shadow-sm min-h-[42px]"
+            >
+              <span>Authenticate & Enter Workspace</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  );
+}

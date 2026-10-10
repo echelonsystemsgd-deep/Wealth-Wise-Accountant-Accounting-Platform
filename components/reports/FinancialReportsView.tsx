@@ -52,11 +52,11 @@ export function FinancialReportsView() {
             Real-time financial reports calculated dynamically from posted double-entry journal lines.
           </p>
         </div>
-        <div className="flex items-center gap-2 self-start sm:self-auto">
-          <div className="flex flex-wrap bg-slate-100 p-0.5 rounded-lg text-xs font-semibold gap-1 sm:gap-0">
+        <div className="flex items-center justify-between sm:justify-end gap-2 w-full sm:w-auto">
+          <div className="flex items-center overflow-x-auto bg-slate-100 p-1 rounded-xl text-xs font-semibold gap-1 scrollbar-none max-w-full">
             <button
               onClick={() => setReportType("PNL")}
-              className={`px-3 py-1.5 rounded-md transition-all min-h-[32px] ${
+              className={`px-3 py-2 sm:py-1.5 rounded-lg transition-all min-h-[36px] sm:min-h-[32px] whitespace-nowrap ${
                 reportType === "PNL" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -64,7 +64,7 @@ export function FinancialReportsView() {
             </button>
             <button
               onClick={() => setReportType("BALANCE_SHEET")}
-              className={`px-3 py-1.5 rounded-md transition-all min-h-[32px] ${
+              className={`px-3 py-2 sm:py-1.5 rounded-lg transition-all min-h-[36px] sm:min-h-[32px] whitespace-nowrap ${
                 reportType === "BALANCE_SHEET" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -72,7 +72,7 @@ export function FinancialReportsView() {
             </button>
             <button
               onClick={() => setReportType("TAX_SUMMARY")}
-              className={`px-3 py-1.5 rounded-md transition-all min-h-[32px] ${
+              className={`px-3 py-2 sm:py-1.5 rounded-lg transition-all min-h-[36px] sm:min-h-[32px] whitespace-nowrap ${
                 reportType === "TAX_SUMMARY" ? "bg-white text-slate-900 shadow-xs" : "text-slate-600 hover:text-slate-900"
               }`}
             >
@@ -80,7 +80,7 @@ export function FinancialReportsView() {
             </button>
           </div>
           <button
-            className="p-1.5 text-slate-600 hover:bg-slate-100 rounded border border-slate-200 min-h-[32px] min-w-[32px] flex items-center justify-center"
+            className="p-2 text-slate-600 hover:bg-slate-100 rounded-xl border border-slate-200 min-h-[36px] min-w-[36px] flex items-center justify-center shrink-0"
             aria-label="Download statement report"
           >
             <Download className="w-4 h-4" />

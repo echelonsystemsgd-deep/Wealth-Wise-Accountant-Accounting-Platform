@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useAccounting } from "@/lib/accounting/AccountingContext";
 import { formatGBP, calculateVatPence } from "@/lib/utils";
-import { Plus, Check, Clock, Send, FileCheck, Search, Scale } from "lucide-react";
+import { Plus, Check, Clock, Send, FileCheck, Search, Scale, AlertCircle } from "lucide-react";
 
 export function InvoicesView() {
   const { invoices, createInvoice, payInvoice } = useAccounting();
@@ -60,10 +60,10 @@ export function InvoicesView() {
   );
 
   return (
-    <div className="card-surface p-5 space-y-5">
+    <div className="card-surface p-4 sm:p-5 space-y-5">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-slate-100 gap-3">
         <div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-base font-bold text-slate-900 tracking-tight">
               Sales Invoicing & Accounts Receivable (Dr 1100 / Cr 4000)
             </h3>
@@ -84,21 +84,99 @@ export function InvoicesView() {
               placeholder="Search invoices..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-2 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg w-full min-h-[38px] focus:outline-none focus:ring-1 focus:ring-slate-900"
+              className="pl-8 pr-3 py-2 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg w-full min-h-[40px] focus:outline-none focus:ring-1 focus:ring-slate-900"
             />
           </div>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-3.5 py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap min-h-[38px]"
+            className="px-3.5 py-2.5 sm:py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap min-h-[42px] sm:min-h-[38px]"
           >
-            <Plus className="w-3.5 h-3.5" />
+            <Plus className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
             Create & Post Invoice
           </button>
         </div>
       </div>
 
-      {/* Invoice Table */}
-      <div className="overflow-x-auto -mx-5 px-5 sm:mx-0 sm:px-0">
+      {/* Mobile Card List (< sm screens) */}
+      <div className="block sm:hidden space-y-3">
+        {filteredInvoices.map((inv) => (
+          <div
+            key={inv.id}
+            className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-2xs space-y-3"
+          >
+            <div className="flex items-start justify-between gap-2">
+              <div>
+                <span className="font-mono font-bold text-sm text-slate-900 block">
+                  {inv.invoiceNumber}
+                </span>
+                <span className="text-xs font-semibold text-slate-800">
+                  {inv.contactName}
+                </span>
+                {inv.journalEntryId && (
+                  <span className="block text-[10px] text-slate-400 font-mono mt-0.5">
+                    GL: {inv.journalEntryId}
+                  </span>
+                )}
+              </div>
+              <div>
+                {inv.status === "PAID" ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200">
+                    <Check className="w-3 h-3" /> Paid
+                  </span>
+                ) : inv.status === "PARTIALLY_PAID" ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200">
+                    <Clock className="w-3 h-3" /> Partial
+                  </span>
+                ) : inv.status === "ISSUED" ? (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-blue-700 bg-blue-50 border border-blue-200">
+                    <Send className="w-3 h-3" /> Issued
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-slate-600 bg-slate-100">
+                    <Clock className="w-3 h-3" /> Draft
+                  </span>
+                )}
+              </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-2 text-xs py-2 border-y border-slate-100 bg-slate-50/50 px-2 rounded-lg">
+              <div>
+                <span className="text-[10px] text-slate-400 block">Net</span>
+                <span className="font-mono font-medium text-slate-700">
+                  {formatGBP(inv.subtotalPence)}
+                </span>
+              </div>
+              <div>
+                <span className="text-[10px] text-slate-400 block">VAT</span>
+                <span className="font-mono font-medium text-slate-500">
+                  {formatGBP(inv.vatPence)}
+                </span>
+              </div>
+              <div className="text-right">
+                <span className="text-[10px] text-slate-400 block">Total Due</span>
+                <span className="font-mono font-bold text-slate-900">
+                  {formatGBP(inv.amountDuePence ?? inv.totalPence)}
+                </span>
+              </div>
+            </div>
+
+            <div className="flex items-center justify-between text-[11px] text-slate-500">
+              <span>Due: {inv.dueDate}</span>
+              {inv.status !== "PAID" && (
+                <button
+                  onClick={() => payInvoice(inv.id)}
+                  className="px-3 py-1.5 text-xs font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg min-h-[36px] transition-colors"
+                >
+                  Record Payment
+                </button>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Desktop Invoice Table (>= sm screens) */}
+      <div className="hidden sm:block overflow-x-auto">
         <table className="w-full text-left border-collapse min-w-[640px]">
           <thead>
             <tr className="border-b border-slate-200 text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
@@ -135,12 +213,16 @@ export function InvoicesView() {
                   {formatGBP(inv.vatPence)}
                 </td>
                 <td className="py-3 text-right font-mono font-bold text-slate-900">
-                  {formatGBP(inv.totalPence)}
+                  {formatGBP(inv.amountDuePence ?? inv.totalPence)}
                 </td>
                 <td className="py-3 text-center">
                   {inv.status === "PAID" ? (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-emerald-700 bg-emerald-50 border border-emerald-200">
                       <Check className="w-3 h-3" /> Paid
+                    </span>
+                  ) : inv.status === "PARTIALLY_PAID" ? (
+                    <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-bold text-amber-700 bg-amber-50 border border-amber-200">
+                      <Clock className="w-3 h-3" /> Partial
                     </span>
                   ) : inv.status === "ISSUED" ? (
                     <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium text-blue-700 bg-blue-50 border border-blue-200">
@@ -170,8 +252,8 @@ export function InvoicesView() {
 
       {/* Modal for Invoice Creation */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-xl border border-slate-200 shadow-xl max-w-md w-full p-4 sm:p-5 space-y-4 my-auto max-h-[92vh] overflow-y-auto">
+        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-4 sm:p-6 space-y-4 my-auto max-h-[92vh] overflow-y-auto">
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <FileCheck className="w-4 h-4 text-slate-700 shrink-0" />
@@ -179,56 +261,56 @@ export function InvoicesView() {
               </h4>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-slate-600 p-1 rounded-lg"
+                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg text-sm"
                 aria-label="Close modal"
               >
                 ✕
               </button>
             </div>
 
-            <form onSubmit={handleCreateInvoice} className="space-y-3 text-xs">
+            <form onSubmit={handleCreateInvoice} className="space-y-3.5 text-xs">
               <div>
-                <label className="text-slate-600 block mb-1 font-medium">Customer Name</label>
+                <label className="text-slate-700 block mb-1 font-semibold">Customer Name</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Acme Tech Solutions Ltd"
                   value={customerName}
                   onChange={(e) => setCustomerName(e.target.value)}
-                  className="w-full p-2.5 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full p-2.5 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 min-h-[42px] sm:min-h-[38px]"
                 />
               </div>
 
               <div>
-                <label className="text-slate-600 block mb-1 font-medium">Service / Line Item Description</label>
+                <label className="text-slate-700 block mb-1 font-semibold">Service / Line Item Description</label>
                 <input
                   type="text"
                   required
                   placeholder="e.g. Monthly Retainer & Consulting"
                   value={itemDesc}
                   onChange={(e) => setItemDesc(e.target.value)}
-                  className="w-full p-2.5 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900"
+                  className="w-full p-2.5 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 min-h-[42px] sm:min-h-[38px]"
                 />
               </div>
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
-                  <label className="text-slate-600 block mb-1 font-medium">Net Amount (£)</label>
+                  <label className="text-slate-700 block mb-1 font-semibold">Net Amount (£)</label>
                   <input
                     type="number"
                     min="1"
                     required
                     value={netAmountPounds}
                     onChange={(e) => setNetAmountPounds(Number(e.target.value))}
-                    className="w-full p-2.5 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
+                    className="w-full p-2.5 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono min-h-[42px] sm:min-h-[38px]"
                   />
                 </div>
                 <div>
-                  <label className="text-slate-600 block mb-1 font-medium">VAT Treatment</label>
+                  <label className="text-slate-700 block mb-1 font-semibold">VAT Treatment</label>
                   <select
                     value={vatTreatment}
                     onChange={(e) => setVatTreatment(e.target.value as typeof vatTreatment)}
-                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs min-h-[38px]"
+                    className="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-lg text-slate-900 text-xs min-h-[42px] sm:min-h-[38px]"
                   >
                     <option value="STANDARD_20">UK Standard (20%)</option>
                     <option value="REDUCED_5">UK Reduced (5%)</option>
@@ -237,7 +319,7 @@ export function InvoicesView() {
                 </div>
               </div>
 
-              <div className="p-3 bg-slate-50 rounded border border-slate-200/80 text-[11px] space-y-1">
+              <div className="p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-[11px] space-y-1.5">
                 <div className="flex justify-between text-slate-500">
                   <span>Net Turnover:</span>
                   <span className="font-mono font-medium">
@@ -250,7 +332,7 @@ export function InvoicesView() {
                     {formatGBP(calculateVatPence(netAmountPounds * 100, vatTreatment))}
                   </span>
                 </div>
-                <div className="flex justify-between text-slate-900 font-bold pt-1 border-t border-slate-200">
+                <div className="flex justify-between text-slate-900 font-bold pt-1.5 border-t border-slate-200">
                   <span>Total Payable:</span>
                   <span className="font-mono">
                     {formatGBP(
@@ -261,24 +343,24 @@ export function InvoicesView() {
                 </div>
               </div>
 
-              <div className="p-2.5 bg-emerald-50 rounded border border-emerald-200 text-[10px] text-emerald-800 flex items-center gap-1.5">
+              <div className="p-2.5 bg-emerald-50 rounded-lg border border-emerald-200 text-[10px] text-emerald-800 flex items-center gap-1.5">
                 <Scale className="w-3.5 h-3.5 text-emerald-700 shrink-0" />
                 <span>
                   Posting creates journal: <strong>Dr 1100 Trade Debtors</strong>, <strong>Cr 4000 Sales Turnover</strong>, <strong>Cr 2200 VAT Output</strong>.
                 </span>
               </div>
 
-              <div className="pt-2 flex justify-end gap-2">
+              <div className="pt-2 flex flex-col-reverse sm:flex-row justify-end gap-2">
                 <button
                   type="button"
                   onClick={() => setShowCreateModal(false)}
-                  className="px-3 py-1.5 text-slate-600 hover:bg-slate-100 rounded"
+                  className="w-full sm:w-auto px-4 py-2.5 text-xs text-slate-600 hover:bg-slate-100 rounded-lg min-h-[42px] sm:min-h-[36px]"
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-1.5 font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg shadow-sm"
+                  className="w-full sm:w-auto px-5 py-2.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg shadow-sm min-h-[42px] sm:min-h-[36px]"
                 >
                   Post to Ledger
                 </button>
