@@ -53,7 +53,7 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
               <h3 className="text-sm font-bold text-slate-900">
                 {authMode === "LOGIN" ? "Sign in to Platform OS" : "Register Client Organisation"}
               </h3>
-              <p className="text-[11px] text-slate-400">Wealth Wise Accountant Practice & Client Gateway</p>
+              <p className="text-[11px] text-slate-400">Wealthwise Accountants Practice & Client Portal</p>
             </div>
           </div>
           <button
