@@ -327,6 +327,7 @@ export function LandingPage() {
                 className="border border-[#E2E8F0] rounded-xl overflow-hidden bg-[#F0F5FA]"
               >
                 <button
+                  type="button"
                   onClick={() => toggleFaq(idx)}
                   className="w-full text-left p-5 flex items-center justify-between gap-4 font-semibold text-base text-[#111111] hover:bg-white transition-colors min-h-[44px]"
                 >
