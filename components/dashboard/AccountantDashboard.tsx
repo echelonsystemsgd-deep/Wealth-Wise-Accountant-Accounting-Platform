@@ -10,6 +10,7 @@ import { DocumentVaultView } from "@/components/documents/DocumentVaultView";
 import { InvoicesView } from "@/components/invoices/InvoicesView";
 import { FinancialReportsView } from "@/components/reports/FinancialReportsView";
 import { GeneralLedgerView } from "@/components/ledger/GeneralLedgerView";
+import { PracticeCrmView } from "@/components/crm/PracticeCrmView";
 import {
   Users,
   AlertCircle,
@@ -18,13 +19,14 @@ import {
   ArrowUpRight,
   TrendingUp,
   DollarSign,
+  Building2,
 } from "lucide-react";
 
 export function AccountantDashboard() {
   const { journals, bankStatements, financialSummary } = useAccounting();
   const [activeTab, setActiveTab] = useState<
     "OVERVIEW" | "CLIENTS" | "LEDGER" | "RECONCILIATION" | "DOCUMENTS" | "INVOICES" | "REPORTS"
-  >("OVERVIEW");
+  >("CLIENTS");
 
   // Dynamic unreconciled count
   const unreconciledCount = bankStatements.filter((b) => !b.isReconciled).length;
@@ -51,6 +53,7 @@ export function AccountantDashboard() {
       {/* Navigation tabs */}
       <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-[#D1D5DB] scrollbar-none touch-pan-x -mx-1 px-1">
         {[
+          { id: "CLIENTS", label: "Practice CRM Portfolio" },
           { id: "OVERVIEW", label: "Executive Overview" },
           { id: "LEDGER", label: `General Ledger (${journals.length} Journals)` },
           { id: "RECONCILIATION", label: `Bank Reconciliation (${unreconciledCount} Unmatched)` },
@@ -270,6 +273,7 @@ export function AccountantDashboard() {
         </div>
       )}
 
+      {activeTab === "CLIENTS" && <PracticeCrmView />}
       {activeTab === "LEDGER" && <GeneralLedgerView />}
       {activeTab === "RECONCILIATION" && <ReconciliationView />}
       {activeTab === "INVOICES" && <InvoicesView />}

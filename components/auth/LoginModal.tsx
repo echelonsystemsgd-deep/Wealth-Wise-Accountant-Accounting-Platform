@@ -132,6 +132,20 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
               </div>
             </div>
 
+            {/* Attention & Configuration Requirements Box */}
+            <div className="bg-[#181920] border border-[#3e3422] rounded-xl p-3 text-[11px] space-y-1.5">
+              <div className="flex items-center gap-1.5 text-[#c9a84c] font-bold">
+                <ShieldCheck className="w-3.5 h-3.5 shrink-0" />
+                <span>Phase 2 Auth & Access Configuration:</span>
+              </div>
+              <p className="text-[#a09a8f] text-[10px] leading-relaxed">
+                • <strong>For You (Developer/Owner):</strong> When ready for live production deployment, configure Supabase Auth keys (<code className="text-[#c9a84c]">NEXT_PUBLIC_SUPABASE_URL</code> & <code className="text-[#c9a84c]">ANON_KEY</code>).
+              </p>
+              <p className="text-[#a09a8f] text-[10px] leading-relaxed">
+                • <strong>For Client (Wealth Wise):</strong> Review the multi-tenant switching and RBAC role profiles (Practice Partner, Senior Accountant, Bookkeeper, Client Director).
+              </p>
+            </div>
+
             <div className="relative my-2">
               <div className="absolute inset-0 flex items-center">
                 <div className="w-full border-t border-[#26241e]" />

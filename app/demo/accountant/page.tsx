@@ -1,6 +1,7 @@
 "use client";
 
 import React from "react";
+import { AuthProvider } from "@/lib/auth/AuthContext";
 import { AccountingProvider } from "@/lib/accounting/AccountingContext";
 import { AccountantDashboard } from "@/components/dashboard/AccountantDashboard";
 import { DemoHeader } from "@/components/demo/DemoHeader";
@@ -8,7 +9,8 @@ import { BRAND } from "@/lib/brand";
 
 export default function AccountantDemoPage() {
   return (
-    <AccountingProvider>
+    <AuthProvider initialRole="SENIOR_ACCOUNTANT">
+      <AccountingProvider>
       <div className="min-h-screen bg-[#F0F5FA] text-[#111111] flex flex-col font-sans">
         <DemoHeader
           activeView="ACCOUNTANT"
@@ -24,5 +26,6 @@ export default function AccountantDemoPage() {
         </footer>
       </div>
     </AccountingProvider>
+  </AuthProvider>
   );
 }

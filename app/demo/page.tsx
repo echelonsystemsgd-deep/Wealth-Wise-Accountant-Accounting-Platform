@@ -59,25 +59,30 @@ export default function DemoHubPage() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left max-w-2xl mx-auto">
-          {/* Accountant Hub Card */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left max-w-3xl mx-auto">
+          {/* Accountant Hub & Practice CRM Card */}
           <Link
             href="/demo/accountant"
             className="p-8 rounded-2xl bg-white border border-[#D1D5DB] hover:border-[#C0A262] transition-colors group flex flex-col justify-between space-y-4 shadow-sm"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-[#F0F5FA] border border-[#E2E8F0] text-[#111111] flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Briefcase className="w-6 h-6 text-[#C0A262]" />
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-xl bg-[#F0F5FA] border border-[#E2E8F0] text-[#111111] flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <Briefcase className="w-6 h-6 text-[#C0A262]" />
+                </div>
+                <span className="text-[10px] font-bold bg-[#111111] text-[#C0A262] px-2.5 py-1 rounded-md uppercase">
+                  Phase 2 Practice CRM
+                </span>
               </div>
               <h2 className="font-serif-heading text-xl font-bold text-[#111111] mt-4">
-                Accountant Hub
+                Accountant Hub & Practice CRM
               </h2>
               <p className="text-xs text-[#666666] mt-1 leading-relaxed">
-                Explore the practice management view: multi-client overview, general ledger journals, bank matching preview, and statutory report generation.
+                Explore multi-tenant portfolio management, statutory filing deadlines, client workspace switching, general ledger journals, and live bank feeds.
               </p>
             </div>
             <div className="flex items-center gap-1.5 text-xs font-bold text-[#9A7A3A] group-hover:translate-x-1 transition-transform pt-2">
-              <span>Enter Accountant Hub Demo</span>
+              <span>Enter Practice CRM & Accountant Hub</span>
               <ArrowRight className="w-3.5 h-3.5" />
             </div>
           </Link>
@@ -88,8 +93,13 @@ export default function DemoHubPage() {
             className="p-8 rounded-2xl bg-white border border-[#D1D5DB] hover:border-[#C0A262] transition-colors group flex flex-col justify-between space-y-4 shadow-sm"
           >
             <div>
-              <div className="w-12 h-12 rounded-xl bg-[#F0F5FA] border border-[#E2E8F0] text-[#111111] flex items-center justify-center group-hover:scale-105 transition-transform">
-                <Building2 className="w-6 h-6 text-[#C0A262]" />
+              <div className="flex items-center justify-between">
+                <div className="w-12 h-12 rounded-xl bg-[#F0F5FA] border border-[#E2E8F0] text-[#111111] flex items-center justify-center group-hover:scale-105 transition-transform">
+                  <Building2 className="w-6 h-6 text-[#C0A262]" />
+                </div>
+                <span className="text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200 px-2.5 py-1 rounded-md uppercase">
+                  Client Sandbox
+                </span>
               </div>
               <h2 className="font-serif-heading text-xl font-bold text-[#111111] mt-4">
                 Client Business Portal

@@ -7,6 +7,7 @@ import { DocumentVaultView } from "@/components/documents/DocumentVaultView";
 import { InvoicesView } from "@/components/invoices/InvoicesView";
 import { FinancialReportsView } from "@/components/reports/FinancialReportsView";
 import { BRAND } from "@/lib/brand";
+import { useAuth } from "@/lib/auth/AuthContext";
 import {
   Wallet,
   ArrowDownLeft,
@@ -14,10 +15,13 @@ import {
   Receipt,
   AlertCircle,
   Send,
+  AlertTriangle,
+  Sparkles,
 } from "lucide-react";
 
 export function ClientPortal() {
   const { invoices, financialSummary } = useAccounting();
+  const { activeClient } = useAuth();
   const [activeTab, setActiveTab] = useState<"OVERVIEW" | "INVOICES" | "DOCUMENTS" | "REPORTS" | "MESSAGES">("OVERVIEW");
   const [messageText, setMessageText] = useState("");
   const [messages, setMessages] = useState([
@@ -84,14 +88,19 @@ export function ClientPortal() {
           {/* Welcome Banner */}
           <div className="p-6 bg-white border border-[#D1D5DB] rounded-xl flex flex-col sm:flex-row sm:items-center justify-between gap-4 shadow-xs">
             <div>
-              <span className="text-xs text-[#C0A262] font-semibold uppercase tracking-wider">
-                Sample Client Workspace
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-[#C0A262] font-semibold uppercase tracking-wider">
+                  Client Workspace
+                </span>
+                <span className="text-[10px] bg-[#F0F5FA] text-[#475569] px-2 py-0.5 rounded border border-[#E2E8F0] font-mono">
+                  {activeClient.companyNumber}
+                </span>
+              </div>
               <h2 className="font-serif-heading text-2xl font-bold text-[#111111] mt-1">
-                Apex Digital Solutions Ltd
+                {activeClient.companyName}
               </h2>
               <p className="text-xs text-[#666666] mt-0.5">
-                Financial records synchronised with {BRAND.practiceName} general ledger.
+                Financial records synchronised with {BRAND.practiceName} general ledger · Assigned Accountant: <strong className="text-[#111111]">{activeClient.assignedAccountant.name}</strong>
               </p>
             </div>
             <div className="flex items-center gap-2 self-start sm:self-center">
@@ -109,6 +118,26 @@ export function ClientPortal() {
               </button>
             </div>
           </div>
+
+          {/* Attention Required Banner: Client Tasks from Accountant */}
+          {activeClient.integrationAttentionRequired?.needsClientAction && (
+            <div className="bg-amber-50/90 border border-amber-300 rounded-xl p-4 space-y-2">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2 text-amber-900 font-bold text-xs">
+                  <AlertTriangle className="w-4 h-4 text-amber-600 shrink-0" />
+                  <span>ACTION REQUIRED BY CLIENT DIRECTOR:</span>
+                </div>
+                <span className="text-[10px] bg-amber-200/80 text-amber-900 font-bold px-2 py-0.5 rounded">
+                  {activeClient.integrationAttentionRequired.needsClientAction.length} Items Pending
+                </span>
+              </div>
+              <ul className="list-disc list-inside text-xs text-amber-800 space-y-1">
+                {activeClient.integrationAttentionRequired.needsClientAction.map((task, idx) => (
+                  <li key={idx}>{task}</li>
+                ))}
+              </ul>
+            </div>
+          )}
 
           {/* Business KPI Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
