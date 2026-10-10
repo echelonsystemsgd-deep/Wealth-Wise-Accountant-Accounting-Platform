@@ -228,7 +228,7 @@ export function LandingPage({ onEnterApp, onOpenLogin }: LandingPageProps) {
             </button>
             <button
               onClick={() => onEnterApp("ACCOUNTANT")}
-              className="px-4 py-2 text-xs font-bold text-black bg-gradient-to-r from-[#d4af37] via-[#f3e5ab] to-[#c59e2b] hover:brightness-110 rounded-lg shadow-md transition-all flex items-center gap-1.5 min-h-[38px]"
+              className="px-4 py-2 text-xs font-bold text-[#0d0e11] bg-[#c9a84c] hover:bg-[#d8b85c] rounded-lg shadow-sm transition-all flex items-center gap-1.5 min-h-[38px]"
             >
               <span>Practice Workspace</span>
               <ArrowRight className="w-3.5 h-3.5" />
@@ -250,7 +250,7 @@ export function LandingPage({ onEnterApp, onOpenLogin }: LandingPageProps) {
 
           <h1 className="text-3xl sm:text-5xl lg:text-6xl font-black tracking-tight text-white max-w-4xl mx-auto leading-tight sm:leading-none">
             Every number your business depends on,{" "}
-            <span className="bg-gradient-to-r from-[#e7c768] via-[#faecc3] to-[#c59e2b] bg-clip-text text-transparent underline decoration-[#d4af37]/60 decoration-wavy underline-offset-8">
+            <span className="text-[#c9a84c] underline decoration-[#c9a84c]/40 decoration-wavy underline-offset-8">
               under one roof.
             </span>
           </h1>
@@ -263,9 +263,9 @@ export function LandingPage({ onEnterApp, onOpenLogin }: LandingPageProps) {
           <div className="mt-8 flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3.5 max-w-lg mx-auto">
             <a
               href="#contact"
-              className="px-6 py-3.5 rounded-xl bg-gradient-to-r from-[#d4af37] via-[#f3e5ab] to-[#c59e2b] text-black font-extrabold text-sm hover:brightness-110 transition-all shadow-lg shadow-[#d4af37]/20 flex items-center justify-center gap-2 min-h-[48px]"
+              className="px-6 py-3.5 rounded-xl bg-[#c9a84c] hover:bg-[#d8b85c] text-[#0d0e11] font-bold text-sm transition-all shadow-md flex items-center justify-center gap-2 min-h-[48px]"
             >
-              <Calendar className="w-4 h-4 text-black" />
+              <Calendar className="w-4 h-4 text-[#0d0e11]" />
               <span>Schedule a Free Consultation</span>
               <ArrowRight className="w-4 h-4" />
             </a>
