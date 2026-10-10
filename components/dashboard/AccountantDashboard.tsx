@@ -11,6 +11,7 @@ import { InvoicesView } from "@/components/invoices/InvoicesView";
 import { FinancialReportsView } from "@/components/reports/FinancialReportsView";
 import { GeneralLedgerView } from "@/components/ledger/GeneralLedgerView";
 import { PracticeCrmView } from "@/components/crm/PracticeCrmView";
+import { useAuth } from "@/lib/auth/AuthContext";
 import {
   Users,
   AlertCircle,
@@ -20,9 +21,13 @@ import {
   TrendingUp,
   DollarSign,
   Building2,
+  ShieldAlert,
+  ArrowRight,
 } from "lucide-react";
+import Link from "next/link";
 
 export function AccountantDashboard() {
+  const { isAccountant, role, user, switchRole } = useAuth();
   const { journals, bankStatements, financialSummary } = useAccounting();
   const [activeTab, setActiveTab] = useState<
     "OVERVIEW" | "CLIENTS" | "LEDGER" | "RECONCILIATION" | "DOCUMENTS" | "INVOICES" | "REPORTS"
@@ -47,6 +52,43 @@ export function AccountantDashboard() {
     { label: "Audit Review", count: 18, sublabel: "Accountant Sign-Off" },
     { label: "Filing Ready", count: 12, sublabel: "HMRC / CoHouse Stage" },
   ];
+
+  // Role-Based UI Guard: If user switched to CLIENT_DIRECTOR, shield Practice CRM
+  if (!isAccountant) {
+    return (
+      <div className="bg-white rounded-2xl border border-amber-300 p-8 text-center max-w-xl mx-auto my-12 shadow-sm space-y-4">
+        <div className="w-12 h-12 rounded-xl bg-amber-50 border border-amber-200 text-amber-700 flex items-center justify-center mx-auto">
+          <ShieldAlert className="w-6 h-6" />
+        </div>
+        <div>
+          <h3 className="font-serif-heading text-xl font-bold text-[#111111]">
+            Practice Management Access Restricted
+          </h3>
+          <p className="text-xs text-[#666666] mt-1.5 leading-relaxed">
+            You are currently viewing as <strong className="text-[#111111]">{user?.fullName} ({role})</strong>.
+            Under Phase 2 Row-Level Security & RBAC, Client Directors cannot access multi-client portfolio data or practice ledgers.
+          </p>
+        </div>
+
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-2 pt-2">
+          <Link
+            href="/demo/client"
+            className="w-full sm:w-auto px-4 py-2.5 bg-[#111111] text-[#C0A262] rounded-xl text-xs font-semibold hover:bg-[#222222] transition-colors min-h-[44px] flex items-center justify-center gap-1.5"
+          >
+            <span>Go to My Client Portal</span>
+            <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+          <button
+            type="button"
+            onClick={() => switchRole("SENIOR_ACCOUNTANT")}
+            className="w-full sm:w-auto px-4 py-2.5 bg-[#F0F5FA] text-[#111111] border border-[#D1D5DB] rounded-xl text-xs font-semibold hover:bg-white transition-colors min-h-[44px]"
+          >
+            Switch to Senior Accountant
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">

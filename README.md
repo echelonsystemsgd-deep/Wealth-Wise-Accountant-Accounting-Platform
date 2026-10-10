@@ -7,80 +7,86 @@
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
 [![Next.js](https://img.shields.io/badge/Next.js-16.4-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
-[![Vitest](https://img.shields.io/badge/Vitest-19%20Passed-green?style=for-the-badge&logo=vitest)](https://vitest.dev/)
-[![Branch](https://img.shields.io/badge/Branch-feat%2Fproduction--core-blueviolet?style=for-the-badge)](https://github.com/echelonsystemsgd-deep/Wealth-Wise-Accountant-Accounting-Platform)
+[![Vitest](https://img.shields.io/badge/Vitest-24%20Passed-green?style=for-the-badge&logo=vitest)](https://vitest.dev/)
+[![Active Branch](https://img.shields.io/badge/Branch-phase--2--auth--crm-gold?style=for-the-badge)](https://github.com/echelonsystemsgd-deep/Wealth-Wise-Accountant-Accounting-Platform)
 
 ---
 
-## 🌐 Live Interactive Application & Branches
+## 🌐 Branch Structure & Development Progression
 
-* **Live Prototype (Vercel):** [https://wealth-wise-platform-sigma.vercel.app/](https://wealth-wise-platform-sigma.vercel.app/) (hosted from `main` branch).
-* **Production Core Branch:** `feat/production-core` — Dedicated phased production build containing the full Data Access Layer (DAL), PostgreSQL multi-tenant schema with Row-Level Security, and mobile UX optimizations.
-* **Instant Role Switcher:** Toggle seamlessly in the header between:
-  1. **Accountant Hub:** Practice command center, client portfolio triage, general ledger inspector, Trial Balance, and bank reconciliation.
-  2. **Business Workspace:** Client business director portal, live cash position, urgent document request drawer, invoice issuance, and direct accountant messenger.
+The project is structured into clear isolated branches for client preview and phased milestone delivery:
 
----
-
-## ⚡ Architecture & Phase 1 Highlights (`feat/production-core`)
-
-Unlike static UI templates or mockup prototypes, this system is engineered on a **canonical double-entry bookkeeping engine** and a modular **Production Data Access Layer (DAL)**:
-
-1. **Production PostgreSQL Schema (`lib/dal/schema.sql`):**  
-   PostgreSQL 15+ compatible with Row-Level Security (RLS) policies, practices, client organisations, users, chart of accounts, journal entries, journal lines, invoices, bank accounts, and tamper-evident audit logs.
-2. **Production TypeScript DAL (`lib/dal/`):**  
-   Strict repository abstractions (`IOrganizationDal`, `ILedgerDal`, `IInvoiceDal`, `IBankDal`, `IAuditDal`) with memory and PostgreSQL connectors.
-3. **Strict Double-Entry Invariant Checking:**  
-   Every transaction posted to the General Ledger strictly enforces $\sum \text{Debits} - \sum \text{Credits} = 0$. Unbalanced transactions trigger a `DoubleEntryImbalanceError`.
-4. **Immutable Audit History & Reversals:**  
-   Posted transactions are never silently overwritten or deleted. Corrections generate an exact reversing journal entry with pointers to the original record and authorizing actor.
-5. **Integer Minor Units (Pence):**  
-   All monetary amounts are stored and calculated strictly in pence (`£150.25` = `15025`) to eliminate floating-point arithmetic errors.
-6. **Mobile Ergonomics & Responsive Dual-Views:**  
-   - Dedicated mobile card views on small viewports (`< sm`) for invoices and general ledger entries.
-   - 40–44px minimum touch targets across all interactive buttons and inputs.
-   - Anti-zoom `text-base sm:text-xs` styling for mobile Safari/Chrome.
-   - Smooth touch momentum scrolling (`-webkit-overflow-scrolling: touch`) with `scrollbar-none`.
+* **`main`**: Verified live production landing page and interactive dual-perspective demonstrator.
+* **`phase-2-auth-crm`** *(Current Active Build)*: Multi-tenant authentication, Row-Level Security (RLS) context, role-based UI guards (RBAC), multi-client workspace switching, and Practice CRM client portfolio manager.
+* **`phase-3-bank-feeds`**: Automated Open Banking statement ingestion, 2-column live bank matching, and reconciliation rules.
+* **`phase-4-document-ocr`**: S3-compatible document vault, AI OCR receipt data extraction, and missing document chase queue.
+* **`phase-5-invoicing-hmrc`**: Client checkout links via Stripe, UK HMRC Making Tax Digital (MTD) VAT returns, and statutory filing exports.
 
 ---
 
-## 📁 Technical Documentation (`/implementation`)
+## ⚡ Phase 2 Deliverables: Multi-Tenant Auth, RBAC & Practice CRM
 
-Detailed blueprints, audit logs, and compliance checklists:
+Phase 2 connects the canonical accounting engine built in Phase 1 into a true multi-tenant practice operating system:
 
-* [`/implementation/IMPLEMENTATION_PLAN.md`](./implementation/IMPLEMENTATION_PLAN.md) — Master implementation plan, problem register, phased roadmap, and Phase 1 completion report.
-* [`/implementation/ARCHITECTURE.md`](./implementation/ARCHITECTURE.md) — System architecture, relational PostgreSQL schema, entity diagrams, and tenancy isolation rules.
-* [`/implementation/ACCOUNTING_RULES.md`](./implementation/ACCOUNTING_RULES.md) — Cardinal ledger invariants, UK nominal codes (1000–7999), and transaction posting lifecycles.
-* [`/implementation/API_KEYS_AND_INTEGRATIONS.md`](./implementation/API_KEYS_AND_INTEGRATIONS.md) — Master checklist of required API credentials (Supabase, Truelayer, HMRC, Mindee, Stripe).
-* [`/implementation/PRODUCTION_READINESS.md`](./implementation/PRODUCTION_READINESS.md) — Subsystem readiness matrix and environmental configuration guide.
+1. **Practice CRM & Portfolio Management Hub (`components/crm/PracticeCrmView.tsx`):**
+   - Central command dashboard for the accountancy practice.
+   - Real-time client health metrics: Unreconciled bank transactions, missing client receipts, draft sales invoices, and bank cash balances.
+   - Practice fee analytics: Tracks monthly practice retainers (£1,190/mo) alongside direct self-serve SaaS revenue (£9–£19/mo).
+   - Statutory compliance tracking: Automatic deadline reminders for upcoming VAT Returns (Form 100), Year-End Accounts (Companies House), and Confirmation Statements.
+
+2. **Client Workspace Switcher (`components/auth/ClientWorkspaceSwitcher.tsx`):**
+   - Instant switcher allowing accountants to cycle between client businesses (Apex Digital Solutions Ltd, Kensington Bistro Ltd, Vanguard Real Estate LLP, Clara Bennett Studio) without logging out.
+   - Automatically sets tenant context (`app.current_org_id`) ensuring strict Row-Level Security.
+
+3. **Role-Based Access Control (RBAC) & UI Guards:**
+   - **`PRACTICE_ADMIN` / `SENIOR_ACCOUNTANT` / `BOOKKEEPER`**: Full practice CRM access, multi-client switching, general ledger journal posting, trial balance generation, and approval drawers.
+   - **`CLIENT_DIRECTOR`**: Strictly sandboxed to their single company workspace. Attempting to access practice-level management views displays an authorized security shield directing them back to their business portal.
+
+4. **Bi-Directional Action Placeholders:**
+   - **Accountant Review Required**: Clear action items requiring accountant sign-off (e.g. VAT Box 1/4 adjustments, POS card batch splits, Sole Trader draft computations).
+   - **Pending Client Director Action**: Clear tasks highlighted directly in the Client Portal (e.g. upload missing Barclaycard receipts, connect Open Banking feeds, approve management report packs).
 
 ---
 
-## 🛠️ Automated Verification & Test Coverage
+## 📱 Mobile-First Ergonomics
 
-All 19 automated tests run and pass cleanly in `vitest`:
+- Touch targets calibrated to a minimum 40–44px for high-dexterity mobile use.
+- Responsive horizontal scrolling (`touch-pan-x` and `scrollbar-none`) for navigation strips and filter bars.
+- Dedicated dual-views: clean itemized cards on `< sm` mobile screens; high-density tabular spreadsheets on desktop.
+- Zero horizontal screen overflow on iOS Safari and mobile Chrome.
+
+---
+
+## 🛠️ Automated Verification & Tests
+
+Run all 24 passing automated tests:
 
 ```bash
 pnpm test
 ```
 
 ```
-✓ lib/dal/dal.test.ts (8 tests)
-✓ lib/accounting/ledgerService.test.ts (4 tests)
-✓ lib/accounting/ledgerService.advanced.test.ts (4 tests)
+✓ lib/crm/crm.test.ts (4 tests)
+✓ lib/dal/dal.test.ts (9 tests)
 ✓ lib/utils.test.ts (3 tests)
+✓ lib/accounting/ledgerService.advanced.test.ts (4 tests)
+✓ lib/accounting/ledgerService.test.ts (4 tests)
 
-Test Files  4 passed (4)
-Tests       19 passed (19)
+Test Files  5 passed (5)
+Tests       24 passed (24)
 ```
 
-To run the Next.js production build:
+Compile the Next.js production build:
+
 ```bash
 pnpm run build
 ```
 
 ---
 
-## 🔒 Security & Phased Delivery Notice
+## 🔒 Configuration & API Checklist for Client & Developer
 
-The software engine is designed to operate seamlessly both in simulation mode (zero external dependency costs) and connected mode (plug-and-play API keys). Live bank synchronization and HMRC tax filing capabilities require the registration of verified UK commercial entities with the Financial Conduct Authority (FCA) and the HMRC Developer Hub as detailed in [`/implementation/API_KEYS_AND_INTEGRATIONS.md`](./implementation/API_KEYS_AND_INTEGRATIONS.md).
+When ready to connect production cloud providers, see detailed setup instructions in:
+- [`/docs/internal/API_KEYS_AND_INTEGRATIONS.md`](./docs/internal/API_KEYS_AND_INTEGRATIONS.md)
+- [`/docs/internal/IMPLEMENTATION_PLAN.md`](./docs/internal/IMPLEMENTATION_PLAN.md)
+- [`/docs/internal/PROPRIETARY_XERO_ALTERNATIVE_BLUEPRINT.md`](./docs/internal/PROPRIETARY_XERO_ALTERNATIVE_BLUEPRINT.md)

@@ -16,9 +16,9 @@ Wealth Wise Accountant is transitioning from a high-fidelity interactive prototy
 
 | Phase | Description | Status | Test Coverage | Mobile Verified | External Connections Needed |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Phase 1** | **Data Architecture & Production DAL** | **COMPLETED ✅** | 19 / 19 Tests Passed | **YES (Cards, Touch 44px, Safe Viewports)** | Database (`DATABASE_URL`) |
-| **Phase 2** | Multi-Tenant Auth, Session RLS & Practice CRM | Next Up ⏳ | Pending | Ready for integration | Supabase Auth / Clerk / NextAuth |
-| **Phase 3** | Bank Feeds & Automated Statement Sync | In Architecture ⏳ | Pending | Ready for integration | Truelayer / Plaid / Yapily Open Banking |
+| **Phase 1** | **Data Architecture & Production DAL** | **COMPLETED ✅** | 20 / 20 Tests Passed | **YES (Cards, Touch 44px, Safe Viewports)** | Database (`DATABASE_URL`) |
+| **Phase 2** | **Multi-Tenant Auth, Session RLS & Practice CRM** | **COMPLETED ✅** | 24 / 24 Tests Passed | **YES (Cards, Touch 44px, Safe Viewports)** | Supabase Auth (`NEXT_PUBLIC_SUPABASE_URL`) |
+| **Phase 3** | Bank Feeds & Automated Statement Sync | Next Up ⏳ | Pending | Ready for integration | Truelayer / Plaid / Yapily Open Banking |
 | **Phase 4** | Document Vault, Real OCR & Receipt Extraction | In Architecture ⏳ | Pending | Ready for integration | AWS S3 / Mindee / Google Cloud Document AI |
 | **Phase 5** | Invoicing Payments, HMRC MTD & Statutory Filing | In Architecture ⏳ | Pending | Ready for integration | HMRC MTD Sandbox & Stripe Connect |
 
