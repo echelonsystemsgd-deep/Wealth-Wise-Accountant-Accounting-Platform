@@ -1,50 +1,73 @@
 @import "tailwindcss";
 
 :root {
-  /* Warm, executive dark theme with muted gold & champagne accents */
-  --background: #0d0e11;
-  --foreground: #f2ede4;
-  
-  --card: #141519;
-  --card-foreground: #f2ede4;
-  
-  --primary: #c9a84c;
-  --primary-foreground: #0d0e11;
-  
-  --muted: #1b1c22;
-  --muted-foreground: #9e9382;
-  
-  --border: #26241e;
-  --ring: #c9a84c;
+  /* Exact extracted Elementor brand tokens */
+  --font-serif: var(--font-dm-serif), 'DM Serif Display', Georgia, serif;
+  --font-sans: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 
-  /* Subtle card and inner shadows */
-  --card-shadow: 0 1px 3px 0 rgb(0 0 0 / 0.4), 0 1px 2px -1px rgb(0 0 0 / 0.4);
-  --card-inner-shadow: inset 0 1px 0 0 rgb(201 168 76 / 0.08);
+  --background: #F0F5FA;
+  --foreground: #111111;
+  
+  --card: #FFFFFF;
+  --card-foreground: #111111;
+  
+  --header-bg: #000000;
+  --header-fg: #FFFFFF;
+
+  --primary-gold: #C0A262;
+  --gold-light: #CDBA7A;
+  --gold-dark: #9A7A3A;
+  --gold-stroke: #C7A447;
+  --gold-border: #D5C8AA;
+
+  --text-heading: #111111;
+  --text-body: #666666;
+  --border-subtle: #D1D5DB;
 }
 
 body {
   background-color: var(--background);
   color: var(--foreground);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
   touch-action: manipulation;
 }
 
-/* Card surface styling tailored for deep black & warm champagne-gold */
+.font-serif-heading {
+  font-family: var(--font-serif);
+}
+
+/* Card surfaces */
 .card-surface {
-  background-color: #141519;
-  border: 1px solid #26241e;
-  border-radius: 0.75rem; /* 12px */
-  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.4);
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  border-radius: 0.75rem;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04);
 }
 
 .card-surface-elevated {
-  background-color: #18191f;
-  border: 1px solid #332f25;
+  background-color: #FFFFFF;
+  border: 1px solid rgba(0, 0, 0, 0.12);
   border-radius: 0.75rem;
-  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.6);
+  box-shadow: 0 4px 12px -2px rgba(0, 0, 0, 0.06);
+}
+
+/* Ticker Animation */
+@keyframes ticker {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-ticker {
+  display: flex;
+  width: max-content;
+  animation: ticker 25s linear infinite;
+}
+
+.animate-ticker:hover {
+  animation-play-state: paused;
 }
 
 /* Mobile scrollbar hiding utility */

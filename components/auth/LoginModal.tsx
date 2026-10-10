@@ -58,7 +58,7 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
             </div>
             <div>
               <h3 className="text-sm font-bold text-white">
-                {authMode === "LOGIN" ? "Sign in to Platform OS" : "Register Client Organisation"}
+                {authMode === "LOGIN" ? "Sign in to Workspace Prototype" : "Register Client Organisation"}
               </h3>
               <p className="text-[11px] text-[#8c8272]">Wealthwise Accountants Practice & Client Portal</p>
             </div>
@@ -301,7 +301,7 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
             <ShieldCheck className="w-3.5 h-3.5 text-[#c9a84c]" />
             <span>Multi-Tenant RLS Partitioned</span>
           </div>
-          <span>Wealthwise OS v1.0</span>
+          <span>Wealthwise Prototype v1.0</span>
         </div>
       </div>
     </div>

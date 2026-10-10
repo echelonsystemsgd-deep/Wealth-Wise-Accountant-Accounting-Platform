@@ -17,7 +17,6 @@ import {
   Clock,
   ArrowUpRight,
   TrendingUp,
-  ShieldCheck,
   DollarSign,
 } from "lucide-react";
 
@@ -50,7 +49,7 @@ export function AccountantDashboard() {
   return (
     <div className="space-y-6">
       {/* Navigation tabs */}
-      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-[#26241e] scrollbar-none touch-pan-x -mx-1 px-1">
+      <div className="flex items-center gap-1.5 overflow-x-auto pb-2 border-b border-[#D1D5DB] scrollbar-none touch-pan-x -mx-1 px-1">
         {[
           { id: "OVERVIEW", label: "Executive Overview" },
           { id: "LEDGER", label: `General Ledger (${journals.length} Journals)` },
@@ -62,10 +61,10 @@ export function AccountantDashboard() {
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id as typeof activeTab)}
-            className={`px-3 sm:px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap min-h-[38px] ${
+            className={`px-3 sm:px-3.5 py-2 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap min-h-[44px] flex items-center ${
               activeTab === tab.id
-                ? "bg-[#25241f] text-[#c9a84c] border border-[#4a4029] shadow-xs"
-                : "text-[#8c8272] hover:text-white hover:bg-[#181920]"
+                ? "bg-[#000000] text-white shadow-xs"
+                : "text-[#666666] hover:text-[#111111] hover:bg-white"
             }`}
           >
             {tab.label}
@@ -77,194 +76,194 @@ export function AccountantDashboard() {
         <div className="space-y-6">
           {/* Top Metric Cards */}
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <div className="card-surface p-4 flex flex-col justify-between">
-              <div className="flex items-center justify-between text-[#8c8272]">
+            <div className="bg-white rounded-xl border border-[#D1D5DB] p-5 flex flex-col justify-between shadow-xs">
+              <div className="flex items-center justify-between text-[#666666]">
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Active Client Portfolio
                 </span>
-                <div className="w-8 h-8 rounded-lg bg-[#1a1b22] border border-[#2e2b22] flex items-center justify-center text-[#c9a84c]">
-                  <Users className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-lg bg-[#F0F5FA] border border-[#E2E8F0] flex items-center justify-center text-[#111111]">
+                  <Users className="w-4 h-4 text-[#C0A262]" />
                 </div>
               </div>
               <div className="my-2">
-                <div className="text-2xl font-bold tracking-tight text-white">
+                <div className="font-serif-heading text-3xl font-bold tracking-tight text-[#111111]">
                   48 Accounts
                 </div>
-                <div className="text-xs font-medium text-[#c9a84c] flex items-center gap-1 mt-1">
+                <div className="text-xs font-medium text-[#046bd2] flex items-center gap-1 mt-1">
                   <TrendingUp className="w-3.5 h-3.5" />
-                  +4 onboarding this month
+                  +4 onboarding this month (Sample)
                 </div>
               </div>
-              <div className="text-[11px] text-[#706859] border-t border-[#26241e] pt-2">
+              <div className="text-[11px] text-[#666666] border-t border-[#F0F5FA] pt-2">
                 All UK entities in good compliance standing
               </div>
             </div>
 
-            <div className="card-surface p-4 flex flex-col justify-between">
-              <div className="flex items-center justify-between text-[#8c8272]">
+            <div className="bg-white rounded-xl border border-[#D1D5DB] p-5 flex flex-col justify-between shadow-xs">
+              <div className="flex items-center justify-between text-[#666666]">
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Unreconciled Feed
                 </span>
-                <div className="w-8 h-8 rounded-lg bg-[#1a1b22] border border-[#2e2b22] flex items-center justify-center text-[#e5c158]">
-                  <Clock className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-lg bg-[#F0F5FA] border border-[#E2E8F0] flex items-center justify-center text-[#111111]">
+                  <Clock className="w-4 h-4 text-[#C0A262]" />
                 </div>
               </div>
               <div className="my-2">
-                <div className="text-2xl font-bold tracking-tight text-white">
+                <div className="font-serif-heading text-3xl font-bold tracking-tight text-[#111111]">
                   {unreconciledCount} Items
                 </div>
-                <div className="text-xs font-medium text-[#e5c158] flex items-center gap-1 mt-1">
+                <div className="text-xs font-medium text-[#C0A262] flex items-center gap-1 mt-1">
                   <AlertCircle className="w-3.5 h-3.5" />
-                  High confidence matches available
+                  Matches suggested from statement
                 </div>
               </div>
-              <div className="text-[11px] text-[#706859] border-t border-[#26241e] pt-2">
+              <div className="text-[11px] text-[#666666] border-t border-[#F0F5FA] pt-2">
                 Barclays Business statement queue
               </div>
             </div>
 
-            <div className="card-surface p-4 flex flex-col justify-between">
-              <div className="flex items-center justify-between text-[#8c8272]">
+            <div className="bg-white rounded-xl border border-[#D1D5DB] p-5 flex flex-col justify-between shadow-xs">
+              <div className="flex items-center justify-between text-[#666666]">
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Ledger Cash Position
                 </span>
-                <div className="w-8 h-8 rounded-lg bg-[#1a1b22] border border-[#2e2b22] flex items-center justify-center text-[#c9a84c]">
-                  <DollarSign className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-lg bg-[#F0F5FA] border border-[#E2E8F0] flex items-center justify-center text-[#111111]">
+                  <DollarSign className="w-4 h-4 text-[#C0A262]" />
                 </div>
               </div>
               <div className="my-2">
-                <div className="text-2xl font-bold tracking-tight text-white">
+                <div className="font-serif-heading text-3xl font-bold tracking-tight text-[#111111]">
                   {formatGBP(financialSummary.cashBalancePence)}
                 </div>
-                <div className="text-xs font-medium text-[#c9a84c] flex items-center gap-1 mt-1">
-                  <ArrowUpRight className="w-3.5 h-3.5" />
-                  Liquid operating reserves (Dr 1200)
+                <div className="text-xs font-medium text-[#111111] flex items-center gap-1 mt-1">
+                  <ArrowUpRight className="w-3.5 h-3.5 text-[#C0A262]" />
+                  Operating accounts (Dr 1200)
                 </div>
               </div>
-              <div className="text-[11px] text-[#706859] border-t border-[#26241e] pt-2">
-                Across business clearing accounts
+              <div className="text-[11px] text-[#666666] border-t border-[#F0F5FA] pt-2">
+                Sample clearing account balance
               </div>
             </div>
 
-            <div className="card-surface p-4 flex flex-col justify-between">
-              <div className="flex items-center justify-between text-[#8c8272]">
+            <div className="bg-white rounded-xl border border-[#D1D5DB] p-5 flex flex-col justify-between shadow-xs">
+              <div className="flex items-center justify-between text-[#666666]">
                 <span className="text-xs font-semibold uppercase tracking-wider">
                   Upcoming Filing Deadlines
                 </span>
-                <div className="w-8 h-8 rounded-lg bg-[#1a1b22] border border-[#2e2b22] flex items-center justify-center text-[#c9a84c]">
-                  <FileCheck2 className="w-4 h-4" />
+                <div className="w-8 h-8 rounded-lg bg-[#F0F5FA] border border-[#E2E8F0] flex items-center justify-center text-[#111111]">
+                  <FileCheck2 className="w-4 h-4 text-[#C0A262]" />
                 </div>
               </div>
               <div className="my-2">
-                <div className="text-2xl font-bold tracking-tight text-white">
+                <div className="font-serif-heading text-3xl font-bold tracking-tight text-[#111111]">
                   6 Returns Due
                 </div>
-                <div className="text-xs font-medium text-[#8c8272] flex items-center gap-1 mt-1">
-                  <span>HMRC MTD VAT · 07 Nov</span>
+                <div className="text-xs font-medium text-[#666666] flex items-center gap-1 mt-1">
+                  <span>VAT & Statutory accounts · 07 Nov</span>
                 </div>
               </div>
-              <div className="text-[11px] text-[#706859] border-t border-[#26241e] pt-2">
-                Quarterly digital submissions ready
+              <div className="text-[11px] text-[#666666] border-t border-[#F0F5FA] pt-2">
+                Quarterly submission tracking
               </div>
             </div>
           </div>
 
           {/* Interactive Chart Grids */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-            <div className="lg:col-span-2 card-surface p-4 sm:p-5 flex flex-col justify-between">
+            <div className="lg:col-span-2 bg-white rounded-xl border border-[#D1D5DB] p-6 flex flex-col justify-between shadow-xs">
               <div>
                 <div className="flex items-center justify-between">
-                  <h3 className="text-sm font-bold text-white">
-                    Trailing 6-Month Practice Performance & Margins
+                  <h3 className="font-serif-heading text-lg font-bold text-[#111111]">
+                    Trailing 6-Month Practice Overview (Sample Data)
                   </h3>
-                  <span className="text-xs font-semibold text-[#c9a84c] bg-[#1d1b15] px-2 py-0.5 rounded border border-[#3b3424]">
-                    GBP Minor-Unit Precision
+                  <span className="text-xs font-semibold text-[#111111] bg-[#F0F5FA] px-2.5 py-1 rounded border border-[#E2E8F0]">
+                    Pence Minor-Units
                   </span>
                 </div>
-                <p className="text-xs text-[#8c8272] mt-0.5">
-                  Accrual basis turnover vs direct costs from client ledgers
+                <p className="text-xs text-[#666666] mt-1">
+                  Turnover vs direct costs calculated from sample client ledgers
                 </p>
               </div>
 
-              <div className="my-4">
+              <div className="my-6">
                 <HighPrecisionFinancialChart data={revenueChartData} />
               </div>
 
-              <div className="flex items-center justify-between text-xs text-[#8c8272] border-t border-[#26241e] pt-3">
+              <div className="flex items-center justify-between text-xs text-[#666666] border-t border-[#E2E8F0] pt-3">
                 <div className="flex items-center gap-4">
                   <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-xs bg-[#c9a84c]" />
+                    <span className="w-3 h-3 rounded-xs bg-[#C0A262]" />
                     <span>Turnover (Nominal 4000)</span>
                   </div>
                   <div className="flex items-center gap-1.5">
-                    <span className="w-3 h-3 rounded-xs bg-[#2e2b22]" />
+                    <span className="w-3 h-3 rounded-xs bg-[#111111]" />
                     <span>Overheads & COGS</span>
                   </div>
                 </div>
-                <span className="font-semibold text-[#f2ede4]">
+                <span className="font-semibold text-[#111111]">
                   Net Operating Margin: 44.8%
                 </span>
               </div>
             </div>
 
-            <div className="card-surface p-4 sm:p-5 flex flex-col justify-between">
+            <div className="bg-white rounded-xl border border-[#D1D5DB] p-6 flex flex-col justify-between shadow-xs">
               <div>
-                <h3 className="text-sm font-bold text-white">
-                  Monthly Workflow & Audit Pipeline
+                <h3 className="font-serif-heading text-lg font-bold text-[#111111]">
+                  Workflow & Review Pipeline
                 </h3>
-                <p className="text-xs text-[#8c8272] mt-0.5">
-                  End-to-end client bookkeeping workflow
+                <p className="text-xs text-[#666666] mt-1">
+                  Practice accounting stages
                 </p>
               </div>
 
-              <div className="my-4">
+              <div className="my-6">
                 <IntakeFunnelChart steps={funnelSteps} />
               </div>
 
-              <div className="text-[11px] text-[#706859] border-t border-[#26241e] pt-3">
-                Strict four-eye review protocol enforced prior to filing
+              <div className="text-[11px] text-[#666666] border-t border-[#E2E8F0] pt-3">
+                Review protocol enforced prior to client submission
               </div>
             </div>
           </div>
 
           {/* Quick Shortcuts */}
-          <div className="card-surface p-4 sm:p-5">
-            <div className="flex items-center justify-between mb-3">
-              <h3 className="text-sm font-bold text-white">
-                Accountant Core Workspaces
+          <div className="bg-white rounded-xl border border-[#D1D5DB] p-6 shadow-xs">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="font-serif-heading text-base font-bold text-[#111111]">
+                Accountant Workspaces
               </h3>
-              <span className="text-xs text-[#8c8272]">
-                Instant context navigation
+              <span className="text-xs text-[#666666]">
+                Instant navigation
               </span>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
               <button
                 onClick={() => setActiveTab("LEDGER")}
-                className="p-3 text-left bg-[#16171d] hover:bg-[#1e1f28] rounded-xl border border-[#282620] hover:border-[#4a4029] transition-all"
+                className="p-4 text-left bg-[#F0F5FA] hover:bg-white rounded-xl border border-[#E2E8F0] hover:border-[#C0A262] transition-colors min-h-[44px]"
               >
-                <div className="text-xs font-bold text-white">General Ledger</div>
-                <div className="text-[11px] text-[#8c8272] mt-0.5">Trial Balance & Journals</div>
+                <div className="text-xs font-bold text-[#111111]">General Ledger</div>
+                <div className="text-[11px] text-[#666666] mt-0.5">Trial Balance & Journals</div>
               </button>
               <button
                 onClick={() => setActiveTab("RECONCILIATION")}
-                className="p-3 text-left bg-[#16171d] hover:bg-[#1e1f28] rounded-xl border border-[#282620] hover:border-[#4a4029] transition-all"
+                className="p-4 text-left bg-[#F0F5FA] hover:bg-white rounded-xl border border-[#E2E8F0] hover:border-[#C0A262] transition-colors min-h-[44px]"
               >
-                <div className="text-xs font-bold text-white">Bank Feeds</div>
-                <div className="text-[11px] text-[#8c8272] mt-0.5">Interactive Matching</div>
+                <div className="text-xs font-bold text-[#111111]">Bank Feeds</div>
+                <div className="text-[11px] text-[#666666] mt-0.5">Statement Matching</div>
               </button>
               <button
                 onClick={() => setActiveTab("INVOICES")}
-                className="p-3 text-left bg-[#16171d] hover:bg-[#1e1f28] rounded-xl border border-[#282620] hover:border-[#4a4029] transition-all"
+                className="p-4 text-left bg-[#F0F5FA] hover:bg-white rounded-xl border border-[#E2E8F0] hover:border-[#C0A262] transition-colors min-h-[44px]"
               >
-                <div className="text-xs font-bold text-white">Invoicing & AR</div>
-                <div className="text-[11px] text-[#8c8272] mt-0.5">Sales & Debtor Tracking</div>
+                <div className="text-xs font-bold text-[#111111]">Invoicing & AR</div>
+                <div className="text-[11px] text-[#666666] mt-0.5">Sales & Debtor Tracking</div>
               </button>
               <button
                 onClick={() => setActiveTab("REPORTS")}
-                className="p-3 text-left bg-[#16171d] hover:bg-[#1e1f28] rounded-xl border border-[#282620] hover:border-[#4a4029] transition-all"
+                className="p-4 text-left bg-[#F0F5FA] hover:bg-white rounded-xl border border-[#E2E8F0] hover:border-[#C0A262] transition-colors min-h-[44px]"
               >
-                <div className="text-xs font-bold text-white">Statutory Reports</div>
-                <div className="text-[11px] text-[#8c8272] mt-0.5">P&L, Balance Sheet & VAT</div>
+                <div className="text-xs font-bold text-[#111111]">Financial Reports</div>
+                <div className="text-[11px] text-[#666666] mt-0.5">P&L and Balance Sheet</div>
               </button>
             </div>
           </div>
