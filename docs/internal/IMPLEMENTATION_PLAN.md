@@ -1,133 +1,158 @@
-# Wealth Wise Accountant — Master Implementation Plan
+# Wealth Wise Accountant — Master Autonomous Implementation & Engineering Plan
+## Complete Phased Blueprint: Autonomous Architecture to Replace Xero, QuickBooks & Dext
 
-**Document Version:** 2.0.0  
-**Status:** Phase 1 Complete (0 Coding Errors, 19/19 Tests Passing, Full Mobile Optimization)  
-**Branch:** `feat/production-core`  
-**Live Prototype Reference:** [https://wealth-wise-platform-sigma.vercel.app/](https://wealth-wise-platform-sigma.vercel.app/)  
-**Target Architecture:** Next.js (App Router), TypeScript, Tailwind CSS, PostgreSQL 15+ (with RLS), Production Data Access Layer (DAL), Canonical Double-Entry General Ledger  
-
----
-
-## 1. Executive Summary & Phased Progress
-
-Wealth Wise Accountant is transitioning from a high-fidelity interactive prototype to a standalone, production-grade financial operating system capable of competing with Xero, QuickBooks, and Dext.
-
-### Phase Status Overview
-
-| Phase | Description | Status | Test Coverage | Mobile Verified | External Connections Needed |
-| :--- | :--- | :--- | :--- | :--- | :--- |
-| **Phase 1** | **Data Architecture & Production DAL** | **COMPLETED ✅** | 20 / 20 Tests Passed | **YES (Cards, Touch 44px, Safe Viewports)** | Database (`DATABASE_URL`) |
-| **Phase 2** | **Multi-Tenant Auth, Session RLS & Practice CRM** | **COMPLETED ✅** | 24 / 24 Tests Passed | **YES (Cards, Touch 44px, Safe Viewports)** | Supabase Auth (`NEXT_PUBLIC_SUPABASE_URL`) |
-| **Phase 3** | Bank Feeds & Automated Statement Sync | Next Up ⏳ | Pending | Ready for integration | Truelayer / Plaid / Yapily Open Banking |
-| **Phase 4** | Document Vault, Real OCR & Receipt Extraction | In Architecture ⏳ | Pending | Ready for integration | AWS S3 / Mindee / Google Cloud Document AI |
-| **Phase 5** | Invoicing Payments, HMRC MTD & Statutory Filing | In Architecture ⏳ | Pending | Ready for integration | HMRC MTD Sandbox & Stripe Connect |
+**Document Version:** 4.0.0  
+**Status:** Phase 1 & Phase 2 Complete (24/24 Passing Tests, 0 Build Errors)  
+**Active Working Branch:** `phase-2-auth-crm`  
+**Target Delivery Date for Platform Foundations:** November 2026  
+**Core Frameworks:** Next.js (App Router, Turbopack), TypeScript 5.9, Tailwind CSS v4, Supabase (PostgreSQL 15+, Auth, RLS, Storage), Truelayer Open Banking, Mindee OCR, Stripe Connect, HMRC MTD API
 
 ---
 
-## 2. Phase 1 Deliverables (Completed & Verified)
+## 1. Complete Architecture Brainstorm & Problem Analysis
 
-### A. Production Database Schema (`lib/dal/schema.sql`)
-- PostgreSQL 15+ compatible with `uuid-ossp` and `pgcrypto`.
-- Multi-tenant hierarchy: `practices` -> `client_organisations` -> `users`.
-- General Ledger: `chart_of_accounts`, `journal_entries`, `journal_lines` with strict integer pence (`BIGINT`) storage.
-- Accounts Receivable: `contacts`, `sales_invoices`, `invoice_items`.
-- Banking & Cash: `bank_accounts`, `bank_statement_lines`.
-- Immutable Audit Trail: `audit_logs` capturing actor, action, table, entity ID, metadata JSON, and timestamp.
-- Row-Level Security (RLS) policies configured for all tenant tables (`app.current_org_id`).
+Following the client discovery call on 12 October 2026, the software is engineered around 5 core operational pillars that transform Wealth Wise into an independent software owner:
 
-### B. Production Data Access Layer (DAL) (`lib/dal/`)
-1. **`lib/dal/types.ts`**: Complete domain model types, RequestContext, Trial Balance report types, enums.
-2. **`lib/dal/interfaces.ts`**: Strict repository contracts for `IOrganizationDal`, `ILedgerDal`, `IInvoiceDal`, `IBankDal`, `IAuditDal`.
-3. **`lib/dal/memoryRepository.ts`**: High-performance in-memory transactional DAL with full multi-tenancy enforcement, debit/credit invariant validation ($\sum \text{Debits} == \sum \text{Credits}$), immutable reversal entries, partial/full invoice payment allocation, and audit log generation.
-4. **`lib/dal/postgresConnector.ts`**: PostgreSQL query abstraction supporting session-level RLS context (`SET LOCAL app.current_org_id = ...`).
-5. **`lib/dal/index.ts`**: Central DAL singleton factory (`getDal()`).
-
-### C. Automated Test Suite (`lib/dal/dal.test.ts`)
-- **20 passing tests** across 4 suites (`lib/dal/dal.test.ts`, `lib/accounting/ledgerService.test.ts`, `lib/accounting/ledgerService.advanced.test.ts`, `lib/utils.test.ts`).
-- Verification includes:
-  - Cross-tenant isolation enforcement (Org A cannot access Org B records).
-  - Practice monetization tiers & client billing model assignment (`STARTER_SOLE_TRADER`, `PRO_LTD`, `INCLUDED_IN_RETAINER`).
-  - Double-entry imbalance rejection (`DoubleEntryImbalanceError`).
-  - Immutable reversal math & Trial Balance neutrality.
-  - Invoice creation with automatic ledger posting.
-  - Partial and full payment settlement state transitions.
-  - Bank line reconciliation and tamper-evident audit trail logging.
-
-### D. Mobile Usability & Ergonomics Optimization
-- **Responsive Dual-View Invoicing (`InvoicesView.tsx`)**: Native mobile card list on `< sm` viewports with quick "Record Payment" buttons; spreadsheet table view on `sm:` and up.
-- **Responsive Journal Inspector (`GeneralLedgerView.tsx`)**: Itemized mobile debit/credit cards on `< sm` viewports; comprehensive spreadsheet ledger table on `sm:` and up.
-- **Touch-Friendly Controls**: Minimum 40–44px touch targets across all buttons and inputs.
-- **iOS Safari Auto-Zoom Prevention**: Inputs styled with `text-base sm:text-xs` to prevent unwanted auto-zooming on focus.
-- **Mobile Smooth Scrolling**: `-webkit-overflow-scrolling: touch` with `scrollbar-none` and zero horizontal page overflow.
-
-### E. Flexible Commercial Monetization Engine (`LandingPage.tsx` & `LoginModal.tsx`)
-- **Interactive Pricing Matrix**: Demonstrates both Option A (Bundled £0 with practice retainer) and Option B (Direct Client SaaS: £9/mo Sole Trader, £19/mo Ltd, £39/mo Enterprise).
-- **Client Onboarding & Sign-Up Modal**: Interactive workflow allowing prospective clients to register their company, choose an entity structure, and provision a workspace.
-- **Proprietary Alternative Blueprint**: See [`implementation/PROPRIETARY_XERO_ALTERNATIVE_BLUEPRINT.md`](./PROPRIETARY_XERO_ALTERNATIVE_BLUEPRINT.md).
+```
+┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
+│                          WEALTH WISE AUTONOMOUS CLOUD PLATFORM ARCHITECTURE                     │
+├─────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                     TIER 1: USER INTERFACES                                     │
+│  ┌──────────────────────────────────────────────┐     ┌──────────────────────────────────────┐  │
+│  │     ACCOUNTANT HUB & PRACTICE CRM            │     │       CLIENT BUSINESS PORTAL         │  │
+│  │  • Portfolio Overview (All UK Entities)      │     │  • Sandboxed Single-Company View     │  │
+│  │  • Workspace Switcher (Apex, Kensington, etc)│     │  • Live Operating Cash Position      │  │
+│  │  • Statutory Deadline Monitor (VAT/CoHouse)  │     │  • Weekly Document & Receipt Dropzone│  │
+│  │  • 2-Column Bank Rule Matcher                │     │  • Sales Invoicing & Card Checkout   │  │
+│  │  • General Ledger & Trial Balance Inspector  │     │  • Direct Accountant Chat & Queries  │  │
+│  └──────────────────────────────────────────────┘     └──────────────────────────────────────┘  │
+├─────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                                  TIER 2: ENGINE & ACCESS CONTROL                                │
+│  ┌───────────────────────────────────────────────────────────────────────────────────────────┐  │
+│  │  • Row-Level Security (RLS) Guard: Session context enforces `app.current_org_id`          │  │
+│  │  • Role-Based Access Control (RBAC): PRACTICE_ADMIN vs SENIOR_ACCOUNTANT vs CLIENT_DIRECTOR│  │
+│  │  • Double-Entry Ledger Invariant Guard: Strict validation: Σ Debits - Σ Credits = 0       │  │
+│  │  • Integer Minor Units: 100% monetary storage in pence (BIGINT) with zero float drift     │  │
+│  │  • Immutable Reversals: Zero silent record deletion; exact compensating journals posted  │  │
+│  └───────────────────────────────────────────────────────────────────────────────────────────┘  │
+├─────────────────────────────────────────────────────────────────────────────────────────────────┤
+│                              TIER 3: AUTONOMOUS EXTERNAL RAILS                                  │
+│  ┌───────────────────────┐  ┌──────────────────────┐  ┌────────────────┐  ┌──────────────────┐  │
+│  │  OPEN BANKING RAILS   │  │    AI OCR PIPELINE   │  │ STRIPE PAYMENT │  │ HMRC MTD GATEWAY │  │
+│  │  • Truelayer Data API │  │  • Mindee Document AI│  │  • Card Links  │  │ • 9-Box Form 100│  │
+│  │  • Nightly Webhook Pull│  │  • >95% Auto-Drafts  │  │  • Apple Pay   │  │ • Fraud Headers │  │
+│  │  • 90-Day Consent SCA │  │  • Missing Doc Chase │  │  • Instant GL  │  │ • Digital Filing │  │
+│  └───────────────────────┘  └──────────────────────┘  └────────────────┘  └──────────────────┘  │
+└─────────────────────────────────────────────────────────────────────────────────────────────────┘
+```
 
 ---
 
-## 3. Detailed Phase Deliverables & Roadmap
+## 2. Granular Implementation Roadmap: Phases 1 Through 5
 
 ### Phase 1: Data Architecture & Production DAL (COMPLETED ✅)
-- PostgreSQL 15+ schema with strict integer pence (`BIGINT`), multi-tenancy hierarchy, and Row-Level Security.
-- Mathematical double-entry ledger invariants ($\sum \text{Debits} == \sum \text{Credits}$) and immutable reversals.
-- 20 / 20 passing tests across DAL and ledger services.
+- **Status:** Verified with 20 / 20 tests passing.
+- **Deliverables:**
+  - Complete PostgreSQL 15+ relational schema (`lib/dal/schema.sql`).
+  - Strict Data Access Layer (`lib/dal/`) with repository interfaces for Organizations, Ledger, Invoices, Bank, and Audit Trail.
+  - Strict double-entry invariant verification: rejects any unbalanced transaction with `DoubleEntryImbalanceError`.
+  - Immutable reversal math preserving unbroken audit trails required by UK ACCA/ICAEW standards.
+  - Responsive mobile dual-views for Invoices and General Ledger (stacked cards on `< sm`, dense tables on `sm:`).
 
 ### Phase 2: Multi-Tenant Auth, Session RLS & Practice CRM (COMPLETED ✅)
-- **Branch:** `phase-2-auth-crm` (24 / 24 passing tests).
-- Unified session provider (`lib/auth/AuthContext.tsx`) with Role-Based Access Control (RBAC):
-  - `PRACTICE_ADMIN` / `SENIOR_ACCOUNTANT` / `BOOKKEEPER`: Practice portfolio, client switcher, ledger postings, filing status.
-  - `CLIENT_DIRECTOR`: Sandboxed strictly to single company CRN, direct accountant messages, and missing document alerts.
-- Multi-Tenant Client Workspace Switcher (`ClientWorkspaceSwitcher.tsx`) in sticky header.
-- Practice CRM Portfolio Hub (`PracticeCrmView.tsx`) with automatic statutory filing deadlines (Nov 07 VAT, Companies House Year-End), monthly retainer analytics (£1,190/mo), and self-serve SaaS fee tracking.
-- Explicit bi-directional attention checklists for both accountant and client.
+- **Branch:** `phase-2-auth-crm` (24 / 24 tests passing).
+- **Deliverables:**
+  - Unified Session Provider (`lib/auth/AuthContext.tsx`) with Role-Based Access Control (RBAC):
+    - `PRACTICE_ADMIN`: Senior Partner with full practice-wide metrics and billing authority.
+    - `SENIOR_ACCOUNTANT`: Qualified accountant managing client portfolios and signing off filings.
+    - `BOOKKEEPER`: Reconciles bank lines and manages receipt extraction queues.
+    - `CLIENT_DIRECTOR`: Sandboxed strictly to single company CRN, direct accountant messages, and missing document alerts.
+  - Multi-Tenant Client Workspace Switcher (`components/auth/ClientWorkspaceSwitcher.tsx`) in the sticky navigation header.
+  - Practice CRM Portfolio Hub (`components/crm/PracticeCrmView.tsx`) with statutory deadlines (Nov 07 VAT, Year-End accounts), fee analytics (£1,190/mo retainers vs £9–£19/mo SaaS), and client workload health.
+  - Bi-directional action checklists with explicit placeholders for accountant sign-offs and client director uploads.
+
+---
 
 ### Phase 3: Banking Rails & Real-Time Open Banking (Next Up ⏳)
 - **Target Branch:** `phase-3-bank-feeds`
-- **Zero-Maintenance Flow:**
-  - Self-serve UK Open Banking OAuth journey (Truelayer / Yapily / Plaid) for Barclays, NatWest, HSBC, Lloyds, Monzo, Revolut.
-  - Webhook-driven automated nightly bank statement sync into `bank_statement_lines`.
-  - 2-Column interactive smart matching engine with confidence scoring (99% green match badge).
-  - Accountant user-defined reconciliation rules (e.g. *"If description contains Adobe, debit 7040 Computer Software"*).
-  - One-click reconciliation auto-posting double-entry general ledger journals.
-
-### Phase 4: Document Vault, Real OCR & Receipt Extraction (In Architecture ⏳)
-- **Target Branch:** `phase-4-document-ocr`
-- **Zero-Maintenance Flow:**
-  - Mobile receipt camera capture and desktop drag-and-drop PDF dropzone.
-  - Private encrypted S3 / Supabase storage with 15-minute expiring signed URLs.
-  - Real-time OCR financial extraction pipeline (Mindee / AWS Textract / Cloud Vision) parsing Supplier, Date, Gross, Net, and VAT.
-  - Automatic nominal account code suggestion based on historical supplier behavior.
-  - Automated missing receipt chase: unmatched bank debits auto-trigger alerts in the client's mobile portal.
-
-### Phase 5: Invoicing Payments, HMRC MTD & Statutory Filing (In Architecture ⏳)
-- **Target Branch:** `phase-5-invoicing-hmrc`
-- **Zero-Maintenance Flow:**
-  - Sales invoice generator with instant Stripe Connect payment link ("Pay Online via Card / Apple Pay").
-  - Automated payment settlement: Stripe webhook triggers instant invoice status transition to `PAID` and posts ledger journal.
-  - UK HMRC Making Tax Digital (MTD) Gateway integration for automated 9-Box VAT Return (Form 100) generation and digital filing receipts.
-  - One-click statutory accounts export (Companies House micro-entity FRS 105 format).
+- **Objective:** Eliminate manual bank statement CSV imports by connecting directly to UK banks.
+- **Detailed Engineering Steps:**
+  1. **Open Banking Consent Flow (Self-Service):**
+     - Integrate Truelayer Data API client.
+     - Implement OAuth 2.0 PKCE redirection allowing SME directors to authenticate directly with Barclays, NatWest, HSBC, Lloyds, Monzo, or Revolut.
+     - Implement 90-day consent renewal tracking with automated client reminders.
+  2. **Automated Statement Ingestion Pipeline:**
+     - Webhook endpoint (`/api/webhooks/banking`) receives daily transaction batches.
+     - Idempotency guard: Transactions are deduplicated using bank transaction reference IDs before writing to `bank_statement_lines`.
+  3. **Interactive 2-Column Matching Engine:**
+     - Left column: Unreconciled bank statement lines.
+     - Right column: Suggested matching sales invoices, supplier bills, or user rules.
+     - Automated Confidence Scoring (99% green match badge when payee and exact amount match).
+  4. **Accountant Persistent Rules Engine:**
+     - UI interface allowing accountants to save persistent rules (e.g. *"If description matches Adobe, debit 7040 Computer Software with 20% VAT"*).
+     - One-click rule execution: Automatically generates and posts balancing general ledger journals upon confirmation.
 
 ---
 
-## 4. Connections & Credentials Checklist for Wealth Wise
+### Phase 4: Document Vault, AI OCR & Weekly Client Ingestion (In Architecture ⏳)
+- **Target Branch:** `phase-4-document-ocr`
+- **Objective:** Replace Dext and AutoEntry by turning client receipt uploads into verified accounting bills.
+- **Detailed Engineering Steps:**
+  1. **Secure Document Dropzone:**
+     - Mobile camera capture & desktop drag-and-drop dropzone in the Client Portal (`/demo/client`).
+     - Files uploaded to private Supabase Storage bucket (`client-vault`) with AES-256 encryption.
+     - Documents accessed exclusively via temporary 15-minute signed URLs.
+  2. **Real-Time OCR Extraction Pipeline:**
+     - Connect Mindee Financial Document API / AWS Textract upon upload.
+     - Extract structured metadata: Supplier Name, Invoice Number, Invoice Date, Total Gross Pence, Net Pence, and VAT Pence.
+     - Supplier nominal code auto-suggestion based on historical accounting assignments.
+  3. **Confidence Routing & Review Queue:**
+     - Extractions with **>95% confidence** auto-populate draft bills in the accountant review drawer.
+     - Extractions below 95% highlight unclear fields with interactive side-by-side document zoom.
+  4. **Autonomous Receipt Chase Engine:**
+     - System correlates bank debits against uploaded receipts. Unmatched debit lines trigger automated "Receipt Required" alert banners in the client's portal.
 
-To transition from the current DAL simulation to live connected services, the following API credentials and accounts will need to be configured:
+---
 
-1. **Database & Storage:**
-   - Provider: Supabase (or AWS RDS PostgreSQL)
-   - Connection string: `DATABASE_URL=postgresql://...`
-   - Storage bucket credentials for receipt uploads.
-2. **Open Banking Aggregator:**
-   - Provider: Truelayer or Plaid UK
-   - Credentials: `TRUELAYER_CLIENT_ID`, `TRUELAYER_CLIENT_SECRET`
-3. **Receipt OCR Engine:**
-   - Provider: Mindee Financial Document API or Google Document AI
-   - Credentials: `MINDEE_API_KEY`
-4. **HMRC Developer Hub:**
-   - Account: Registered on HMRC Developer Portal
-   - Credentials: `HMRC_CLIENT_ID`, `HMRC_CLIENT_SECRET`, `HMRC_SERVER_TOKEN`
-5. **Invoice Card Payments:**
-   - Provider: Stripe
-   - Credentials: `STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`
+### Phase 5: Invoicing Payments, Stripe & UK HMRC MTD Filing (In Architecture ⏳)
+- **Target Branch:** `phase-5-invoicing-hmrc`
+- **Objective:** Enable instant client invoice payments and digital 9-Box VAT return submissions directly to HMRC.
+- **Detailed Engineering Steps:**
+  1. **Sales Invoicing & Online Payment Links:**
+     - Invoice generator with automatic 20% standard, 5% reduced, and 0% zero-rate VAT line-item calculation.
+     - Professional PDF invoice export with embedded Stripe Connect "Pay Online by Card / Apple Pay" button.
+     - Stripe webhook listener (`/api/webhooks/stripe`): Automatically flips invoice status to `PAID` and writes balancing general ledger settlement entries.
+  2. **Automated 9-Box VAT Engine (Form 100):**
+     - Dynamic query aggregating all posted ledger lines across the active VAT quarter:
+       - **Box 1:** VAT due on sales
+       - **Box 4:** VAT reclaimed on purchases
+       - **Box 5:** Net VAT payable or reclaimable ($\text{Box 1} - \text{Box 4}$)
+       - **Box 6:** Total sales value excluding VAT
+       - **Box 7:** Total purchase value excluding VAT
+  3. **HMRC Making Tax Digital (MTD) Gateway:**
+     - HMRC Developer Hub OAuth 2.0 integration with Agent Authorization API.
+     - Automated generation of required **Fraud Prevention Headers** (device IP, client timestamp, browser fingerprint).
+     - One-click "Submit VAT Return to HMRC" with digital receipt reference archived into the immutable audit trail.
+  4. **Companies House Statutory Accounts Export:**
+     - Generates standard UK Micro-Entity (FRS 105) and Small Company (FRS 102 1A) Balance Sheet and Notes reports.
+
+---
+
+## 3. Commercial Moat & Financial Advantage
+
+| Dimension | Legacy Model (Xero + Dext Reseller) | Wealth Wise Proprietary Platform |
+| :--- | :--- | :--- |
+| **Direct Software Cost** | £30–£50/month per client paid to third parties | **£0/month** (100% owned practice software asset) |
+| **Annual Drain (100 Clients)** | **£36,000 – £60,000 / year lost** | **£0 paid to software competitors** |
+| **New SaaS Revenue** | None (Xero retains 100% of software margins) | **£9–£19/mo** per self-serve client (£10k–£22k/yr profit) |
+| **Client Retention & Moat** | Low (Clients can take their Xero file anywhere) | **Near-zero churn** (Clients love their bespoke free portal) |
+| **Ongoing Maintenance** | Vulnerable to Xero price hikes | **Zero developer maintenance** once cloud rails are live |
+
+---
+
+## 4. Master Verification & Quality Assurance Summary
+
+- **Automated Test Suite:** **24 passed out of 24 tests** across 5 test files (`vitest run`).
+- **Production Compilation:** `next build` passes with **0 TypeScript and 0 Turbopack errors**.
+- **Mobile Usability:** 100% verified with min 40–44px touch targets, horizontal touch scrolling, and zero viewport overflow.
+- **Git Repository Branch:** `phase-2-auth-crm` is cleanly committed and ready for client demonstration.
