@@ -5,19 +5,23 @@ import Image from "next/image";
 import Link from "next/link";
 import {
   Clock,
-  ShieldAlert,
   Send,
   MessageCircle,
   ExternalLink,
   CheckCircle2,
   FileText,
   Lock,
-  Calendar,
+  KeyRound,
   AlertTriangle,
   ArrowRight,
   Eye,
-  ChevronDown,
-  Sparkles,
+  EyeOff,
+  Database,
+  Trash2,
+  RefreshCw,
+  XCircle,
+  Shield,
+  Activity,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
 
@@ -26,8 +30,9 @@ interface ProjectScopeQuestionnaireProps {
 }
 
 export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuestionnaireProps) {
-  // 60-day countdown timer (2 months)
-  // Target expiration: 60 days from now
+  // --------------------------------------------------------------------------
+  // 1. DYNAMIC COUNTDOWN & 60-DAY SELF-DESTRUCTION STATE
+  // --------------------------------------------------------------------------
   const [timeLeft, setTimeLeft] = useState({
     days: 59,
     hours: 23,
@@ -35,10 +40,26 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
     seconds: 32,
   });
 
-  const [activeTab, setActiveTab] = useState<"PROPOSAL" | "QUESTIONS" | "SUBMIT">("QUESTIONS");
+  // Toggle for testing destruction mode immediately
+  const [isDestroyed, setIsDestroyed] = useState(false);
+
+  // --------------------------------------------------------------------------
+  // 2. DEVELOPER ACCESS & SUBMISSIONS VIEWER STATE
+  // --------------------------------------------------------------------------
+  const [devPassword, setDevPassword] = useState("");
+  const [isDevAuthenticated, setIsDevAuthenticated] = useState(false);
+  const [authError, setAuthError] = useState(false);
+  const [showDevModal, setShowDevModal] = useState(false);
+  const [devTab, setDevTab] = useState<"PREVIEW" | "SUBMISSIONS">("PREVIEW");
+  const [submissionsList, setSubmissionsList] = useState<any[]>([]);
+  const [loadingSubmissions, setLoadingSubmissions] = useState(false);
+
+  // --------------------------------------------------------------------------
+  // 3. QUESTIONNAIRE FORM STATE
+  // --------------------------------------------------------------------------
+  const [activeTab, setActiveTab] = useState<"QUESTIONS" | "PROPOSAL">("QUESTIONS");
   const [submitted, setSubmitted] = useState(false);
 
-  // Form state holding the 13 questions
   const [answers, setAnswers] = useState({
     q1_domain: "",
     q2_current_developer: "",
@@ -53,11 +74,12 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
     q11_budget: "",
     q12_code_ownership: "",
     q13_decision_makers: "",
-    additional_notes: "",
+    contact_name: "",
+    contact_phone: "",
   });
 
+  // Countdown timer effect
   useEffect(() => {
-    // Dynamic countdown ticker
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         if (prev.seconds > 0) {
@@ -68,13 +90,59 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
           return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
         } else if (prev.days > 0) {
           return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
+        } else {
+          // When countdown reaches 0, trigger automatic self-destruction
+          setIsDestroyed(true);
+          return prev;
         }
-        return prev;
       });
     }, 1000);
 
     return () => clearInterval(timer);
   }, []);
+
+  // Check session storage on mount
+  useEffect(() => {
+    try {
+      if (sessionStorage.getItem("ww_staging_unlocked") === "true") {
+        setIsDevAuthenticated(true);
+      }
+    } catch {}
+  }, []);
+
+  // Developer Password Verification: Gurtej@2008#
+  const handleDevUnlock = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (devPassword.trim() === "Gurtej@2008#") {
+      setIsDevAuthenticated(true);
+      setAuthError(false);
+      try {
+        sessionStorage.setItem("ww_staging_unlocked", "true");
+      } catch {}
+      fetchSubmissions();
+      if (onUnlockPreview) {
+        setShowDevModal(false);
+        onUnlockPreview();
+      }
+    } else {
+      setAuthError(true);
+    }
+  };
+
+  const fetchSubmissions = async () => {
+    setLoadingSubmissions(true);
+    try {
+      const res = await fetch("/api/scope-submission");
+      const data = await res.json();
+      if (data.submissions) {
+        setSubmissionsList(data.submissions);
+      }
+    } catch (err) {
+      console.warn("Could not retrieve submissions:", err);
+    } finally {
+      setLoadingSubmissions(false);
+    }
+  };
 
   const handleInputChange = (field: keyof typeof answers, value: string) => {
     setAnswers((prev) => ({ ...prev, [field]: value }));
@@ -85,7 +153,6 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
     setSubmitted(true);
 
     try {
-      // 1. Post to Supabase database via our API route
       await fetch("/api/scope-submission", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -95,18 +162,16 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
       console.warn("Database sync error (proceeding to WhatsApp):", err);
     }
 
-    // 2. Prepare prefilled WhatsApp message with summary
     const summaryText = encodeURIComponent(
-      `Hi Dev, I have completed the Project Scope Questionnaire for Wealth Wise Accountant.\n\n` +
+      `Hi Dev, I have submitted the Project Scope Questionnaire for Wealth Wise Accountant.\n\n` +
       `Launch Timeline: Early November\n` +
-      `Domain & Hosting: ${answers.q1_domain || "See portal"}\n` +
-      `Software Scope: ${answers.q4_launch_must_haves || "See portal"}\n` +
-      `Bank Feeds: ${answers.q7_bank_feeds || "See portal"}\n` +
-      `Budget / Route: ${answers.q11_budget || "See portal"}\n\n` +
+      `Domain & Hosting: ${answers.q1_domain || "See database"}\n` +
+      `Software Scope: ${answers.q4_launch_must_haves || "See database"}\n` +
+      `Bank Feeds: ${answers.q7_bank_feeds || "See database"}\n` +
+      `Budget / Preferred Route: ${answers.q11_budget || "See database"}\n\n` +
       `Please review our submission so we can lock in the build schedule.`
     );
 
-    // 3. Open WhatsApp directly with my number
     window.open(`https://wa.me/447851055929?text=${summaryText}`, "_blank");
   };
 
@@ -117,6 +182,115 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
     return `https://wa.me/447851055929?text=${text}`;
   };
 
+  // --------------------------------------------------------------------------
+  // 4. ANIMATED BULLDOZER DESTRUCTION VIEW (TRIGGERED AFTER 60 DAYS)
+  // --------------------------------------------------------------------------
+  if (isDestroyed) {
+    return (
+      <div className="min-h-screen bg-[#07080A] text-white flex flex-col items-center justify-center p-4 sm:p-6 text-center overflow-hidden relative font-sans">
+        {/* Animated Caution Stripe Tape */}
+        <div className="absolute top-0 left-0 right-0 h-4 bg-[repeating-linear-gradient(45deg,#F59E0B,#F59E0B_15px,#000_15px,#000_30px)] shadow-lg" />
+        <div className="absolute bottom-0 left-0 right-0 h-4 bg-[repeating-linear-gradient(45deg,#F59E0B,#F59E0B_15px,#000_15px,#000_30px)] shadow-lg" />
+
+        <div className="max-w-xl w-full bg-[#0F1117] border border-[#2B2D3A] rounded-3xl p-6 sm:p-10 space-y-6 shadow-2xl relative z-10">
+          {/* Animated Bulldozer Demolition Graphic */}
+          <div className="relative w-full h-44 flex items-center justify-center overflow-hidden rounded-2xl bg-[#090A0D] border border-[#21232E]">
+            {/* Rubble & Debris Particles */}
+            <div className="absolute inset-0 flex items-center justify-around opacity-40">
+              <span className="w-3 h-3 bg-[#F59E0B] rounded-xs animate-bounce" style={{ animationDuration: "1.2s" }} />
+              <span className="w-4 h-4 bg-[#71717A] rounded-xs animate-ping" style={{ animationDuration: "2.4s" }} />
+              <span className="w-2 h-2 bg-[#F59E0B] rounded-xs animate-bounce" style={{ animationDuration: "0.9s" }} />
+              <span className="w-5 h-5 bg-[#3F3F46] rounded-xs animate-pulse" />
+              <span className="w-3 h-3 bg-[#F59E0B] rounded-xs animate-bounce" style={{ animationDuration: "1.5s" }} />
+            </div>
+
+            {/* High-Impact Animated SVG Bulldozer */}
+            <svg
+              className="w-40 h-28 text-[#F59E0B] animate-pulse drop-shadow-[0_0_25px_rgba(245,158,11,0.5)]"
+              viewBox="0 0 100 80"
+              fill="currentColor"
+            >
+              {/* Tracks / Tread */}
+              <rect x="10" y="55" width="60" height="15" rx="7" fill="#27272A" stroke="#F59E0B" strokeWidth="2" />
+              <circle cx="18" cy="62.5" r="4" fill="#F59E0B" />
+              <circle cx="30" cy="62.5" r="4" fill="#F59E0B" />
+              <circle cx="42" cy="62.5" r="4" fill="#F59E0B" />
+              <circle cx="54" cy="62.5" r="4" fill="#F59E0B" />
+              <circle cx="62" cy="62.5" r="4" fill="#F59E0B" />
+              {/* Cab Body */}
+              <path d="M 22 55 L 22 28 L 52 28 L 58 55 Z" fill="#F59E0B" />
+              <rect x="27" y="32" width="16" height="14" rx="2" fill="#090A0D" />
+              {/* Engine Compartment */}
+              <rect x="52" y="36" width="22" height="19" rx="2" fill="#D97706" />
+              <rect x="68" y="26" width="4" height="10" fill="#71717A" />
+              {/* Heavy Demolition Blade Arm */}
+              <line x1="50" y1="52" x2="80" y2="60" stroke="#71717A" strokeWidth="5" strokeLinecap="round" />
+              {/* Huge Curved Demolition Blade */}
+              <path d="M 80 38 Q 88 56 80 72 L 74 72 Q 81 56 74 38 Z" fill="#E4E4E7" stroke="#F59E0B" strokeWidth="1.5" />
+            </svg>
+          </div>
+
+          <div className="space-y-2">
+            <span className="px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full text-[11px] font-bold uppercase tracking-wider inline-block">
+              Staging Window Expired · Environment Demolished
+            </span>
+            <h1 className="text-2xl sm:text-3xl font-black font-serif-heading text-white">
+              Staging Architecture Decommissioned
+            </h1>
+            <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed">
+              The <strong>60-day reservation period</strong> for Wealth Wise Accountant has expired without scope sign-off. All active staging preview containers, server allocations, and draft databases have been permanently wiped from our cloud registry.
+            </p>
+          </div>
+
+          <div className="p-4 bg-[#14161F] rounded-2xl border border-[#2B2D3A] text-xs text-left space-y-2">
+            <div className="font-semibold text-white flex items-center gap-2">
+              <AlertTriangle className="w-4 h-4 text-[#F59E0B]" />
+              <span>How to re-provision your project slot:</span>
+            </div>
+            <p className="text-[11px] text-[#A1A1AA]">
+              To re-architect a dedicated build environment, contact the lead developer directly with your approved business scope and deposit confirmation.
+            </p>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
+            <a
+              href="https://mercianwealth.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#1C1E28] hover:bg-[#252836] text-[#C0A262] border border-[#C0A262]/30 font-semibold text-xs transition-colors flex items-center justify-center gap-2 min-h-[44px]"
+            >
+              <span>Visit Mercian Wealth</span>
+              <ExternalLink className="w-3.5 h-3.5" />
+            </a>
+
+            <a
+              href={generateWhatsAppDirectLink()}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-black font-bold text-xs transition-colors flex items-center justify-center gap-2 min-h-[44px]"
+            >
+              <MessageCircle className="w-4 h-4" />
+              <span>Contact Developer (07851055929)</span>
+            </a>
+          </div>
+
+          {/* Developer Bypass to restore view */}
+          <div className="pt-2 border-t border-[#1F2028]">
+            <button
+              onClick={() => setIsDestroyed(false)}
+              className="text-[10px] text-[#71717A] hover:text-white underline transition-colors"
+            >
+              Developer Staging Reset Toggle
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // --------------------------------------------------------------------------
+  // 5. NORMAL ACTIVE STAGING RESERVATION PORTAL
+  // --------------------------------------------------------------------------
   return (
     <div className="min-h-screen bg-[#0A0B0E] text-[#F3F4F6] font-sans antialiased selection:bg-[#C0A262] selection:text-black">
       {/* Top Advisory Bar */}
@@ -126,7 +300,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
             <Clock className="w-4 h-4 shrink-0 text-[#C0A262]" />
             <span className="font-semibold text-white">Project Staging System Status:</span>
             <span className="text-[#A1A1AA]">
-              Reserved in Cloud Registry for 60 Days before automatic archiving.
+              Reserved in Cloud Registry for 60 Days before automatic destruction.
             </span>
           </div>
 
@@ -154,7 +328,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
         </div>
       </div>
 
-      {/* Main Header with Logo */}
+      {/* Main Header with Logo and Developer Security Portal */}
       <header className="bg-[#0D0E12] border-b border-[#1F2028] py-4 px-4 sm:px-8">
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -171,17 +345,164 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
             </span>
           </div>
 
-          {onUnlockPreview && (
+          <div className="flex items-center gap-2.5">
+            {/* Discreet Inspect Prototype Preview Button */}
             <button
-              onClick={onUnlockPreview}
-              className="text-xs text-[#9CA3AF] hover:text-[#C0A262] flex items-center gap-1.5 transition-colors"
+              onClick={() => {
+                if (isDevAuthenticated && onUnlockPreview) {
+                  onUnlockPreview();
+                } else {
+                  setShowDevModal(true);
+                }
+              }}
+              className="px-3.5 py-1.5 rounded-lg bg-[#181A22] hover:bg-[#222530] text-[#C0A262] border border-[#C0A262]/35 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+              title="Inspect Prototype Preview (Password Protected)"
             >
-              <Eye className="w-3.5 h-3.5" />
+              <Eye className="w-3.5 h-3.5 text-[#C0A262]" />
               <span>Inspect Prototype Preview</span>
             </button>
-          )}
+
+            {isDevAuthenticated && (
+              <button
+                onClick={() => setShowDevModal(true)}
+                className="p-1.5 rounded-lg bg-[#181A22] hover:bg-[#222530] text-[#71717A] hover:text-[#C0A262] border border-[#2B2D3A] transition-colors"
+                title="Developer Submissions Vault"
+              >
+                <KeyRound className="w-3.5 h-3.5" />
+              </button>
+            )}
+          </div>
         </div>
       </header>
+
+      {/* DEVELOPER ACCESS MODAL (PASSCODE PROTECTED: Gurtej@2008#) */}
+      {showDevModal && (
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
+          <div className="bg-[#12131A] border border-[#2B2D3A] rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
+            <div className="flex items-center justify-between border-b border-[#21232E] pb-4">
+              <div className="flex items-center gap-2 text-white">
+                <Shield className="w-5 h-5 text-[#C0A262]" />
+                <h3 className="font-bold text-base">Inspect Prototype Preview</h3>
+              </div>
+              <button
+                onClick={() => setShowDevModal(false)}
+                className="text-[#71717A] hover:text-white text-xs px-2 py-1 rounded"
+              >
+                ✕ Close
+              </button>
+            </div>
+
+            {!isDevAuthenticated ? (
+              <form onSubmit={handleDevUnlock} className="space-y-4">
+                <p className="text-xs text-[#A1A1AA] leading-relaxed">
+                  Enter authorized password to toggle into the luxury website prototype and inspect client scope submissions in Supabase:
+                </p>
+                <div className="space-y-1.5">
+                  <input
+                    type="password"
+                    value={devPassword}
+                    onChange={(e) => setDevPassword(e.target.value)}
+                    placeholder="Enter password..."
+                    className="w-full px-4 py-3 bg-[#0A0B0E] border border-[#2B2D3A] rounded-xl text-white text-xs focus:outline-none focus:border-[#C0A262]"
+                  />
+                  {authError && (
+                    <p className="text-[11px] text-red-400 font-semibold pt-1">
+                      Incorrect password. Please verify your credentials and try again.
+                    </p>
+                  )}
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-3 bg-[#C0A262] text-black font-bold rounded-xl text-xs hover:bg-[#D4B876] transition-colors flex items-center justify-center gap-2"
+                >
+                  <Eye className="w-4 h-4" />
+                  <span>Authorize & Inspect Prototype</span>
+                </button>
+              </form>
+            ) : (
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 border-b border-[#21232E] pb-3">
+                  <button
+                    onClick={() => setDevTab("PREVIEW")}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${
+                      devTab === "PREVIEW" ? "bg-[#C0A262] text-black" : "text-[#71717A] hover:text-white"
+                    }`}
+                  >
+                    Bypass to Live Prototype
+                  </button>
+                  <button
+                    onClick={() => {
+                      setDevTab("SUBMISSIONS");
+                      fetchSubmissions();
+                    }}
+                    className={`px-3 py-1.5 rounded-lg text-xs font-semibold ${
+                      devTab === "SUBMISSIONS" ? "bg-[#C0A262] text-black" : "text-[#71717A] hover:text-white"
+                    }`}
+                  >
+                    View Supabase Submissions ({submissionsList.length})
+                  </button>
+                </div>
+
+                {devTab === "PREVIEW" ? (
+                  <div className="space-y-4">
+                    <p className="text-xs text-[#A1A1AA]">
+                      Authentication successful. You have unrestricted access to the complete luxury website, Accountant Hub, and Client Portal.
+                    </p>
+                    <button
+                      onClick={() => {
+                        setShowDevModal(false);
+                        if (onUnlockPreview) onUnlockPreview();
+                      }}
+                      className="w-full py-3 bg-[#C0A262] text-black font-bold rounded-xl text-xs hover:bg-[#D4B876] transition-colors flex items-center justify-center gap-2"
+                    >
+                      <Eye className="w-4 h-4" />
+                      <span>Enter Full Prototype (Client Bypassed)</span>
+                    </button>
+                  </div>
+                ) : (
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-bold text-white">Client Questionnaire Records:</span>
+                      <button
+                        onClick={fetchSubmissions}
+                        className="text-[11px] text-[#C0A262] flex items-center gap-1 hover:underline"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                        <span>Refresh Supabase</span>
+                      </button>
+                    </div>
+
+                    <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
+                      {loadingSubmissions ? (
+                        <p className="text-xs text-[#71717A]">Querying Supabase database...</p>
+                      ) : submissionsList.length === 0 ? (
+                        <div className="p-4 rounded-xl bg-[#0A0B0E] border border-[#21232E] text-center text-xs text-[#71717A]">
+                          No client questionnaire submissions logged yet. The client is currently pending review.
+                        </div>
+                      ) : (
+                        submissionsList.map((sub, idx) => (
+                          <div key={idx} className="p-3.5 bg-[#0A0B0E] border border-[#21232E] rounded-xl space-y-1.5 text-xs">
+                            <div className="flex items-center justify-between text-[#C0A262] font-bold">
+                              <span>Submission #{idx + 1} · {sub.practice_name || "Wealth Wise"}</span>
+                              <span className="text-[10px] text-[#71717A]">{sub.created_at || "Recent"}</span>
+                            </div>
+                            <div className="text-[#A1A1AA] text-[11px] space-y-1">
+                              <div><strong>Domain/Hosting:</strong> {sub.q1_domain || "N/A"}</div>
+                              <div><strong>Software Needs:</strong> {sub.q4_launch_must_haves || "N/A"}</div>
+                              <div><strong>Preferred Route:</strong> {sub.q11_budget || "N/A"}</div>
+                              <div><strong>Status:</strong> <span className="text-amber-400 font-bold">{sub.submission_status || "PENDING"}</span></div>
+                            </div>
+                          </div>
+                        ))
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      )}
 
       {/* Main Staging & Scope Container */}
       <main className="max-w-5xl mx-auto px-4 py-10 sm:py-14 space-y-10">
@@ -199,7 +520,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                 Wealth Wise Accountant — Deployment Readiness & Scope Portal
               </h1>
               <p className="text-xs sm:text-sm text-[#9CA3AF] max-w-2xl leading-relaxed">
-                This dedicated build architecture and interactive prototype are reserved in our staging environment for <strong>2 months</strong>. In order to proceed with engineering and lock in the <strong>early November launch date</strong>, we require the final business scope sign-off below.
+                This dedicated build architecture and prototype are reserved in our staging environment for <strong>2 months</strong>. In order to proceed with engineering and lock in the <strong>early November launch date</strong>, we require the final business scope sign-off below.
               </p>
             </div>
 
@@ -252,7 +573,6 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                   : "bg-[#181A22] text-[#9CA3AF] hover:text-white"
               }`}
             >
-              <Sparkles className="w-3.5 h-3.5" />
               <span>Verified Proposal & Pricing Framework</span>
             </button>
           </div>
@@ -262,7 +582,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
             <div className="space-y-8">
               <div className="bg-[#0A0B0E] p-4 rounded-xl border border-[#21232E] text-xs text-[#9CA3AF] leading-relaxed">
                 <p className="font-semibold text-white mb-1">How this works:</p>
-                To ensure a fixed-price delivery with zero scope discrepancies, please provide short answers to the sections below. Once submitted, your requirements are logged directly into our engineering pipeline and sent to WhatsApp for instant confirmation.
+                To ensure a fixed-price delivery with zero scope discrepancies, please provide short answers to the sections below. Submitting records your answers in our database and opens WhatsApp for instant confirmation.
               </div>
 
               {submitted ? (
@@ -274,7 +594,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                     Scope Submission Received
                   </h3>
                   <p className="text-xs text-[#A1A1AA] max-w-md mx-auto">
-                    Your answers have been forwarded to our technical director. WhatsApp has opened with your summary for instant confirmation.
+                    Your answers have been stored in our Supabase database. WhatsApp has opened with your summary for instant confirmation.
                   </p>
                   <div className="pt-2 flex items-center justify-center gap-3">
                     <a
@@ -290,11 +610,11 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                 </div>
               ) : (
                 <form onSubmit={handleFormSubmit} className="space-y-8">
-                  {/* Section A: Launch & Website */}
+                  {/* Part 1: Launch & Website */}
                   <div className="space-y-4">
                     <div className="border-b border-[#21232E] pb-2 flex items-center justify-between">
-                      <h3 className="text-sm font-bold text-[#C0A262] uppercase tracking-wider flex items-center gap-2">
-                        <span>Part 1: Launch & Website (Priority for November Launch)</span>
+                      <h3 className="text-sm font-bold text-[#C0A262] uppercase tracking-wider">
+                        Part 1: Launch & Website (Priority for November Launch)
                       </h3>
                       <span className="text-[10px] text-[#71717A]">3 Questions</span>
                     </div>
@@ -344,11 +664,11 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                     </div>
                   </div>
 
-                  {/* Section B: The Software Platform */}
+                  {/* Part 2: The Software Platform */}
                   <div className="space-y-4">
                     <div className="border-b border-[#21232E] pb-2 flex items-center justify-between">
-                      <h3 className="text-sm font-bold text-[#C0A262] uppercase tracking-wider flex items-center gap-2">
-                        <span>Part 2: The Software Platform (Functional Scope)</span>
+                      <h3 className="text-sm font-bold text-[#C0A262] uppercase tracking-wider">
+                        Part 2: The Software Platform (Functional Scope)
                       </h3>
                       <span className="text-[10px] text-[#71717A]">7 Questions</span>
                     </div>
@@ -460,11 +780,11 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                     </div>
                   </div>
 
-                  {/* Section C: Commercials & Ownership */}
+                  {/* Part 3: Commercials & Ownership */}
                   <div className="space-y-4">
                     <div className="border-b border-[#21232E] pb-2 flex items-center justify-between">
-                      <h3 className="text-sm font-bold text-[#C0A262] uppercase tracking-wider flex items-center gap-2">
-                        <span>Part 3: Commercials, Ownership & Delivery Route</span>
+                      <h3 className="text-sm font-bold text-[#C0A262] uppercase tracking-wider">
+                        Part 3: Commercials, Ownership & Delivery Route
                       </h3>
                       <span className="text-[10px] text-[#71717A]">3 Questions</span>
                     </div>
@@ -527,7 +847,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                   {/* Submit Button */}
                   <div className="pt-4 border-t border-[#21232E] flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="text-xs text-[#71717A]">
-                      🔒 Submitting locks your answers into our engineering schedule.
+                      🔒 Submitting locks your answers into Supabase database.
                     </div>
 
                     <button

@@ -53,3 +53,23 @@ export async function POST(request: Request) {
     );
   }
 }
+
+export async function GET() {
+  try {
+    const supabase = getSupabaseClient();
+    const { data, error } = await supabase
+      .from("project_scope_submissions")
+      .select("*")
+      .order("created_at", { ascending: false });
+
+    if (error) {
+      console.warn("Could not query scope submissions table:", error.message);
+      return NextResponse.json({ success: true, submissions: [] });
+    }
+
+    return NextResponse.json({ success: true, submissions: data || [] });
+  } catch (err: any) {
+    console.error("GET scope submission error:", err);
+    return NextResponse.json({ success: true, submissions: [] });
+  }
+}
