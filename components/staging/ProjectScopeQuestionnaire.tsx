@@ -24,6 +24,7 @@ import {
   Activity,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { BulldozerDemolition } from "@/components/demolition/BulldozerDemolition";
 
 interface ProjectScopeQuestionnaireProps {
   onUnlockPreview?: () => void;
@@ -186,106 +187,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
   // 4. ANIMATED BULLDOZER DESTRUCTION VIEW (TRIGGERED AFTER 60 DAYS)
   // --------------------------------------------------------------------------
   if (isDestroyed) {
-    return (
-      <div className="min-h-screen bg-[#07080A] text-white flex flex-col items-center justify-center p-4 sm:p-6 text-center overflow-hidden relative font-sans">
-        {/* Animated Caution Stripe Tape */}
-        <div className="absolute top-0 left-0 right-0 h-4 bg-[repeating-linear-gradient(45deg,#F59E0B,#F59E0B_15px,#000_15px,#000_30px)] shadow-lg" />
-        <div className="absolute bottom-0 left-0 right-0 h-4 bg-[repeating-linear-gradient(45deg,#F59E0B,#F59E0B_15px,#000_15px,#000_30px)] shadow-lg" />
-
-        <div className="max-w-xl w-full bg-[#0F1117] border border-[#2B2D3A] rounded-3xl p-6 sm:p-10 space-y-6 shadow-2xl relative z-10">
-          {/* Animated Bulldozer Demolition Graphic */}
-          <div className="relative w-full h-44 flex items-center justify-center overflow-hidden rounded-2xl bg-[#090A0D] border border-[#21232E]">
-            {/* Rubble & Debris Particles */}
-            <div className="absolute inset-0 flex items-center justify-around opacity-40">
-              <span className="w-3 h-3 bg-[#F59E0B] rounded-xs animate-bounce" style={{ animationDuration: "1.2s" }} />
-              <span className="w-4 h-4 bg-[#71717A] rounded-xs animate-ping" style={{ animationDuration: "2.4s" }} />
-              <span className="w-2 h-2 bg-[#F59E0B] rounded-xs animate-bounce" style={{ animationDuration: "0.9s" }} />
-              <span className="w-5 h-5 bg-[#3F3F46] rounded-xs animate-pulse" />
-              <span className="w-3 h-3 bg-[#F59E0B] rounded-xs animate-bounce" style={{ animationDuration: "1.5s" }} />
-            </div>
-
-            {/* High-Impact Animated SVG Bulldozer */}
-            <svg
-              className="w-40 h-28 text-[#F59E0B] animate-pulse drop-shadow-[0_0_25px_rgba(245,158,11,0.5)]"
-              viewBox="0 0 100 80"
-              fill="currentColor"
-            >
-              {/* Tracks / Tread */}
-              <rect x="10" y="55" width="60" height="15" rx="7" fill="#27272A" stroke="#F59E0B" strokeWidth="2" />
-              <circle cx="18" cy="62.5" r="4" fill="#F59E0B" />
-              <circle cx="30" cy="62.5" r="4" fill="#F59E0B" />
-              <circle cx="42" cy="62.5" r="4" fill="#F59E0B" />
-              <circle cx="54" cy="62.5" r="4" fill="#F59E0B" />
-              <circle cx="62" cy="62.5" r="4" fill="#F59E0B" />
-              {/* Cab Body */}
-              <path d="M 22 55 L 22 28 L 52 28 L 58 55 Z" fill="#F59E0B" />
-              <rect x="27" y="32" width="16" height="14" rx="2" fill="#090A0D" />
-              {/* Engine Compartment */}
-              <rect x="52" y="36" width="22" height="19" rx="2" fill="#D97706" />
-              <rect x="68" y="26" width="4" height="10" fill="#71717A" />
-              {/* Heavy Demolition Blade Arm */}
-              <line x1="50" y1="52" x2="80" y2="60" stroke="#71717A" strokeWidth="5" strokeLinecap="round" />
-              {/* Huge Curved Demolition Blade */}
-              <path d="M 80 38 Q 88 56 80 72 L 74 72 Q 81 56 74 38 Z" fill="#E4E4E7" stroke="#F59E0B" strokeWidth="1.5" />
-            </svg>
-          </div>
-
-          <div className="space-y-2">
-            <span className="px-3 py-1 bg-red-500/20 text-red-400 border border-red-500/30 rounded-full text-[11px] font-bold uppercase tracking-wider inline-block">
-              Staging Window Expired · Environment Demolished
-            </span>
-            <h1 className="text-2xl sm:text-3xl font-black font-serif-heading text-white">
-              Staging Architecture Decommissioned
-            </h1>
-            <p className="text-xs sm:text-sm text-[#A1A1AA] leading-relaxed">
-              The <strong>60-day reservation period</strong> for Wealth Wise Accountant has expired without scope sign-off. All active staging preview containers, server allocations, and draft databases have been permanently wiped from our cloud registry.
-            </p>
-          </div>
-
-          <div className="p-4 bg-[#14161F] rounded-2xl border border-[#2B2D3A] text-xs text-left space-y-2">
-            <div className="font-semibold text-white flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-[#F59E0B]" />
-              <span>How to re-provision your project slot:</span>
-            </div>
-            <p className="text-[11px] text-[#A1A1AA]">
-              To re-architect a dedicated build environment, contact the lead developer directly with your approved business scope and deposit confirmation.
-            </p>
-          </div>
-
-          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
-            <a
-              href="https://mercianwealth.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#1C1E28] hover:bg-[#252836] text-[#C0A262] border border-[#C0A262]/30 font-semibold text-xs transition-colors flex items-center justify-center gap-2 min-h-[44px]"
-            >
-              <span>Visit Mercian Wealth</span>
-              <ExternalLink className="w-3.5 h-3.5" />
-            </a>
-
-            <a
-              href={generateWhatsAppDirectLink()}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba5a] text-black font-bold text-xs transition-colors flex items-center justify-center gap-2 min-h-[44px]"
-            >
-              <MessageCircle className="w-4 h-4" />
-              <span>Contact Developer (07851055929)</span>
-            </a>
-          </div>
-
-          {/* Developer Bypass to restore view */}
-          <div className="pt-2 border-t border-[#1F2028]">
-            <button
-              onClick={() => setIsDestroyed(false)}
-              className="text-[10px] text-[#71717A] hover:text-white underline transition-colors"
-            >
-              Developer Staging Reset Toggle
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <BulldozerDemolition onReset={() => setIsDestroyed(false)} />;
   }
 
   // --------------------------------------------------------------------------
@@ -457,6 +359,17 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                     >
                       <Eye className="w-4 h-4" />
                       <span>Enter Full Prototype (Client Bypassed)</span>
+                    </button>
+
+                    <button
+                      onClick={() => {
+                        setShowDevModal(false);
+                        setIsDestroyed(true);
+                      }}
+                      className="w-full py-2.5 bg-[#181A22] text-[#F59E0B] border border-[#F59E0B]/30 font-semibold rounded-xl text-xs hover:bg-[#202330] transition-colors flex items-center justify-center gap-2"
+                    >
+                      <AlertTriangle className="w-4 h-4 text-[#F59E0B]" />
+                      <span>Test Bulldozer Demolition Mode (Day 0)</span>
                     </button>
                   </div>
                 ) : (
