@@ -59,43 +59,43 @@ export function BulldozerDemolition({ onReset, isNotFoundRoute = false }: Bulldo
   };
 
   return (
-    <div className="min-h-screen bg-[#07080B] text-white flex flex-col items-center justify-center p-4 sm:p-8 relative overflow-hidden font-sans select-none">
+    <div className="min-h-screen bg-[#07080B] text-white flex flex-col items-center justify-center p-3 sm:p-6 md:p-8 relative overflow-x-hidden font-sans select-none py-8 sm:py-14">
       {/* Top & Bottom Industrial Hazard Striped Caution Bands */}
-      <div className="absolute top-0 left-0 right-0 h-4 bg-[repeating-linear-gradient(45deg,#F59E0B,#F59E0B_16px,#090A0D_16px,#090A0D_32px)] border-b border-[#F59E0B]/50 shadow-[0_4px_20px_rgba(245,158,11,0.3)] z-30" />
-      <div className="absolute bottom-0 left-0 right-0 h-4 bg-[repeating-linear-gradient(45deg,#F59E0B,#F59E0B_16px,#090A0D_16px,#090A0D_32px)] border-t border-[#F59E0B]/50 shadow-[0_-4px_20px_rgba(245,158,11,0.3)] z-30" />
+      <div className="absolute top-0 left-0 right-0 h-3 sm:h-4 bg-[repeating-linear-gradient(45deg,#F59E0B,#F59E0B_14px,#090A0D_14px,#090A0D_28px)] border-b border-[#F59E0B]/50 shadow-[0_4px_20px_rgba(245,158,11,0.3)] z-30" />
+      <div className="absolute bottom-0 left-0 right-0 h-3 sm:h-4 bg-[repeating-linear-gradient(45deg,#F59E0B,#F59E0B_14px,#090A0D_14px,#090A0D_28px)] border-t border-[#F59E0B]/50 shadow-[0_-4px_20px_rgba(245,158,11,0.3)] z-30" />
 
       {/* Background Ambient Warning Glow */}
       <div className="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,rgba(245,158,11,0.12)_0%,rgba(0,0,0,0.95)_75%)]" />
 
       {/* Screen Shake Container on Impact */}
-      <div className={`w-full max-w-4xl mx-auto space-y-6 relative z-10 transition-transform ${isImpacted ? "animate-[shake_0.6s_ease-in-out]" : ""}`}>
+      <div className={`w-full max-w-4xl mx-auto space-y-4 sm:space-y-6 relative z-10 transition-transform ${isImpacted ? "animate-[shake_0.6s_ease-in-out]" : ""}`}>
         
         {/* Dynamic Demolition Stage Canvas */}
-        <div className="relative w-full h-72 sm:h-80 bg-[#0C0E14] border-2 border-[#242736] rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex items-center justify-center">
+        <div className="relative w-full h-56 sm:h-72 md:h-80 bg-[#0C0E14] border border-[#242736] rounded-2xl sm:rounded-3xl overflow-hidden shadow-[0_20px_60px_rgba(0,0,0,0.8)] flex items-center justify-center">
           
           {/* Concrete / Brick Wall Texture Background */}
-          <div className="absolute inset-0 bg-[linear-gradient(to_right,#141722_1px,transparent_1px),linear-gradient(to_bottom,#141722_1px,transparent_1px)] bg-[size:24px_24px] opacity-40" />
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,#141722_1px,transparent_1px),linear-gradient(to_bottom,#141722_1px,transparent_1px)] bg-[size:20px_20px] sm:bg-[size:24px_24px] opacity-40" />
 
           {/* Warning Flashing Beacon on Wall */}
-          <div className="absolute top-4 left-6 flex items-center gap-2 px-3 py-1 bg-red-500/20 border border-red-500/40 rounded-full text-[11px] font-bold text-red-400">
-            <span className="w-2 h-2 rounded-full bg-red-500 animate-ping" />
-            <span>CRITICAL DEMOLITION PROTOCOL ACTIVE</span>
+          <div className="absolute top-2.5 sm:top-4 left-3 sm:left-6 flex items-center gap-1.5 px-2.5 py-0.5 sm:px-3 sm:py-1 bg-red-500/20 border border-red-500/40 rounded-full text-[9px] sm:text-[11px] font-bold text-red-400">
+            <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500 animate-ping" />
+            <span>CRITICAL DEMOLITION PROTOCOL</span>
           </div>
 
-          <div className="absolute top-4 right-6 text-[10px] font-mono text-[#71717A] tracking-wider uppercase">
+          <div className="absolute top-2.5 sm:top-4 right-3 sm:right-6 text-[8px] sm:text-[10px] font-mono text-[#71717A] tracking-wider uppercase">
             STATUS: 404_DESTROYED
           </div>
 
           {/* CRACKED WALL STRUCTURE (Demolished by Bulldozer) */}
           <div 
-            className={`relative z-10 transition-all duration-700 max-w-lg text-center px-4 ${
+            className={`relative z-10 transition-all duration-700 max-w-lg text-center px-3 sm:px-4 ${
               isImpacted 
-                ? "scale-90 rotate-2 opacity-30 blur-[1px] translate-y-6" 
+                ? "scale-90 rotate-2 opacity-30 blur-[1px] translate-y-3 sm:translate-y-6" 
                 : "scale-100 rotate-0 opacity-100"
             }`}
           >
             <div className="inline-block relative">
-              <span className="text-6xl sm:text-7xl font-black font-mono tracking-tight text-[#2B2E3E] select-none">
+              <span className="text-4xl sm:text-6xl md:text-7xl font-black font-mono tracking-tight text-[#2B2E3E] select-none">
                 404
               </span>
               {/* Shattered Crack Overlay */}
@@ -107,10 +107,10 @@ export function BulldozerDemolition({ onReset, isNotFoundRoute = false }: Bulldo
               )}
             </div>
 
-            <h2 className="text-xl sm:text-2xl font-black text-white uppercase tracking-wider font-serif-heading mt-1">
+            <h2 className="text-base sm:text-xl md:text-2xl font-black text-white uppercase tracking-wider font-serif-heading mt-0.5 sm:mt-1">
               Wealth Wise Staging Core
             </h2>
-            <p className="text-xs text-[#9CA3AF] max-w-sm mx-auto mt-1 font-mono">
+            <p className="text-[10px] sm:text-xs text-[#9CA3AF] max-w-sm mx-auto mt-0.5 sm:mt-1 font-mono">
               [CONTAINER_ID: WW-STAGING-ALPHA]
             </p>
           </div>
@@ -119,33 +119,33 @@ export function BulldozerDemolition({ onReset, isNotFoundRoute = false }: Bulldo
           {showRubble && (
             <div className="absolute inset-0 pointer-events-none z-20 overflow-hidden">
               {/* Rock Fragment 1 */}
-              <div className="absolute left-[52%] top-[45%] w-6 h-6 bg-[#3F3F46] border border-[#F59E0B]/50 rounded-xs animate-[flyRight_1.2s_ease-out_forwards]" />
+              <div className="absolute left-[52%] top-[45%] w-4 h-4 sm:w-6 sm:h-6 bg-[#3F3F46] border border-[#F59E0B]/50 rounded-xs animate-[flyRight_1.2s_ease-out_forwards]" />
               {/* Rock Fragment 2 */}
-              <div className="absolute left-[48%] top-[50%] w-8 h-5 bg-[#27272A] border border-[#71717A] rounded-xs animate-[flyUp_1s_ease-out_forwards]" />
+              <div className="absolute left-[48%] top-[50%] w-6 h-4 sm:w-8 sm:h-5 bg-[#27272A] border border-[#71717A] rounded-xs animate-[flyUp_1s_ease-out_forwards]" />
               {/* Rock Fragment 3 */}
-              <div className="absolute left-[55%] top-[55%] w-4 h-4 bg-[#F59E0B] rounded-xs animate-[flyDown_1.4s_ease-out_forwards]" />
+              <div className="absolute left-[55%] top-[55%] w-3 h-3 sm:w-4 sm:h-4 bg-[#F59E0B] rounded-xs animate-[flyDown_1.4s_ease-out_forwards]" />
               {/* Flying Sparks */}
               <div className="absolute left-[50%] top-[40%] w-2 h-2 bg-yellow-300 rounded-full animate-ping" />
               <div className="absolute left-[54%] top-[60%] w-2 h-2 bg-amber-400 rounded-full animate-ping" />
               {/* Dust Wave */}
-              <div className="absolute left-[30%] right-[30%] bottom-8 h-12 bg-[#F59E0B]/10 rounded-full blur-xl animate-pulse" />
+              <div className="absolute left-[20%] right-[20%] bottom-4 sm:bottom-8 h-8 sm:h-12 bg-[#F59E0B]/10 rounded-full blur-xl animate-pulse" />
             </div>
           )}
 
           {/* THE BULLDOZER UNIT (Drives across from left to right) */}
           <div 
             key={animationKey}
-            className="absolute z-20 bottom-6 sm:bottom-8 left-0 animate-[driveAcross_4s_cubic-bezier(0.25,1,0.5,1)_forwards]"
+            className="absolute z-20 bottom-3 sm:bottom-6 md:bottom-8 left-0 animate-[driveAcross_4.8s_cubic-bezier(0.25,1,0.5,1)_forwards]"
           >
             {/* Animated Diesel Smoke Puffs */}
-            <div className="absolute -top-6 left-12 flex space-x-1 opacity-70">
-              <span className="w-2.5 h-2.5 bg-[#52525B] rounded-full animate-[smokePuff_1s_infinite_ease-out]" />
-              <span className="w-3.5 h-3.5 bg-[#3F3F46] rounded-full animate-[smokePuff_1.3s_infinite_ease-out_0.2s]" />
+            <div className="absolute -top-4 sm:-top-6 left-8 sm:left-12 flex space-x-1 opacity-70">
+              <span className="w-2 h-2 sm:w-2.5 sm:h-2.5 bg-[#52525B] rounded-full animate-[smokePuff_1s_infinite_ease-out]" />
+              <span className="w-2.5 h-2.5 sm:w-3.5 sm:h-3.5 bg-[#3F3F46] rounded-full animate-[smokePuff_1.3s_infinite_ease-out_0.2s]" />
             </div>
 
             {/* SVG Industrial Demolition Bulldozer */}
             <svg 
-              className="w-48 sm:w-56 h-auto drop-shadow-[0_15px_30px_rgba(245,158,11,0.4)]" 
+              className="w-32 sm:w-44 md:w-56 h-auto drop-shadow-[0_12px_24px_rgba(245,158,11,0.4)]" 
               viewBox="0 0 160 110" 
               fill="none" 
               xmlns="http://www.w3.org/2000/svg"
@@ -217,14 +217,14 @@ export function BulldozerDemolition({ onReset, isNotFoundRoute = false }: Bulldo
         </div>
 
         {/* Demolition Information Box */}
-        <div className="bg-[#0E1017] border border-[#232635] rounded-3xl p-6 sm:p-8 space-y-6 text-center shadow-xl">
-          <div className="space-y-3">
-            <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-red-500/15 border border-red-500/30 rounded-full text-red-400 text-xs font-bold uppercase tracking-wider">
-              <ShieldAlert className="w-4 h-4 text-red-400" />
+        <div className="bg-[#0E1017] border border-[#232635] rounded-2xl sm:rounded-3xl p-4 sm:p-6 md:p-8 space-y-4 sm:space-y-6 text-center shadow-xl">
+          <div className="space-y-2.5 sm:space-y-3">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-red-500/15 border border-red-500/30 rounded-full text-red-400 text-[10px] sm:text-xs font-bold uppercase tracking-wider">
+              <ShieldAlert className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-red-400" />
               <span>404 Demolition Complete · Environment Wiped</span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-black font-serif-heading text-white">
+            <h1 className="text-xl sm:text-3xl md:text-4xl font-black font-serif-heading text-white">
               Staging Architecture Decommissioned
             </h1>
 
@@ -234,10 +234,10 @@ export function BulldozerDemolition({ onReset, isNotFoundRoute = false }: Bulldo
           </div>
 
           {/* Quick Details Box */}
-          <div className="p-4 bg-[#141620] rounded-2xl border border-[#262838] text-xs text-left max-w-xl mx-auto space-y-2">
-            <div className="font-semibold text-white flex items-center gap-2">
-              <AlertTriangle className="w-4 h-4 text-[#F59E0B]" />
-              <span>To re-architect and reinstate your project:</span>
+          <div className="p-3.5 sm:p-4 bg-[#141620] rounded-xl sm:rounded-2xl border border-[#262838] text-xs text-left max-w-xl mx-auto space-y-1.5 sm:space-y-2">
+            <div className="font-semibold text-white flex items-center gap-1.5 sm:gap-2">
+              <AlertTriangle className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#F59E0B]" />
+              <span className="text-xs sm:text-sm">To re-architect and reinstate your project:</span>
             </div>
             <p className="text-[#9CA3AF] text-[11px] leading-relaxed">
               To re-provision a dedicated staging container and preserve the November delivery timeline, contact the lead engineering team with the completed 13-question scope requirements and deposit confirmation.

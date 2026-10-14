@@ -12,12 +12,12 @@ export default function Home() {
     return (
       <div>
         {/* Floating banner to return to staging scope portal */}
-        <div className="fixed top-2 right-2 z-50">
+        <div className="fixed top-2 right-2 sm:top-3 sm:right-3 z-50">
           <button
             onClick={() => setShowLivePrototype(false)}
-            className="px-3.5 py-1.5 bg-[#000000] text-[#C0A262] border border-[#C0A262] rounded-lg text-xs font-bold shadow-xl hover:bg-[#111111] transition-all flex items-center gap-2"
+            className="px-2.5 py-1.5 sm:px-3.5 sm:py-2 bg-[#000000] text-[#C0A262] border border-[#C0A262] rounded-lg text-[10px] sm:text-xs font-bold shadow-2xl hover:bg-[#111111] transition-all flex items-center gap-1.5 backdrop-blur-sm"
           >
-            <span>← Return to Scope & Staging Portal</span>
+            <span>← Return to Scope Portal</span>
           </button>
         </div>
         <LandingPage />

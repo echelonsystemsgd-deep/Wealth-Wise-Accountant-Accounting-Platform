@@ -79,25 +79,42 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
     contact_phone: "",
   });
 
-  // Countdown timer effect
+  // Real calendar-anchored 60-day countdown with localStorage persistence
   useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev.seconds > 0) {
-          return { ...prev, seconds: prev.seconds - 1 };
-        } else if (prev.minutes > 0) {
-          return { ...prev, minutes: 59, seconds: 59 };
-        } else if (prev.hours > 0) {
-          return { ...prev, hours: prev.hours - 1, minutes: 59, seconds: 59 };
-        } else if (prev.days > 0) {
-          return { ...prev, days: prev.days - 1, hours: 23, minutes: 59, seconds: 59 };
-        } else {
-          // When countdown reaches 0, trigger automatic self-destruction
-          setIsDestroyed(true);
-          return prev;
-        }
-      });
-    }, 1000);
+    const SIXTY_DAYS_MS = 60 * 24 * 60 * 60 * 1000;
+    let targetTimestamp: number;
+
+    try {
+      const stored = localStorage.getItem("ww_staging_deadline");
+      if (stored && !isNaN(Number(stored))) {
+        targetTimestamp = Number(stored);
+      } else {
+        targetTimestamp = Date.now() + SIXTY_DAYS_MS;
+        localStorage.setItem("ww_staging_deadline", String(targetTimestamp));
+      }
+    } catch {
+      targetTimestamp = Date.now() + SIXTY_DAYS_MS;
+    }
+
+    const updateCountdown = () => {
+      const now = Date.now();
+      const diff = targetTimestamp - now;
+
+      if (diff <= 0) {
+        setTimeLeft({ days: 0, hours: 0, minutes: 0, seconds: 0 });
+        setIsDestroyed(true);
+      } else {
+        const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+        const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((diff % (1000 * 60)) / 1000);
+
+        setTimeLeft({ days, hours, minutes, seconds });
+      }
+    };
+
+    updateCountdown();
+    const timer = setInterval(updateCountdown, 1000);
 
     return () => clearInterval(timer);
   }, []);
@@ -231,23 +248,23 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
       </div>
 
       {/* Main Header with Logo and Developer Security Portal */}
-      <header className="bg-[#0D0E12] border-b border-[#1F2028] py-4 px-4 sm:px-8">
-        <div className="max-w-7xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
+      <header className="bg-[#0D0E12] border-b border-[#1F2028] py-3.5 px-3 sm:py-4 sm:px-8">
+        <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             <Image
               src={BRAND.logos.fullLogo}
               alt={BRAND.practiceName}
               width={220}
               height={36}
               priority
-              className="h-8 sm:h-9 w-auto object-contain"
+              className="h-7 sm:h-9 w-auto object-contain"
             />
-            <span className="text-[10px] font-bold bg-[#C0A262]/20 text-[#C0A262] border border-[#C0A262]/40 px-2 py-0.5 rounded">
+            <span className="hidden xs:inline-block text-[9px] sm:text-[10px] font-bold bg-[#C0A262]/20 text-[#C0A262] border border-[#C0A262]/40 px-2 py-0.5 rounded">
               STAGING RESERVATION
             </span>
           </div>
 
-          <div className="flex items-center gap-2.5">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Discreet Inspect Prototype Preview Button */}
             <button
               onClick={() => {
@@ -257,7 +274,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                   setShowDevModal(true);
                 }
               }}
-              className="px-3.5 py-1.5 rounded-lg bg-[#181A22] hover:bg-[#222530] text-[#C0A262] border border-[#C0A262]/35 text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm"
+              className="px-3 py-1.5 sm:px-3.5 sm:py-2 rounded-lg bg-[#181A22] hover:bg-[#222530] text-[#C0A262] border border-[#C0A262]/35 text-[11px] sm:text-xs font-semibold flex items-center gap-1.5 transition-all shadow-sm min-h-[38px] sm:min-h-[40px]"
               title="Inspect Prototype Preview (Password Protected)"
             >
               <Eye className="w-3.5 h-3.5 text-[#C0A262]" />
@@ -267,7 +284,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
             {isDevAuthenticated && (
               <button
                 onClick={() => setShowDevModal(true)}
-                className="p-1.5 rounded-lg bg-[#181A22] hover:bg-[#222530] text-[#71717A] hover:text-[#C0A262] border border-[#2B2D3A] transition-colors"
+                className="p-2 sm:p-2.5 rounded-lg bg-[#181A22] hover:bg-[#222530] text-[#71717A] hover:text-[#C0A262] border border-[#2B2D3A] transition-colors min-h-[38px] min-w-[38px] flex items-center justify-center"
                 title="Developer Submissions Vault"
               >
                 <KeyRound className="w-3.5 h-3.5" />
@@ -418,18 +435,18 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
       )}
 
       {/* Main Staging & Scope Container */}
-      <main className="max-w-5xl mx-auto px-4 py-10 sm:py-14 space-y-10">
+      <main className="max-w-5xl mx-auto px-3 sm:px-4 py-6 sm:py-12 space-y-6 sm:space-y-10">
         {/* Reservation & Expiration Countdown Hero */}
-        <div className="bg-[#12131A] border border-[#2B2D3A] rounded-2xl p-6 sm:p-8 space-y-6 shadow-2xl relative overflow-hidden">
+        <div className="bg-[#12131A] border border-[#2B2D3A] rounded-xl sm:rounded-2xl p-4 sm:p-8 space-y-5 sm:space-y-6 shadow-2xl relative overflow-hidden">
           <div className="absolute top-0 right-0 w-96 h-96 bg-[#C0A262]/5 rounded-full blur-3xl pointer-events-none" />
 
-          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 border-b border-[#21232E] pb-6">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-5 sm:gap-6 border-b border-[#21232E] pb-5 sm:pb-6">
             <div className="space-y-2">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold">
-                <AlertTriangle className="w-3.5 h-3.5" />
+              <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-[11px] sm:text-xs font-semibold">
+                <AlertTriangle className="w-3.5 h-3.5 shrink-0" />
                 <span>Project Staging Lock Active</span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-bold font-serif-heading text-white">
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold font-serif-heading text-white leading-tight">
                 Wealth Wise Accountant — Practice Growth & Proprietary Platform Portal
               </h1>
               <p className="text-xs sm:text-sm text-[#9CA3AF] max-w-2xl leading-relaxed">
@@ -438,37 +455,45 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
             </div>
 
             {/* 60-Day Countdown Box */}
-            <div className="bg-[#0A0B0E] border border-[#2B2D3A] rounded-xl p-4 text-center shrink-0 min-w-[240px]">
+            <div className="w-full md:w-auto bg-[#0A0B0E] border border-[#2B2D3A] rounded-xl p-3.5 sm:p-4 text-center shrink-0 min-w-0 md:min-w-[260px]">
               <span className="text-[10px] font-bold text-[#A1A1AA] uppercase tracking-wider block mb-2">
                 Staging Reservation Countdown
               </span>
-              <div className="grid grid-cols-4 gap-2 text-center">
-                <div className="bg-[#151720] rounded-lg p-2 border border-[#232530]">
-                  <div className="text-xl font-mono font-bold text-[#C0A262]">{timeLeft.days}</div>
-                  <div className="text-[9px] text-[#71717A] uppercase">Days</div>
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-2 text-center">
+                <div className="bg-[#151720] rounded-lg p-1.5 sm:p-2 border border-[#232530]">
+                  <div className="text-lg sm:text-xl font-mono font-bold text-[#C0A262]" suppressHydrationWarning>
+                    {String(timeLeft.days).padStart(2, "0")}
+                  </div>
+                  <div className="text-[8px] sm:text-[9px] text-[#71717A] uppercase">Days</div>
                 </div>
-                <div className="bg-[#151720] rounded-lg p-2 border border-[#232530]">
-                  <div className="text-xl font-mono font-bold text-[#C0A262]">{timeLeft.hours}</div>
-                  <div className="text-[9px] text-[#71717A] uppercase">Hours</div>
+                <div className="bg-[#151720] rounded-lg p-1.5 sm:p-2 border border-[#232530]">
+                  <div className="text-lg sm:text-xl font-mono font-bold text-[#C0A262]" suppressHydrationWarning>
+                    {String(timeLeft.hours).padStart(2, "0")}
+                  </div>
+                  <div className="text-[8px] sm:text-[9px] text-[#71717A] uppercase">Hours</div>
                 </div>
-                <div className="bg-[#151720] rounded-lg p-2 border border-[#232530]">
-                  <div className="text-xl font-mono font-bold text-[#C0A262]">{timeLeft.minutes}</div>
-                  <div className="text-[9px] text-[#71717A] uppercase">Mins</div>
+                <div className="bg-[#151720] rounded-lg p-1.5 sm:p-2 border border-[#232530]">
+                  <div className="text-lg sm:text-xl font-mono font-bold text-[#C0A262]" suppressHydrationWarning>
+                    {String(timeLeft.minutes).padStart(2, "0")}
+                  </div>
+                  <div className="text-[8px] sm:text-[9px] text-[#71717A] uppercase">Mins</div>
                 </div>
-                <div className="bg-[#151720] rounded-lg p-2 border border-[#232530]">
-                  <div className="text-xl font-mono font-bold text-[#C0A262]">{timeLeft.seconds}</div>
-                  <div className="text-[9px] text-[#71717A] uppercase">Secs</div>
+                <div className="bg-[#151720] rounded-lg p-1.5 sm:p-2 border border-[#232530]">
+                  <div className="text-lg sm:text-xl font-mono font-bold text-[#C0A262]" suppressHydrationWarning>
+                    {String(timeLeft.seconds).padStart(2, "0")}
+                  </div>
+                  <div className="text-[8px] sm:text-[9px] text-[#71717A] uppercase">Secs</div>
                 </div>
               </div>
-              <p className="text-[10px] text-[#71717A] mt-2">Target launch window: 1st – 2nd week November</p>
+              <p className="text-[9px] sm:text-[10px] text-[#71717A] mt-2">Target launch window: 1st – 2nd week November</p>
             </div>
           </div>
 
           {/* Quick Action Navigation Tabs */}
-          <div className="flex items-center gap-2 border-b border-[#21232E] pb-3 overflow-x-auto scrollbar-none">
+          <div className="flex items-center gap-2 border-b border-[#21232E] pb-3 overflow-x-auto scrollbar-none -mx-4 px-4 sm:mx-0 sm:px-0">
             <button
               onClick={() => setActiveTab("QUESTIONS")}
-              className={`px-4 py-2 rounded-xl text-xs font-semibold transition-all min-h-[40px] flex items-center gap-2 ${
+              className={`shrink-0 px-3.5 py-2 sm:px-4 sm:py-2 rounded-xl text-[11px] sm:text-xs font-semibold transition-all min-h-[40px] flex items-center gap-2 ${
                 activeTab === "QUESTIONS"
                   ? "bg-[#C0A262] text-black font-bold shadow-md"
                   : "bg-[#181A22] text-[#9CA3AF] hover:text-white"
