@@ -27,14 +27,32 @@ export function BulldozerDemolition({ onReset, isNotFoundRoute = false }: Bulldo
     setIsImpacted(false);
     setShowRubble(false);
 
-    // Impact triggers when bulldozer reaches center (approx 1.8s)
+    // Impact triggers when bulldozer reaches center wall (1.8s)
     const impactTimer = setTimeout(() => {
       setIsImpacted(true);
       setShowRubble(true);
     }, 1800);
 
-    return () => clearTimeout(impactTimer);
+    // Reset wall before next loop cycle
+    const resetTimer = setTimeout(() => {
+      setIsImpacted(false);
+      setShowRubble(false);
+    }, 4600);
+
+    return () => {
+      clearTimeout(impactTimer);
+      clearTimeout(resetTimer);
+    };
   }, [animationKey]);
+
+  // Auto-loop demolition continuously every 5.2 seconds
+  useEffect(() => {
+    const loopTimer = setInterval(() => {
+      setAnimationKey((prev) => prev + 1);
+    }, 5200);
+
+    return () => clearInterval(loopTimer);
+  }, []);
 
   const handleReplay = () => {
     setAnimationKey((prev) => prev + 1);
@@ -277,19 +295,19 @@ export function BulldozerDemolition({ onReset, isNotFoundRoute = false }: Bulldo
       <style jsx>{`
         @keyframes driveAcross {
           0% {
-            transform: translateX(-120%);
+            transform: translateX(-140%);
           }
-          40% {
-            transform: translateX(20%);
+          35% {
+            transform: translateX(10%);
           }
-          55% {
+          48% {
             transform: translateX(35%);
           }
-          70% {
-            transform: translateX(40%);
+          65% {
+            transform: translateX(65%);
           }
           100% {
-            transform: translateX(110%);
+            transform: translateX(140%);
           }
         }
 

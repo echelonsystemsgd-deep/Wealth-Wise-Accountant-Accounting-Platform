@@ -297,7 +297,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
             {!isDevAuthenticated ? (
               <form onSubmit={handleDevUnlock} className="space-y-4">
                 <p className="text-xs text-[#A1A1AA] leading-relaxed">
-                  Enter authorized password to toggle into the luxury website prototype and inspect client scope submissions in Supabase:
+                  Enter authorized password to toggle into the luxury website prototype and review logged client scope submissions:
                 </p>
                 <div className="space-y-1.5">
                   <input
@@ -341,7 +341,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                       devTab === "SUBMISSIONS" ? "bg-[#C0A262] text-black" : "text-[#71717A] hover:text-white"
                     }`}
                   >
-                    View Supabase Submissions ({submissionsList.length})
+                    Review Client Scope Submissions ({submissionsList.length})
                   </button>
                 </div>
 
@@ -381,13 +381,13 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                         className="text-[11px] text-[#C0A262] flex items-center gap-1 hover:underline"
                       >
                         <RefreshCw className="w-3 h-3" />
-                        <span>Refresh Supabase</span>
+                        <span>Refresh Submissions</span>
                       </button>
                     </div>
 
                     <div className="max-h-72 overflow-y-auto space-y-2 pr-1">
                       {loadingSubmissions ? (
-                        <p className="text-xs text-[#71717A]">Querying Supabase database...</p>
+                        <p className="text-xs text-[#71717A]">Retrieving verified submissions...</p>
                       ) : submissionsList.length === 0 ? (
                         <div className="p-4 rounded-xl bg-[#0A0B0E] border border-[#21232E] text-center text-xs text-[#71717A]">
                           No client questionnaire submissions logged yet. The client is currently pending review.
@@ -430,10 +430,10 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                 <span>Project Staging Lock Active</span>
               </div>
               <h1 className="text-2xl sm:text-3xl font-bold font-serif-heading text-white">
-                Wealth Wise Accountant — Deployment Readiness & Scope Portal
+                Wealth Wise Accountant — Practice Growth & Proprietary Platform Portal
               </h1>
               <p className="text-xs sm:text-sm text-[#9CA3AF] max-w-2xl leading-relaxed">
-                This dedicated build architecture and prototype are reserved in our staging environment for <strong>2 months</strong>. In order to proceed with engineering and lock in the <strong>early November launch date</strong>, we require the final business scope sign-off below.
+                This dedicated build architecture and interactive prototype are reserved in our staging environment for <strong>60 days</strong>. Our engineering commitment is to deliver immediate and compounding profitability to Wealth Wise: eliminating <strong>£30,000–£50,000/year in third-party software fees (Xero + Dext)</strong>, retaining over <strong>£90,000 in practice capital</strong> across 3 years, and launching a luxury client-intake presence ready for your <strong>early November launch</strong>.
               </p>
             </div>
 
@@ -495,7 +495,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
             <div className="space-y-8">
               <div className="bg-[#0A0B0E] p-4 rounded-xl border border-[#21232E] text-xs text-[#9CA3AF] leading-relaxed">
                 <p className="font-semibold text-white mb-1">How this works:</p>
-                To ensure a fixed-price delivery with zero scope discrepancies, please provide short answers to the sections below. Submitting records your answers in our database and opens WhatsApp for instant confirmation.
+                To guarantee fixed-price execution and eliminate scope discrepancies, please provide short answers below. Submitting securely locks your requirements into our dedicated engineering schedule and opens WhatsApp for immediate confirmation.
               </div>
 
               {submitted ? (
@@ -507,7 +507,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                     Scope Submission Received
                   </h3>
                   <p className="text-xs text-[#A1A1AA] max-w-md mx-auto">
-                    Your answers have been stored in our Supabase database. WhatsApp has opened with your summary for instant confirmation.
+                    Your business scope requirements have been securely logged in our technical pipeline. WhatsApp has opened with your executive summary for immediate delivery confirmation.
                   </p>
                   <div className="pt-2 flex items-center justify-center gap-3">
                     <a
@@ -735,7 +735,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                             required
                             value={answers.q12_code_ownership}
                             onChange={(e) => handleInputChange("q12_code_ownership", e.target.value)}
-                            placeholder="e.g. 100% self-hosted on our own Supabase/Vercel instance"
+                            placeholder="e.g. 100% full independent code ownership with zero ongoing software vendor fees"
                             className="w-full px-3.5 py-2.5 bg-[#0D0E14] border border-[#2A2B38] rounded-xl text-white placeholder-[#52525B] focus:outline-none focus:border-[#C0A262] min-h-[44px]"
                           />
                         </div>
@@ -760,7 +760,7 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                   {/* Submit Button */}
                   <div className="pt-4 border-t border-[#21232E] flex flex-col sm:flex-row items-center justify-between gap-4">
                     <div className="text-xs text-[#71717A]">
-                      🔒 Submitting locks your answers into Supabase database.
+                      🔒 Submitting locks your project requirements into our dedicated delivery schedule.
                     </div>
 
                     <button

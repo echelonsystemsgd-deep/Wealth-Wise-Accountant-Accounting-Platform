@@ -139,7 +139,7 @@ export function LoginModal({ isOpen, onClose, onLogin }: LoginModalProps) {
                 <span>Phase 2 Auth & Access Configuration:</span>
               </div>
               <p className="text-[#a09a8f] text-[10px] leading-relaxed">
-                • <strong>For You (Developer/Owner):</strong> When ready for live production deployment, configure Supabase Auth keys (<code className="text-[#c9a84c]">NEXT_PUBLIC_SUPABASE_URL</code> & <code className="text-[#c9a84c]">ANON_KEY</code>).
+                • <strong>For Practice Leadership:</strong> Enterprise-grade security credentials and domain-level session encryption are provisioned for your live environment.
               </p>
               <p className="text-[#a09a8f] text-[10px] leading-relaxed">
                 • <strong>For Client (Wealth Wise):</strong> Review the multi-tenant switching and RBAC role profiles (Practice Partner, Senior Accountant, Bookkeeper, Client Director).
