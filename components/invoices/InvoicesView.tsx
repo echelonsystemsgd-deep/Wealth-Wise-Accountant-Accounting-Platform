@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { SalesInvoice } from "@/lib/accounting/types";
 import { useAccounting } from "@/lib/accounting/AccountingContext";
 import { formatGBP, calculateVatPence } from "@/lib/utils";
 import { 
@@ -20,7 +21,7 @@ import { InvoicePaymentModal } from "@/components/payments/InvoicePaymentModal";
 export function InvoicesView() {
   const { invoices, createInvoice, payInvoice } = useAccounting();
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [selectedPayInvoice, setSelectedPayInvoice] = useState<any | null>(null);
+  const [selectedPayInvoice, setSelectedPayInvoice] = useState<SalesInvoice | null>(null);
   const [customerName, setCustomerName] = useState("");
   const [itemDesc, setItemDesc] = useState("");
   const [netAmountPounds, setNetAmountPounds] = useState(1500);

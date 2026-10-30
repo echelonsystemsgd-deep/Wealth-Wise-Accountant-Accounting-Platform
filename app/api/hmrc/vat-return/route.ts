@@ -82,9 +82,9 @@ export async function POST(request: Request) {
       message: "Quarterly VAT Return successfully submitted to HMRC Making Tax Digital API",
       statutoryConfirmation: "Accepted by HM Revenue & Customs Central Processing System",
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     return NextResponse.json(
-      { success: false, error: err.message || "HMRC MTD filing failed" },
+      { success: false, error: (err instanceof Error ? err.message : String(err)) || "HMRC MTD filing failed" },
       { status: 500 }
     );
   }

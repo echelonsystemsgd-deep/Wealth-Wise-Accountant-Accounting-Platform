@@ -64,9 +64,9 @@ export async function POST(request: Request) {
         "PayPal One-Click Checkout",
       ],
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     return NextResponse.json(
-      { success: false, error: err.message || "Failed to create payment intent" },
+      { success: false, error: (err instanceof Error ? err.message : String(err)) || "Failed to create payment intent" },
       { status: 500 }
     );
   }

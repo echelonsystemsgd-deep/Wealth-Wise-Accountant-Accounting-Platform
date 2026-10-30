@@ -14,6 +14,7 @@ import {
   KeyRound,
   AlertTriangle,
   ArrowRight,
+  ArrowUpRight,
   Eye,
   EyeOff,
   Database,
@@ -48,11 +49,26 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
   // 2. DEVELOPER ACCESS & SUBMISSIONS VIEWER STATE
   // --------------------------------------------------------------------------
   const [devPassword, setDevPassword] = useState("");
-  const [isDevAuthenticated, setIsDevAuthenticated] = useState(false);
+  const [isDevAuthenticated, setIsDevAuthenticated] = useState(() => {
+    try {
+      return typeof window !== "undefined" && sessionStorage.getItem("ww_staging_unlocked") === "true";
+    } catch {
+      return false;
+    }
+  });
   const [authError, setAuthError] = useState(false);
   const [showDevModal, setShowDevModal] = useState(false);
   const [devTab, setDevTab] = useState<"PREVIEW" | "SUBMISSIONS">("PREVIEW");
-  const [submissionsList, setSubmissionsList] = useState<any[]>([]);
+  interface ScopeSubmissionRecord {
+  practice_name?: string;
+  created_at?: string;
+  q1_domain?: string;
+  q4_launch_must_haves?: string;
+  q11_budget?: string;
+  submission_status?: string;
+  [key: string]: unknown;
+}
+  const [submissionsList, setSubmissionsList] = useState<ScopeSubmissionRecord[]>([]);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
 
   // Lock body scroll and handle Escape key while dev modal is active
@@ -138,14 +154,6 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
     return () => clearInterval(timer);
   }, []);
 
-  // Check session storage on mount
-  useEffect(() => {
-    try {
-      if (sessionStorage.getItem("ww_staging_unlocked") === "true") {
-        setIsDevAuthenticated(true);
-      }
-    } catch {}
-  }, []);
 
   // Developer Password Verification: Gurtej@2008#
   const handleDevUnlock = (e: React.FormEvent) => {
@@ -432,14 +440,14 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
                         submissionsList.map((sub, idx) => (
                           <div key={idx} className="p-3.5 bg-[#0A0B0E] border border-[#21232E] rounded-xl space-y-1.5 text-xs">
                             <div className="flex items-center justify-between text-[#C0A262] font-bold">
-                              <span>Submission #{idx + 1} · {sub.practice_name || "Wealth Wise"}</span>
-                              <span className="text-[10px] text-[#71717A]">{sub.created_at || "Recent"}</span>
+                              <span>Submission #{idx + 1} · {String(sub.practice_name || "Wealth Wise")}</span>
+                              <span className="text-[10px] text-[#71717A]">{String(sub.created_at || "Recent")}</span>
                             </div>
                             <div className="text-[#A1A1AA] text-[11px] space-y-1">
-                              <div><strong>Domain/Hosting:</strong> {sub.q1_domain || "N/A"}</div>
-                              <div><strong>Software Needs:</strong> {sub.q4_launch_must_haves || "N/A"}</div>
-                              <div><strong>Preferred Route:</strong> {sub.q11_budget || "N/A"}</div>
-                              <div><strong>Status:</strong> <span className="text-amber-400 font-bold">{sub.submission_status || "PENDING"}</span></div>
+                              <div><strong>Domain/Hosting:</strong> {String(sub.q1_domain || "N/A")}</div>
+                              <div><strong>Software Needs:</strong> {String(sub.q4_launch_must_haves || "N/A")}</div>
+                              <div><strong>Preferred Route:</strong> {String(sub.q11_budget || "N/A")}</div>
+                              <div><strong>Status:</strong> <span className="text-amber-400 font-bold">{String(sub.submission_status || "PENDING")}</span></div>
                             </div>
                           </div>
                         ))
@@ -901,8 +909,21 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-[#1F2028] bg-[#0A0B0E] py-6 text-center text-xs text-[#71717A]">
-        <p>© 2026 {BRAND.legalName} · Staging Deployment Portal</p>
+      <footer className="border-t border-[#1F2028] bg-[#0A0B0E] py-6 px-4 text-center text-xs text-[#71717A]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p>© 2026 {BRAND.legalName} · Staging Deployment Portal</p>
+          <a
+            href="https://mercianwealth.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#14151C] hover:bg-[#1F2028] text-xs text-[#D1D5DB] border border-[#C0A262]/50 hover:border-[#C0A262] transition-all shadow-xs group min-h-[40px]"
+            aria-label="Designed and built by Mercian Wealth"
+          >
+            <span className="text-[#71717A] group-hover:text-white transition-colors">Designed &amp; Built by</span>
+            <span className="font-semibold text-[#C0A262]">Mercian Wealth</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-[#C0A262] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </a>
+        </div>
       </footer>
     </div>
   );

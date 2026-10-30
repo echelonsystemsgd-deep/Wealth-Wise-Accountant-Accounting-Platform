@@ -45,10 +45,10 @@ export async function POST(request: Request) {
       success: true,
       data,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Scope submission error:", err);
     return NextResponse.json(
-      { success: false, error: err.message || "Failed to log submission" },
+      { success: false, error: (err instanceof Error ? err.message : String(err)) || "Failed to log submission" },
       { status: 500 }
     );
   }
@@ -68,7 +68,7 @@ export async function GET() {
     }
 
     return NextResponse.json({ success: true, submissions: data || [] });
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("GET scope submission error:", err);
     return NextResponse.json({ success: true, submissions: [] });
   }

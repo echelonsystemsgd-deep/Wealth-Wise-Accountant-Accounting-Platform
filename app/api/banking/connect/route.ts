@@ -94,7 +94,7 @@ export async function POST(request: Request) {
 
     // Build OAuth 2.0 PKCE consent redirect link
     const authSessionUrl = `${bank.authUrl}&redirect_uri=${encodeURIComponent(
-      redirectUri || "https://wealth-wise-platform-sigma.vercel.app/api/banking/callback"
+      redirectUri || "https://wealthwiseaccountants.co.uk/api/banking/callback"
     )}&state=${Date.now()}`;
 
     return NextResponse.json({
@@ -105,9 +105,9 @@ export async function POST(request: Request) {
       authRedirectUrl: authSessionUrl,
       message: `Open Banking consent portal initialized for ${bank.name}`,
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     return NextResponse.json(
-      { success: false, error: err.message || "Failed to initiate bank link" },
+      { success: false, error: (err instanceof Error ? err.message : String(err)) || "Failed to initiate bank link" },
       { status: 500 }
     );
   }

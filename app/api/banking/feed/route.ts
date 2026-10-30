@@ -125,9 +125,9 @@ export async function POST(request: Request) {
     }
 
     return NextResponse.json({ success: true, message: "Feed up to date" });
-  } catch (err: any) {
+  } catch (err: unknown) {
     return NextResponse.json(
-      { success: false, error: err.message || "Failed to sync bank feed" },
+      { success: false, error: (err instanceof Error ? err.message : String(err)) || "Failed to sync bank feed" },
       { status: 500 }
     );
   }

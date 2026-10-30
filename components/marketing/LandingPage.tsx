@@ -9,6 +9,7 @@ import {
   MapPin,
   ChevronDown,
   ArrowRight,
+  ArrowUpRight,
   Menu,
   X,
   CheckCircle2,
@@ -82,7 +83,17 @@ export function LandingPage() {
       <header className="sticky top-0 z-40 bg-[#000000] text-white border-b border-[#222222] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
           {/* Logo */}
-          <Link href="/" className="flex items-center gap-2">
+          <Link
+            href="/"
+            onClick={(e) => {
+              if (typeof window !== "undefined" && (window.location.pathname === "/" || window.location.pathname === "")) {
+                e.preventDefault();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }
+            }}
+            className="flex items-center gap-2 cursor-pointer"
+            aria-label="Wealthwise Accountants Homepage"
+          >
             <Image
               src={BRAND.logos.fullLogo}
               alt={BRAND.practiceName}
@@ -682,7 +693,17 @@ export function LandingPage() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-[#222222]">
             <div>
-              <Link href="/" className="inline-block">
+              <Link
+                href="/"
+                onClick={(e) => {
+                  if (typeof window !== "undefined" && (window.location.pathname === "/" || window.location.pathname === "")) {
+                    e.preventDefault();
+                    window.scrollTo({ top: 0, behavior: "smooth" });
+                  }
+                }}
+                className="inline-block cursor-pointer"
+                aria-label="Back to top"
+              >
                 <Image
                   src={BRAND.logos.fullLogo}
                   alt={BRAND.practiceName}
@@ -718,7 +739,36 @@ export function LandingPage() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[#D1D5DB] text-[11px]">
+          {/* Practice Details, Policy & Mercian Wealth Attribution Button */}
+          <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-2 pb-6 border-b border-[#222222]">
+            <div className="flex flex-wrap items-center gap-3 text-xs text-[#9CA3AF]">
+              <span>{BRAND.practiceOffice}</span>
+              <span>·</span>
+              <a
+                href={BRAND.website.privacyPolicyUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-[#C0A262] hover:underline flex items-center min-h-[36px]"
+              >
+                Privacy Policy
+              </a>
+            </div>
+
+            {/* Designed & Built by Mercian Wealth Button */}
+            <a
+              href="https://mercianwealth.com"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#111111] hover:bg-[#1A1A1A] text-xs text-[#D1D5DB] border border-[#C0A262]/60 hover:border-[#C0A262] transition-all shadow-xs group min-h-[44px]"
+              aria-label="Designed and built by Mercian Wealth"
+            >
+              <span className="text-[#9CA3AF] group-hover:text-white transition-colors">Designed &amp; Built by</span>
+              <span className="font-semibold text-[#C0A262] group-hover:text-[#CDBA7A] transition-colors">Mercian Wealth</span>
+              <ArrowUpRight className="w-3.5 h-3.5 text-[#C0A262] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+            </a>
+          </div>
+
+          <div className="flex flex-col sm:flex-row items-center justify-between gap-4 text-[#9CA3AF] text-[11px]">
             <p>
               © 2026 {BRAND.legalName} · Company No. {BRAND.companyNumber} · Registered in {BRAND.registeredCountry}
             </p>

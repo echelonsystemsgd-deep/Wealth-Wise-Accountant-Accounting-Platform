@@ -1,11 +1,11 @@
-# Wealth Wise Accountant — Proprietary Accounting Platform OS
+# Wealthwise Accountants — Proprietary Accounting Platform OS
 
 **A Standalone, High-Trust Financial Operating System & Accounting Platform Engine**  
 *Direct Competitor & Bespoke Alternative to Xero, QuickBooks, and Dext for UK Accountancy Practices*
 
-[![Vercel Deployment](https://img.shields.io/badge/Vercel-Live%20Prototype-000000?style=for-the-badge&logo=vercel)](https://wealth-wise-platform-sigma.vercel.app/)
+[![Engineered by Mercian Wealth](https://img.shields.io/badge/Designed%20%26%20Built%20By-Mercian%20Wealth-C0A262?style=for-the-badge)](https://mercianwealth.com)
+[![Branding](https://img.shields.io/badge/Branding-100%25%20Proprietary-black?style=for-the-badge)](https://wealthwiseaccountants.co.uk)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.9-blue?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
-[![Next.js](https://img.shields.io/badge/Next.js-16.4-black?style=for-the-badge&logo=next.js)](https://nextjs.org/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind_CSS-v4-38B2AC?style=for-the-badge&logo=tailwind-css)](https://tailwindcss.com/)
 [![Vitest](https://img.shields.io/badge/Vitest-24%20Passed-green?style=for-the-badge&logo=vitest)](https://vitest.dev/)
 [![Active Branch](https://img.shields.io/badge/Branch-phase--2--auth--crm-gold?style=for-the-badge)](https://github.com/echelonsystemsgd-deep/Wealth-Wise-Accountant-Accounting-Platform)
@@ -21,6 +21,17 @@ The project is structured into clear isolated branches for client preview and ph
 * **`phase-3-bank-feeds`**: Automated Open Banking statement ingestion, 2-column live bank matching, and reconciliation rules.
 * **`phase-4-document-ocr`**: S3-compatible document vault, AI OCR receipt data extraction, and missing document chase queue.
 * **`phase-5-invoicing-hmrc`**: Client checkout links via Stripe, UK HMRC Making Tax Digital (MTD) VAT returns, and statutory filing exports.
+
+---
+
+## 🎨 Proprietary Metadata, Brand Identity & Footer Attribution
+
+The application features a complete **zero external vendor footprint**:
+* **Zero Third-Party Badging:** All boilerplate framework SVGs, headers (`X-Powered-By: Next.js`), and vendor URLs have been permanently purged.
+* **Custom App Icons & Favicon:** Multi-resolution `favicon.ico`, vector `icon.svg`, and iOS `apple-icon.svg` styled strictly with the black (`#000000`) and polished gold (`#C0A262`) Wealthwise Accountants palette.
+* **OpenGraph & Twitter Card Suite:** Bespoke 1200x630 vector social banner with practice coordinates and Mercian Wealth attribution watermark.
+* **Mercian Wealth Footer Button:** Every environment (Landing Page, Staging Portal, Demo Hub, Accountant Hub, Client Portal) features an interactive luxury button:
+  > **Designed & Built by Mercian Wealth** → links directly to [`https://mercianwealth.com`](https://mercianwealth.com)
 
 ---
 

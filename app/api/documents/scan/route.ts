@@ -99,9 +99,9 @@ export async function POST(request: Request) {
       ocrEngine: "Mindee Financial Document AI / Tesseract Engine",
       extractedAt: new Date().toISOString(),
     });
-  } catch (err: any) {
+  } catch (err: unknown) {
     return NextResponse.json(
-      { success: false, error: err.message || "OCR extraction failed" },
+      { success: false, error: (err instanceof Error ? err.message : String(err)) || "OCR extraction failed" },
       { status: 500 }
     );
   }

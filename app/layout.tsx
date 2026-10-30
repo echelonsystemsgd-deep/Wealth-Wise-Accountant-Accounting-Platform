@@ -23,6 +23,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://wealthwiseaccountants.co.uk"),
   title: {
     default: "Wealthwise Accountants | Accounting & Tax Services",
     template: `%s | ${BRAND.practiceName}`,
@@ -30,9 +31,25 @@ export const metadata: Metadata = {
   description:
     "Accounting, tax, bookkeeping, VAT and payroll support from Wealthwise Accountants. Clear advice to help you understand your numbers and make confident decisions.",
   applicationName: BRAND.practiceName,
-  authors: [{ name: BRAND.practiceName }],
+  authors: [{ name: BRAND.practiceName, url: "https://wealthwiseaccountants.co.uk" }],
   creator: BRAND.legalName,
   publisher: BRAND.legalName,
+  generator: "Wealthwise Accountants Engine",
+  keywords: [
+    "Wealthwise Accountants",
+    "Accountants Smethwick",
+    "Chartered Certified Accountants",
+    "UK Tax Accounting",
+    "Self Assessment",
+    "Corporation Tax",
+    "Bookkeeping",
+    "VAT Returns MTD",
+    "Payroll Services",
+    "Double-entry bookkeeping",
+  ],
+  alternates: {
+    canonical: "/",
+  },
   robots: {
     index: false,
     follow: false,
@@ -46,6 +63,30 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
+  openGraph: {
+    title: "Wealthwise Accountants | Accounting & Tax Services",
+    description:
+      "Accounting, tax, bookkeeping, VAT and payroll support from Wealthwise Accountants. Clear advice to help you understand your numbers and make confident decisions.",
+    url: "https://wealthwiseaccountants.co.uk",
+    siteName: BRAND.practiceName,
+    locale: "en_GB",
+    type: "website",
+    images: [
+      {
+        url: "/og-image.svg",
+        width: 1200,
+        height: 630,
+        alt: "Wealthwise Accountants - Accounting & Tax Services",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Wealthwise Accountants | Accounting & Tax Services",
+    description:
+      "Accounting, tax, bookkeeping, VAT and payroll support from Wealthwise Accountants.",
+    images: ["/og-image.svg"],
+  },
   formatDetection: {
     email: false,
     address: false,
@@ -56,19 +97,33 @@ export const metadata: Metadata = {
       {
         url: BRAND.logos.favicon32,
         sizes: "32x32",
+        type: "image/png",
       },
       {
         url: BRAND.logos.favicon192,
         sizes: "192x192",
+        type: "image/png",
+      },
+      {
+        url: "/icon.svg",
+        type: "image/svg+xml",
       },
     ],
+    shortcut: "/favicon.ico",
     apple: [
       {
         url: BRAND.logos.favicon192,
         sizes: "180x180",
+        type: "image/png",
+      },
+      {
+        url: "/apple-icon.svg",
+        type: "image/svg+xml",
+        sizes: "180x180",
       },
     ],
   },
+  manifest: "/site.webmanifest",
 };
 
 export default function RootLayout({

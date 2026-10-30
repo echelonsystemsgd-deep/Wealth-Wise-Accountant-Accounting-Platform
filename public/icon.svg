@@ -1,20 +1,31 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" fill="none">
-  <!-- Rounded Background Container -->
-  <rect width="128" height="128" rx="28" fill="#0f172a" />
+  <!-- Rounded Luxury Obsidian Container -->
+  <rect width="128" height="128" rx="28" fill="#000000" />
   
-  <!-- Subtle inner gradient border -->
-  <rect x="2" y="2" width="124" height="124" rx="26" stroke="#334155" stroke-width="2" fill="none" opacity="0.6"/>
+  <!-- Warm Gold Precision Border -->
+  <rect x="2" y="2" width="124" height="124" rx="26" stroke="#C0A262" stroke-width="2.5" fill="none" opacity="0.8"/>
   
-  <!-- Warm Gold Precision Accent Dot -->
-  <circle cx="102" cy="26" r="6" fill="#d97706" />
+  <!-- Subtle Inner Accent -->
+  <rect x="6" y="6" width="116" height="116" rx="22" stroke="#CDBA7A" stroke-width="1" fill="none" opacity="0.3"/>
   
-  <!-- Geometric Interlocking "WW" Monogram -->
-  <path d="M26 42 L38 86 L50 50 L64 86 L78 50 L90 86 L102 42" 
-        stroke="#ffffff" 
+  <!-- Warm Gold Precision Diamond Accent -->
+  <path d="M100 24 L105 29 L100 34 L95 29 Z" fill="#C0A262" />
+  
+  <!-- Wealthwise Signature Interlocking W Monogram -->
+  <path d="M26 44 L38 86 L51 50 L64 86 L77 50 L90 86 L102 44" 
+        stroke="#FFFFFF" 
         stroke-width="7" 
         stroke-linecap="round" 
         stroke-linejoin="round" />
   
-  <!-- Gold Accent Horizon Line representing balanced double-entry ledger -->
-  <line x1="30" y1="96" x2="98" y2="96" stroke="#d97706" stroke-width="4" stroke-linecap="round"/>
+  <!-- Secondary Gold Interlocking Line Accent -->
+  <path d="M31 46 L40 78 L51 54 L64 82 L77 54 L88 78 L97 46" 
+        stroke="#C0A262" 
+        stroke-width="2.5" 
+        stroke-linecap="round" 
+        stroke-linejoin="round" 
+        opacity="0.9"/>
+  
+  <!-- Gold Horizon Line representing balanced financial equilibrium -->
+  <line x1="30" y1="96" x2="98" y2="96" stroke="#C0A262" stroke-width="4" stroke-linecap="round"/>
 </svg>

@@ -24,8 +24,10 @@ export function BulldozerDemolition({ onReset, isNotFoundRoute = false }: Bulldo
 
   useEffect(() => {
     // Reset state on animation trigger
-    setIsImpacted(false);
-    setShowRubble(false);
+    const startTimer = setTimeout(() => {
+      setIsImpacted(false);
+      setShowRubble(false);
+    }, 0);
 
     // Impact triggers when bulldozer reaches center wall (1.8s)
     const impactTimer = setTimeout(() => {
@@ -40,6 +42,7 @@ export function BulldozerDemolition({ onReset, isNotFoundRoute = false }: Bulldo
     }, 4600);
 
     return () => {
+      clearTimeout(startTimer);
       clearTimeout(impactTimer);
       clearTimeout(resetTimer);
     };

@@ -1,7 +1,13 @@
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Briefcase, Building2, ShieldAlert, ArrowRight } from "lucide-react";
+import { ArrowLeft, Briefcase, Building2, ShieldAlert, ArrowRight, ArrowUpRight } from "lucide-react";
+import type { Metadata } from "next";
 import { BRAND } from "@/lib/brand";
+
+export const metadata: Metadata = {
+  title: "Platform Demo Hub",
+  description: "Interactive client portal and accountant management dashboard demo for Wealthwise Accountants.",
+};
 
 export default function DemoHubPage() {
   return (
@@ -116,8 +122,21 @@ export default function DemoHubPage() {
         </div>
       </div>
 
-      <footer className="border-t border-[#D1D5DB] bg-white py-4 text-center text-xs text-[#666666]">
-        <p>© 2026 {BRAND.legalName} · Prototype for review only.</p>
+      <footer className="border-t border-[#D1D5DB] bg-white py-6 px-4 text-center text-xs text-[#666666]">
+        <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p>© 2026 {BRAND.legalName} · Prototype for review only.</p>
+          <a
+            href="https://mercianwealth.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-[#000000] hover:bg-[#111111] text-xs text-white border border-[#C0A262]/60 hover:border-[#C0A262] transition-all shadow-xs group min-h-[40px]"
+            aria-label="Designed and built by Mercian Wealth"
+          >
+            <span className="text-[#D1D5DB]">Designed &amp; Built by</span>
+            <span className="font-semibold text-[#C0A262]">Mercian Wealth</span>
+            <ArrowUpRight className="w-3.5 h-3.5 text-[#C0A262] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+          </a>
+        </div>
       </footer>
     </div>
   );

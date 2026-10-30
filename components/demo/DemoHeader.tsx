@@ -71,7 +71,17 @@ export function DemoHeader({ activeView, title }: DemoHeaderProps) {
       <header className="sticky top-0 z-40 bg-[#000000] text-white border-b border-[#222222] shadow-sm">
         <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-2 sm:gap-4">
           <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-            <Link href="/" className="flex items-center shrink-0">
+            <Link
+              href="/"
+              onClick={(e) => {
+                if (typeof window !== "undefined" && window.location.pathname === "/") {
+                  e.preventDefault();
+                  window.scrollTo({ top: 0, behavior: "smooth" });
+                }
+              }}
+              className="flex items-center shrink-0 cursor-pointer"
+              aria-label="Wealthwise Accountants Homepage"
+            >
               <Image
                 src={BRAND.logos.fullLogo}
                 alt={BRAND.practiceName}

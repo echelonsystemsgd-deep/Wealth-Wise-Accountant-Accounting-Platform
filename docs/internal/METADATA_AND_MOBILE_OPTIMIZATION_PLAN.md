@@ -1,37 +1,41 @@
-# Wealth Wise Accountant — Metadata, Custom Branding & Mobile Optimization Architecture Plan
+# Wealthwise Accountants — Metadata, Custom Branding & Mobile Optimization Architecture Plan
 
-**Document Version:** 1.0.0  
-**Status:** Approved Architectural Implementation Specification  
-**Project:** Wealth Wise Accountant Operating System & Accounting Platform  
+**Document Version:** 2.0.0  
+**Status:** Approved Architectural Implementation Specification & Production Standard  
+**Project:** Wealthwise Accountants Operating System & Accounting Platform  
 **Target Architecture:** Next.js (App Router), TypeScript, Tailwind CSS, Zero External Vendor Footprint  
+**Footer Attribution Standard:** "Designed & Built by Mercian Wealth" ([mercianwealth.com](https://mercianwealth.com))
 
 ---
 
 ## 1. Executive Summary & Objectives
 
-The Wealth Wise Accountant platform is preparing for client and stakeholder prototype demonstrations. To establish complete professional authority and client trust, the application must present **100% proprietary branding** with **zero external vendor footprint** (specifically eliminating any Next.js, Vercel, or starter template artifacts).
+The Wealthwise Accountants platform is built to establish complete professional authority and client trust. The application presents **100% proprietary branding** with **zero external vendor footprint** (specifically eliminating any Next.js, Vercel, or starter template artifacts).
 
-Simultaneously, because accountancy clients and business owners increasingly access receipts, invoices, and approvals from smartphones, the entire application interface must be **fully mobile-optimised** across all existing workflows and architected cleanly to ensure future features inherit zero-defect mobile behaviour by design.
+Simultaneously, because accountancy clients and business owners access receipts, invoices, tax calculators, and approvals on mobile devices, the entire interface is **fully mobile-optimised** across all workflows, ensuring zero-defect mobile behaviour by design.
+
+At the footer of all environments (Marketing Portal, Staging Portal, Platform Demo Hub, Partner Practice OS, and Client Vault), a luxury interactive button attributes the engineering to **Mercian Wealth** linking to `https://mercianwealth.com`.
 
 ### Key Mandates
-1. **Purge External Branding:** Total elimination of Next.js and Vercel artifacts, default starter SVGs (`next.svg`, `vercel.svg`, `file.svg`, `globe.svg`, `window.svg`), framework headers (`X-Powered-By: Next.js`), and default starter metadata.
-2. **Proprietary Metadata Suite:** Comprehensive Next.js 16 metadata implementation exclusively branding Wealth Wise Accountant (Title templates, Open Graph, Twitter cards, Apple Mobile Web App configurations, Web Manifest, canonical URLs, and favicon/appicon assets).
-3. **Custom Brand Assets:** High-resolution bespoke SVG, PNG, and ICO icons featuring Wealth Wise Accountant's visual identity ("WW" monogram in deep obsidian `#0f172a`, polished gold `#d97706`, and clean slate `#f8fafc`).
-4. **Comprehensive Mobile Optimization:** Fluid layouts across all screen sizes (320px, 375px, 414px, 768px, 1024px+), eliminating horizontal overflow, optimizing tap targets (>= 44px), providing responsive table handling, mobile modal ergonomics, and prevention of iOS form zoom.
-5. **Zero Coding Errors & Build Rigor:** 0 TypeScript compiler errors, 0 ESLint errors, 0 build failures, and 100% test suite pass rate.
+1. **Purge External Branding:** Total elimination of Next.js and Vercel artifacts, default starter SVGs (`next.svg`, `vercel.svg`, `file.svg`, `globe.svg`, `window.svg`), framework headers (`X-Powered-By: Next.js`), external vendor callback URLs, and default starter metadata.
+2. **Proprietary Metadata Suite:** Comprehensive Next.js 16 metadata implementation exclusively branding Wealthwise Accountants (Title templates, Open Graph, Twitter cards, Apple Mobile Web App configurations, Web Manifest, canonical URLs, and favicon/appicon assets).
+3. **Custom Brand Assets:** High-resolution bespoke SVG, PNG, and ICO icons featuring Wealthwise Accountants' visual identity (Obsidian `#000000`, warm gold `#C0A262`, and clean white `#FFFFFF`).
+4. **Footer Attribution Button:** Dedicated "Designed & Built by Mercian Wealth" pill button in all footers linking directly to `https://mercianwealth.com` with `target="_blank" rel="noopener noreferrer"`.
+5. **Comprehensive Mobile Optimization:** Fluid layouts across all screen sizes (320px, 375px, 414px, 768px, 1024px+), eliminating horizontal overflow, optimizing tap targets (>= 44px), providing responsive table handling, mobile modal ergonomics, and prevention of iOS form zoom.
+6. **Zero Coding Errors & Build Rigor:** 0 TypeScript compiler errors, 0 ESLint errors, 0 build failures, and 100% test suite pass rate.
 
 ---
 
 ## 2. External Footprint Elimination Plan
 
-### 2.1 File System Deletions
-The default Next.js starter repository template includes boilerplate assets in `/public` and `/app` that must be deleted or replaced:
-* **`public/next.svg`** -> Remove permanently.
-* **`public/vercel.svg`** -> Remove permanently.
-* **`public/file.svg`** -> Remove permanently.
-* **`public/globe.svg`** -> Remove permanently.
-* **`public/window.svg`** -> Remove permanently.
-* **`app/favicon.ico`** -> Replace with proprietary Wealth Wise Accountant multi-resolution ICO/SVG.
+### 2.1 File System Deletions & Cleanups
+The default Next.js starter repository template boilerplate assets in `/public` and `/app` have been permanently eliminated:
+* **`public/next.svg`** -> Deleted.
+* **`public/vercel.svg`** -> Deleted.
+* **`public/file.svg`** -> Deleted.
+* **`public/globe.svg`** -> Deleted.
+* **`public/window.svg`** -> Deleted.
+* **`app/favicon.ico`** & **`public/favicon.ico`** -> Converted from official `public/images/favicon-32.png` into genuine multi-resolution ICO files.
 
 ### 2.2 Framework Header Suppression
 Next.js by default appends an HTTP response header `X-Powered-By: Next.js`. 
@@ -39,155 +43,131 @@ Next.js by default appends an HTTP response header `X-Powered-By: Next.js`.
 * **Action:** Set `poweredByHeader: false`.
 * **Result:** No HTTP response reveals the underlying server technology to inspect tools or automated scanners.
 
-### 2.3 Metadata Scrubbing
-The root layout (`app/layout.tsx`) currently contains:
-```typescript
-// BEFORE:
-export const metadata: Metadata = {
-  title: "Create Next App",
-  description: "Generated by create next app",
-};
-```
-This is scrubbed and replaced with the authoritative Wealth Wise Accountant metadata suite.
+### 2.3 Vendor URL Purge in API Routes
+Any fallback or OAuth callback redirect pointing to `*.vercel.app` has been scrubbed:
+* **Target:** `app/api/banking/connect/route.ts`
+* **Action:** Replaced `wealth-wise-platform-sigma.vercel.app` with `wealthwiseaccountants.co.uk`.
 
 ---
 
-## 3. Wealth Wise Accountant Proprietary Metadata Architecture
+## 3. Wealthwise Accountants Proprietary Metadata Architecture
 
 ### 3.1 Metadata Specification Table
 
 | Meta Property | Value | Rationale |
 | :--- | :--- | :--- |
-| **`title.default`** | `Wealth Wise Accountant — Modern Accounting Platform & Client Workspace` | Definitive practice platform positioning |
-| **`title.template`** | `%s \| Wealth Wise Accountant` | Dynamic sub-page titling for future expansions |
-| **`description`** | `Dedicated UK accounting platform and client portal. Double-entry general ledger, automated bank reconciliation, MTD VAT management, and secure document vault.` | Authoritative description for search engines and social sharing |
-| **`applicationName`** | `Wealth Wise Accountant Platform OS` | Progressive Web App and system identity |
-| **`authors`** | `[{ name: "Wealth Wise Accountant Practice" }]` | Practice authorship |
-| **`creator`** | `Wealth Wise Accountant Ltd` | Proprietary entity declaration |
-| **`publisher`** | `Wealth Wise Accountant Ltd` | Formal publisher record |
-| **`keywords`** | `["accounting platform", "UK accountant", "double-entry ledger", "client portal", "VAT MTD", "bank reconciliation", "Wealth Wise Accountant"]` | Targeted accounting search indexing |
-| **`metadataBase`** | `https://wealthwiseaccountant.co.uk` (configured via env or default fallback) | Absolute URL resolution for social assets |
-| **`robots`** | `{ index: true, follow: true, googleBot: { index: true, follow: true } }` | High-fidelity search engine indexing |
-| **`openGraph.title`** | `Wealth Wise Accountant — Intelligent Financial Platform` | High-trust social cards |
-| **`openGraph.siteName`** | `Wealth Wise Accountant` | Universal site identifier |
+| **`title.default`** | `Wealthwise Accountants \| Accounting & Tax Services` | Official practice title |
+| **`title.template`** | `%s \| Wealthwise Accountants` | Dynamic sub-page titling across all routes |
+| **`description`** | `Accounting, tax, bookkeeping, VAT and payroll support from Wealthwise Accountants. Clear advice to help you understand your numbers and make confident decisions.` | Official firm value proposition |
+| **`applicationName`** | `Wealthwise Accountants` | Progressive Web App and system identity |
+| **`authors`** | `[{ name: "Wealthwise Accountants", url: "https://wealthwiseaccountants.co.uk" }]` | Practice authorship |
+| **`creator`** | `Wealthwise Accountants Limited` | Legal entity declaration |
+| **`publisher`** | `Wealthwise Accountants Limited` | Formal publisher record |
+| **`keywords`** | `["Wealthwise Accountants", "Accountants Smethwick", "Chartered Certified Accountants", "UK Tax Accounting", "Self Assessment", "Corporation Tax", "Bookkeeping", "VAT Returns MTD", "Payroll Services"]` | Targeted accounting search indexing |
+| **`metadataBase`** | `https://wealthwiseaccountants.co.uk` | Absolute URL resolution for social assets |
+| **`robots`** | `{ index: false, follow: false }` | Protected staging/prototype indexing guard |
+| **`openGraph.title`** | `Wealthwise Accountants \| Accounting & Tax Services` | High-trust social cards |
+| **`openGraph.siteName`** | `Wealthwise Accountants` | Universal site identifier |
 | **`openGraph.locale`** | `en_GB` | UK jurisdiction alignment |
-| **`twitter.card`** | `summary_large_image` | Rich preview on communications channels |
+| **`openGraph.images`** | `[{ url: "/og-image.svg", width: 1200, height: 630 }]` | Bespoke vector social banner with Mercian Wealth watermark |
+| **`twitter.card`** | `summary_large_image` | High-resolution preview on communications channels |
+| **`manifest`** | `/site.webmanifest` | PWA manifest configuration |
 
-### 3.2 Viewport & PWA Configuration
+### 3.2 Viewport Configuration
 Next.js 16 separates `viewport` from `metadata`:
 ```typescript
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
   maximumScale: 5,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#0f172a" },
-  ],
+  themeColor: "#000000",
 };
 ```
 
 ### 3.3 Web App Manifest (`public/site.webmanifest`)
 Provides full standalone mobile installation capabilities:
-* `name`: `Wealth Wise Accountant Platform`
-* `short_name`: `WealthWise`
-* `description`: `Proprietary Accounting Platform & Client Workspace`
+* `name`: `Wealthwise Accountants`
+* `short_name`: `Wealthwise`
+* `description`: `Accounting & Tax Services for UK Businesses and Individuals`
 * `start_url`: `/`
 * `display`: `standalone`
-* `background_color`: `#ffffff`
-* `theme_color`: `#0f172a`
-* `icons`: 192x192, 512x512, and maskable vector icons
+* `background_color`: `#F0F5FA`
+* `theme_color`: `#000000`
+* `icons`: 192x192, 32x32, and vector maskable icons
 
 ---
 
 ## 4. Visual Identity & Brand Assets Creation
 
 ### 4.1 Visual Hierarchy & Motif
-* **Primary Mark:** Refined hexagonal/curved crest with interlocking geometric "WW" monogram.
+* **Primary Mark:** Interlocking geometric monogram in polished gold (`#C0A262`) with white accents and obsidian background.
 * **Palette:**
-  * Obsidian Navy: `#0f172a` (Primary Trust & Structure)
-  * Rich Slate: `#334155` (Secondary & Structure)
-  * Warm Amber / Gold: `#d97706` / `#f59e0b` (Financial Prosperity & Precision Accent)
-  * Pure White: `#ffffff` (Clarity)
+  * Obsidian Black: `#000000` / `#111111` (Primary Trust & Structure)
+  * Rich Gold: `#C0A262` / `#CDBA7A` (Financial Prosperity & Precision Accent)
+  * Page Slate: `#F0F5FA` (Soft readable background)
+  * Pure White: `#FFFFFF` (Clarity)
 * **Assets Generated:**
-  1. `public/favicon.svg` & `app/favicon.ico` — Vector and raster crisp favicon.
-  2. `public/apple-touch-icon.png` — iOS home screen bookmark icon (180x180).
-  3. `public/icon-192.png` & `public/icon-512.png` — Progressive Web App launcher icons.
-  4. `public/og-image.png` / `public/brand-card.svg` — Social graph banner displaying "Wealth Wise Accountant — Standalone Accounting Software Engine".
+  1. `public/favicon.ico` & `app/favicon.ico` — Multi-resolution favicon generated from official 32x32 brand asset.
+  2. `public/icon.svg` & `app/icon.svg` — Precision vector monogram with gold geometric accents.
+  3. `public/apple-icon.svg` & `app/apple-icon.svg` — 180x180 iOS touch icon with gold border.
+  4. `public/og-image.svg` — 1200x630 vector OpenGraph banner with practice coordinates and "Designed & Built by Mercian Wealth" watermark.
 
 ---
 
-## 5. Mobile Optimization Engineering Plan
+## 5. Mercian Wealth Footer Attribution Button
 
-### 5.1 Viewport Ergonomics & Responsive Breakpoints
-Accountants and business clients frequently operate on devices ranging from iPhone SE (375px) to iPad Pro (1024px). The following adjustments guarantee 0 layout bugs:
+In accordance with agency engineering requirements, every environment features a luxury attribution button linking to `https://mercianwealth.com`:
 
-1. **Global Header (`app/page.tsx`):**
-   * *Problem:* Fixed `h-16 flex items-center justify-between` compresses on 320px-390px screens when brand title, platform badge, and role switcher buttons compete for horizontal space.
-   * *Solution:* Wrap brand text responsively (`hidden xs:inline`), make role switcher pill compact on mobile with icon-prominent touch buttons, ensure profile badge drops neatly into mobile-friendly layout.
-   * *Touch targets:* Minimum 44px tap target area for role switcher and navigation elements.
-
-2. **Scrollable Tab Strips (`AccountantDashboard.tsx` & `ClientPortal.tsx`):**
-   * *Problem:* Tab navigation can cause scroll friction or hide off-screen tabs without visual indication.
-   * *Solution:* Add smooth horizontal scrolling (`overflow-x-auto no-scrollbar scroll-smooth`), padding guards, and active indicators so users can swipe between views naturally.
-
-3. **General Ledger View (`GeneralLedgerView.tsx`):**
-   * *Problem:* Complex double-entry journal line tables with 6 columns (Account Code, Nominal Account, Description, Debit, Credit, Net Balance) cause severe horizontal truncation on mobile.
-   * *Solution:* Wrap tables in responsive horizontal scrollers with smooth momentum scrolling, add card-view summaries on mobile viewports (`block sm:hidden`), and ensure mathematical balancing indicators (`Σ Debits = Σ Credits`) remain visible without overflowing.
-
-4. **Bank Reconciliation Feed (`ReconciliationView.tsx`):**
-   * *Problem:* Two-column layout (statement list on left, reconciliation workbench on right) can feel cramped on tablet/mobile portrait.
-   * *Solution:* Single-column flow on mobile (<1024px) where selecting a transaction smoothly reveals or anchors to the reconciliation matching drawer with high-contrast 1-tap "Confirm Match" buttons.
-
-5. **Invoices View & Creation Modal (`InvoicesView.tsx`):**
-   * *Problem:* Fixed modal widths and desktop table headers cause overflow on mobile; inputs below 16px cause iOS Safari viewport auto-zoom.
-   * *Solution:* Modal optimized with `w-full max-w-lg mx-4`, max-height with smooth vertical scroll, input font sizing configured to prevent iOS zoom (`text-base sm:text-xs`), and responsive action buttons.
-
-6. **Financial Reports & Statements (`FinancialReportsView.tsx`):**
-   * *Problem:* Statutory accounts (P&L and Balance Sheet) need strict row-column alignment for financial readability.
-   * *Solution:* Clean responsive rows with subtle dot-leaders, monospace integer-formatted values, and clear hierarchy that retains tabular clarity even on 360px screens.
-
-7. **SVG Financial Charts (`HighPrecisionFinancialChart.tsx`):**
-   * *Problem:* Fixed SVG viewBox calculations with non-wrapping headers can cause legend items to collide on small screens.
-   * *Solution:* Responsive flex header with wrap capabilities (`flex-col sm:flex-row`), touch-friendly hover points with touch event listeners (`onTouchStart`), and fluid SVG scaling.
-
----
-
-## 6. Implementation Milestones & Checklist
-
-```
-[Phase 1] Asset & Framework Scrubbing
-  ├─ Delete public/next.svg, public/vercel.svg, public/file.svg, public/globe.svg, public/window.svg
-  ├─ Update next.config.ts with poweredByHeader: false
-  └─ Generate bespoke Wealth Wise Accountant SVGs and icons
-
-[Phase 2] Comprehensive Metadata Architecture
-  ├─ Implement Metadata and Viewport in app/layout.tsx
-  ├─ Create public/site.webmanifest for PWA capability
-  └─ Configure Open Graph, Twitter card, and canonical schema
-
-[Phase 3] Responsive & Mobile-First Component Refinements
-  ├─ app/page.tsx: Responsive header & ledger status ribbon
-  ├─ AccountantDashboard.tsx: Touch-optimized tab strip & responsive metric grid
-  ├─ ClientPortal.tsx: Mobile-first chat, upload action cards & responsive sub-tabs
-  ├─ InvoicesView.tsx: Mobile table handling, iOS zoom prevention & adaptive modal
-  ├─ GeneralLedgerView.tsx: Adaptive journal view & trial balance mobile ergonomics
-  ├─ ReconciliationView.tsx: Responsive feed & mobile-friendly match drawer
-  ├─ HighPrecisionFinancialChart.tsx: Touch event listeners & wrapping legends
-  └─ DocumentVaultView.tsx: Responsive drag-and-drop & touch approval controls
-
-[Phase 4] Verification & Quality Gate
-  ├─ Run TypeScript compiler check (0 errors)
-  ├─ Run Vitest automated test suite (11/11 tests pass)
-  ├─ Run ESLint verification (0 errors)
-  ├─ Run production build: pnpm run build (0 errors)
-  └─ Verify HTML output and inspect bundle for zero external branding
+```tsx
+<a
+  href="https://mercianwealth.com"
+  target="_blank"
+  rel="noopener noreferrer"
+  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#111111] hover:bg-[#1A1A1A] text-xs text-[#D1D5DB] border border-[#C0A262]/60 hover:border-[#C0A262] transition-all shadow-xs group min-h-[44px]"
+  aria-label="Designed and built by Mercian Wealth"
+>
+  <span className="text-[#9CA3AF] group-hover:text-white transition-colors">Designed &amp; Built by</span>
+  <span className="font-semibold text-[#C0A262] group-hover:text-[#CDBA7A] transition-colors">Mercian Wealth</span>
+  <ArrowUpRight className="w-3.5 h-3.5 text-[#C0A262] group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+</a>
 ```
 
+### Footers Equipped:
+1. **Public Practice Landing Page** (`components/marketing/LandingPage.tsx`)
+2. **Interactive Platform Demo Hub** (`app/demo/page.tsx`)
+3. **Partner Practice OS Demo** (`app/demo/accountant/page.tsx`)
+4. **Client Collaboration Portal Demo** (`app/demo/client/page.tsx`)
+5. **Client Staging Deployment Portal** (`components/staging/ProjectScopeQuestionnaire.tsx`)
+
 ---
 
-## 7. Future Proofing Architecture
-To ensure future features inherit flawless mobile responsiveness and zero vendor contamination:
-1. **Tailwind Design System Tokens:** All card surfaces, interactive pills, and typography use centralized utility classes (`card-surface`, `font-sans`, `font-mono`).
-2. **Metadata Extension Convention:** Any future sub-routes (`/invoices/[id]`, `/portal/[clientId]`, etc.) will export standard `generateMetadata()` inheriting the base `%s | Wealth Wise Accountant` template.
-3. **Automated CI Checks:** Ensure build pipelines fail if default framework SVG assets or unbranded titles are committed.
+## 6. Mobile Optimization Engineering Standards
+
+1. **Tap Targets:** Every button and interactive control satisfies >= 40–44px touch ergonomics.
+2. **Horizontal Overflow Prevention:** Tables and filter strips wrapped in `overflow-x-auto scrollbar-none touch-pan-x`.
+3. **Modal Isolation:** All modal overlays lock `body` scroll (`overflow: hidden`), handle backdrop click dismissal, and respond to the `Escape` key.
+4. **Form Ergonomics:** Inputs styled with base 16px font on small screens to prevent iOS Safari auto-zoom.
+
+---
+
+## 7. Quality Gate Checklist
+
+```
+[x] 1. Zero external vendor branding (No Next.js, no Vercel).
+[x] 2. Powered-by headers disabled in next.config.ts.
+[x] 3. Genuine Wealthwise Accountants favicon.ico, icon.svg, apple-icon.svg.
+[x] 4. Comprehensive metadata, OpenGraph, Twitter card, webmanifest in app/layout.tsx.
+[x] 5. "Designed & Built by Mercian Wealth" interactive button in all footers linking to mercianwealth.com.
+[x] 6. Automated Vitest suite passing (24/24 tests).
+[x] 7. TypeScript compiler check passing (0 errors).
+[x] 8. Production build passing (pnpm run build) across all routes.
+```
+
+
+---
+
+## 8. Header Logo Navigation Behavior
+
+Clicking the practice logo in the top navigation header on any page now seamlessly routes and resets viewport scroll to the top of the landing page:
+- In `components/marketing/LandingPage.tsx`, clicking the logo checks `window.location.pathname === '/'` and executes smooth scrolling to top (`window.scrollTo({ top: 0, behavior: 'smooth' })`), avoiding redundant page reloads while providing instant viewport reset.
+- In `components/demo/DemoHeader.tsx` and related portals, clicking the logo routes directly to `/` with the top scroll anchor preserved.

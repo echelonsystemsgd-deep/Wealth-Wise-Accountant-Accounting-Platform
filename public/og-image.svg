@@ -2,41 +2,72 @@
   <defs>
     <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
       <stop offset="0%" stop-color="#000000" />
-      <stop offset="100%" stop-color="#111111" />
+      <stop offset="60%" stop-color="#0A0B0E" />
+      <stop offset="100%" stop-color="#14151C" />
     </linearGradient>
     <linearGradient id="goldGrad" x1="0" y1="0" x2="1" y2="0">
       <stop offset="0%" stop-color="#C0A262" />
       <stop offset="100%" stop-color="#CDBA7A" />
+    </linearGradient>
+    <linearGradient id="goldBorderGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#C0A262" stop-opacity="0.6" />
+      <stop offset="50%" stop-color="#9A7A3A" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#C0A262" stop-opacity="0.6" />
     </linearGradient>
   </defs>
 
   <!-- Background -->
   <rect width="1200" height="630" fill="url(#bg)" />
 
-  <!-- Gold Accent Border -->
-  <rect x="40" y="40" width="1120" height="550" rx="16" fill="none" stroke="#C0A262" stroke-width="2" opacity="0.3" />
+  <!-- Gold Accent Outer Frame -->
+  <rect x="36" y="36" width="1128" height="558" rx="20" fill="none" stroke="url(#goldBorderGrad)" stroke-width="2" />
+  <rect x="44" y="44" width="1112" height="542" rx="14" fill="none" stroke="#C0A262" stroke-width="1" stroke-opacity="0.15" />
+
+  <!-- Brand Emblem Monogram in Top Left -->
+  <g transform="translate(100, 90)">
+    <rect width="72" height="72" rx="16" fill="#111111" stroke="#C0A262" stroke-width="1.5" />
+    <path d="M16 25 L23 49 L30 29 L37 49 L44 29 L51 49 L58 25" stroke="#FFFFFF" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />
+    <line x1="18" y1="55" x2="56" y2="55" stroke="#C0A262" stroke-width="2.5" stroke-linecap="round" />
+  </g>
 
   <!-- Main Title -->
-  <text x="100" y="240" font-family="'DM Serif Display', Georgia, serif" font-size="64" font-weight="700" fill="#ffffff" letter-spacing="-1">
+  <text x="190" y="145" font-family="'DM Serif Display', Georgia, serif" font-size="44" font-weight="700" fill="#FFFFFF" letter-spacing="-0.5">
     Wealthwise Accountants
   </text>
-  <text x="100" y="300" font-family="'Inter', sans-serif" font-size="28" font-weight="500" fill="url(#goldGrad)">
+  <text x="100" y="240" font-family="'Inter', sans-serif" font-size="28" font-weight="500" fill="url(#goldGrad)">
     Accounting, Tax, Bookkeeping, VAT &amp; Payroll Support
   </text>
 
   <!-- Value propositions -->
-  <text x="100" y="390" font-family="'Inter', sans-serif" font-size="20" fill="#D1D5DB" font-weight="400">
-    • Clarity in every number. Confidence in every decision.
-  </text>
-  <text x="100" y="430" font-family="'Inter', sans-serif" font-size="20" fill="#D1D5DB" font-weight="400">
-    • Dedicated practice software &amp; client review prototype.
-  </text>
+  <g transform="translate(100, 290)">
+    <circle cx="8" cy="18" r="4" fill="#C0A262" />
+    <text x="24" y="24" font-family="'Inter', sans-serif" font-size="20" fill="#E2E8F0" font-weight="400">
+      Clarity in every number. Confidence in every decision.
+    </text>
 
-  <!-- Footer badge -->
-  <g transform="translate(100, 500)">
-    <rect width="360" height="36" rx="6" fill="#111111" stroke="#C0A262" stroke-width="1" />
-    <text x="180" y="23" font-family="'Inter', sans-serif" font-size="13" font-weight="600" fill="#C0A262" text-anchor="middle">
+    <circle cx="8" cy="62" r="4" fill="#C0A262" />
+    <text x="24" y="68" font-family="'Inter', sans-serif" font-size="20" fill="#E2E8F0" font-weight="400">
+      Specialist advice for limited companies, sole traders, and landlords across the UK.
+    </text>
+
+    <circle cx="8" cy="106" r="4" fill="#C0A262" />
+    <text x="24" y="112" font-family="'Inter', sans-serif" font-size="20" fill="#E2E8F0" font-weight="400">
+      Dedicated practice operating platform &amp; client collaboration workspace.
+    </text>
+  </g>
+
+  <!-- Bottom Coordinates & Attribution -->
+  <g transform="translate(100, 490)">
+    <rect width="380" height="42" rx="8" fill="#111111" stroke="#C0A262" stroke-width="1" stroke-opacity="0.6" />
+    <text x="190" y="26" font-family="'Inter', sans-serif" font-size="13" font-weight="600" fill="#C0A262" text-anchor="middle">
       65 Waterloo Road, Smethwick, B66 4JS
+    </text>
+  </g>
+
+  <g transform="translate(760, 490)">
+    <rect width="340" height="42" rx="21" fill="#111111" stroke="#C0A262" stroke-width="1" stroke-opacity="0.6" />
+    <text x="170" y="26" font-family="'Inter', sans-serif" font-size="12" font-weight="500" fill="#94A3B8" text-anchor="middle">
+      Designed &amp; Built by <tspan font-weight="700" fill="#C0A262">Mercian Wealth</tspan>
     </text>
   </g>
 </svg>
