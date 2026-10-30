@@ -16,43 +16,52 @@
 
 The project is structured into clear isolated branches for client preview and phased milestone delivery:
 
-* **`main`**: Verified live production landing page and interactive dual-perspective demonstrator.
-* **`phase-2-auth-crm`** *(Current Active Build)*: Multi-tenant authentication, Row-Level Security (RLS) context, role-based UI guards (RBAC), multi-client workspace switching, and Practice CRM client portfolio manager.
+* **`main`**: Verified live production landing page, interactive dual-perspective demonstrator, and prototype review bar.
+* **`phase-2-auth-crm`** *(Current Active Build)*: Multi-tenant authentication, Row-Level Security (RLS) context, role-based UI guards (RBAC), multi-client workspace switching, responsive dashboard sidebars, interactive UK tax calculator, and Practice CRM client portfolio manager.
 * **`phase-3-bank-feeds`**: Automated Open Banking statement ingestion, 2-column live bank matching, and reconciliation rules.
 * **`phase-4-document-ocr`**: S3-compatible document vault, AI OCR receipt data extraction, and missing document chase queue.
 * **`phase-5-invoicing-hmrc`**: Client checkout links via Stripe, UK HMRC Making Tax Digital (MTD) VAT returns, and statutory filing exports.
 
 ---
 
-## ⚡ Phase 2 Deliverables: Multi-Tenant Auth, RBAC & Practice CRM
+## ⚡ Core Upgrades & Feature Highlights
 
-Phase 2 connects the canonical accounting engine built in Phase 1 into a true multi-tenant practice operating system:
+### 1. Responsive Dashboard Sidebar Navigation (`components/dashboard/`, `components/portal/`)
+- **Partner Practice OS (`/demo/accountant`)**:
+  - High-contrast workstation desktop sidebar collapsible between 260px (full labels) and 80px (icon-only widescreen mode for wide ledger spreadsheets).
+  - Categorized nav groups: **Practice CRM** (Clients, Executive KPIs), **Ledger & Compliance** (General Ledger, Bank Rec, Reports), and **Operations & Billing** (Invoices, Document Vault).
+  - Dynamic status counters: `48 Active` clients, `2 Due` unmatched bank feeds, `OCR Ingest` queue.
+  - Mobile off-canvas drawer with full body scroll locking (`overflow: hidden`), Escape key listener, and touch-calibrated targets.
+- **Client Dropzone & Vault (`/demo/client`)**:
+  - Dedicated client sidebar with active Company CRN badge and assigned Senior Accountant indicator (Sarah Jenkins, ACCA).
+  - Quick "+ Upload Receipt" dropzone action, sales invoicing link, and 1-tap WhatsApp consultation.
 
-1. **Practice CRM & Portfolio Management Hub (`components/crm/PracticeCrmView.tsx`):**
-   - Central command dashboard for the accountancy practice.
-   - Real-time client health metrics: Unreconciled bank transactions, missing client receipts, draft sales invoices, and bank cash balances.
-   - Practice fee analytics: Tracks monthly practice retainers (£1,190/mo) alongside direct self-serve SaaS revenue (£9–£19/mo).
-   - Statutory compliance tracking: Automatic deadline reminders for upcoming VAT Returns (Form 100), Year-End Accounts (Companies House), and Confirmation Statements.
+### 2. Interactive UK Small Business & Ltd Tax Calculator (`components/marketing/TaxSavingsCalculator.tsx`)
+- Dynamic turnover (£25k–£500k+) and allowable expense sliders calibrated for UK tax rules.
+- Live comparison of Sole Trader (Income Tax + NI Class 2/4) vs. UK Limited Company structure (Optimal £12,570 Director Salary, 19/25% Corporation Tax, Dividend Allowances).
+- Computes estimated annual tax savings (£2,400 to £14,000+/year) and recommends an optimal Wealthwise monthly retainer (£120–£450/month).
+- "Claim This Strategy" action pre-fills the consultation form with calculated figures.
 
-2. **Client Workspace Switcher (`components/auth/ClientWorkspaceSwitcher.tsx`):**
-   - Instant switcher allowing accountants to cycle between client businesses (Apex Digital Solutions Ltd, Kensington Bistro Ltd, Vanguard Real Estate LLP, Clara Bennett Studio) without logging out.
-   - Automatically sets tenant context (`app.current_org_id`) ensuring strict Row-Level Security.
+### 3. Persistent 3-Environment Prototype Review Bar (`components/demo/PrototypeReviewBar.tsx`)
+- Collapsible review bar anchored across all pages allowing 1-tap switching between:
+  1. 🌐 **Public Marketing Portal** (`/`)
+  2. 💼 **Partner Practice OS** (`/demo/accountant`)
+  3. 📱 **Client Dropzone & Vault** (`/demo/client`)
+- Direct 1-tap WhatsApp advisory link connecting directly with the firm.
 
-3. **Role-Based Access Control (RBAC) & UI Guards:**
-   - **`PRACTICE_ADMIN` / `SENIOR_ACCOUNTANT` / `BOOKKEEPER`**: Full practice CRM access, multi-client switching, general ledger journal posting, trial balance generation, and approval drawers.
-   - **`CLIENT_DIRECTOR`**: Strictly sandboxed to their single company workspace. Attempting to access practice-level management views displays an authorized security shield directing them back to their business portal.
-
-4. **Bi-Directional Action Placeholders:**
-   - **Accountant Review Required**: Clear action items requiring accountant sign-off (e.g. VAT Box 1/4 adjustments, POS card batch splits, Sole Trader draft computations).
-   - **Pending Client Director Action**: Clear tasks highlighted directly in the Client Portal (e.g. upload missing Barclaycard receipts, connect Open Banking feeds, approve management report packs).
+### 4. Enterprise Row-Level Security (RLS) & Multi-Tenant Switcher
+- Instant client switching (Apex Digital Solutions Ltd, Kensington Bistro Ltd, Vanguard Real Estate LLP, Clara Bennett Studio) without logging out.
+- Automatic session tenant context (`app.current_org_id`) guaranteeing complete client isolation.
+- Strict UI guards shielding practice-level accounting data from unauthorized client directors.
 
 ---
 
-## 📱 Mobile-First Ergonomics
+## 📱 Mobile-First Ergonomics & Modal Isolation
 
 - Touch targets calibrated to a minimum 40–44px for high-dexterity mobile use.
 - Responsive horizontal scrolling (`touch-pan-x` and `scrollbar-none`) for navigation strips and filter bars.
 - Dedicated dual-views: clean itemized cards on `< sm` mobile screens; high-density tabular spreadsheets on desktop.
+- Modal dialogs (Payment Modal, Open Banking Modal, HMRC MTD Filing, Mobile Drawer) enforce body scroll locks, backdrop click dismissal, and `Escape` key listeners.
 - Zero horizontal screen overflow on iOS Safari and mobile Chrome.
 
 ---
@@ -66,9 +75,9 @@ pnpm test
 ```
 
 ```
-✓ lib/crm/crm.test.ts (4 tests)
 ✓ lib/dal/dal.test.ts (9 tests)
 ✓ lib/utils.test.ts (3 tests)
+✓ lib/crm/crm.test.ts (4 tests)
 ✓ lib/accounting/ledgerService.advanced.test.ts (4 tests)
 ✓ lib/accounting/ledgerService.test.ts (4 tests)
 
@@ -76,7 +85,7 @@ Test Files  5 passed (5)
 Tests       24 passed (24)
 ```
 
-Compile the Next.js production build:
+Compile the Next.js production build (17/17 routes prerendered):
 
 ```bash
 pnpm run build
@@ -86,7 +95,7 @@ pnpm run build
 
 ## 🔒 Configuration & API Checklist for Client & Developer
 
-When ready to connect production cloud providers, see detailed setup instructions in:
+When ready to connect live UK banking, Stripe checkout, or HMRC MTD credentials, see detailed step-by-step guides in:
 - [`/docs/internal/API_KEYS_AND_INTEGRATIONS.md`](./docs/internal/API_KEYS_AND_INTEGRATIONS.md)
 - [`/docs/internal/IMPLEMENTATION_PLAN.md`](./docs/internal/IMPLEMENTATION_PLAN.md)
 - [`/docs/internal/PROPRIETARY_XERO_ALTERNATIVE_BLUEPRINT.md`](./docs/internal/PROPRIETARY_XERO_ALTERNATIVE_BLUEPRINT.md)

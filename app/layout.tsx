@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { DM_Serif_Display, Inter } from "next/font/google";
 import "./globals.css";
 import { BRAND } from "@/lib/brand";
+import { PrototypeReviewBar } from "@/components/demo/PrototypeReviewBar";
 
 const dmSerifDisplay = DM_Serif_Display({
   weight: "400",
@@ -80,8 +81,11 @@ export default function RootLayout({
       <head>
         <meta name="robots" content="noindex, nofollow" />
       </head>
-      <body className="bg-[#F0F5FA] text-[#111111] font-sans antialiased min-h-screen selection:bg-[#C0A262] selection:text-black">
-        {children}
+      <body className="bg-[#F0F5FA] text-[#111111] font-sans antialiased min-h-screen selection:bg-[#C0A262] selection:text-black flex flex-col">
+        <PrototypeReviewBar />
+        <main className="flex-1">
+          {children}
+        </main>
       </body>
     </html>
   );

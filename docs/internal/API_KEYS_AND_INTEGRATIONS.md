@@ -1,108 +1,110 @@
-# Wealth Wise Accountant — Technical Architecture & Integration Master Guide
-## Full End-to-End Implementation Blueprint for Open Banking, Automated VAT, Document Vault & Ledger Rails
+# Wealth Wise Accountant — API Keys, Cloud Integrations & MCP Connection Guide
+## Comprehensive Setup Guide to Connect Real-Time Banking, Payments, Document OCR & HMRC
+
+This guide details the exact API credentials, developer portals, environment variables, and MCP (Model Context Protocol) connections required to transition Wealth Wise from prototype mode to live production operations.
 
 ---
 
-### 1. Executive Overview: Mapping Client Discovery to Architecture
+### 1. Master Production API Keys Matrix
 
-During the discovery call on 12 October 2026, Wealth Wise Accounting confirmed the exact workflows required to replace their dependency on third-party software (Xero and Hostinger):
-
-1. **Client Portal & Weekly Upload Cadence:** SME clients access their portal weekly to upload expense receipts, purchase invoices, and check their business health.
-2. **Automated VAT Calculation:** System must automatically compute quarterly VAT liabilities ("tell them this VAT is due in this quarter") directly from ledger postings.
-3. **Sales Invoicing & Ledger Linking:** Issue sales invoices, record customer payments, and automatically post double-entry journals to nominal codes.
-4. **Automated Bank Feeds:** Direct connection to UK business bank accounts to stream transactions into the 2-column reconciliation matcher without manual CSV entry.
-5. **Brand Website Transformation:** Upgrade the current Hostinger website into a high-converting, luxury-branded client portal and marketing hub.
+| Domain | Recommended Provider | Registration & Keys URL | Required Environment Variables | Free Tier / Cost Structure |
+| :--- | :--- | :--- | :--- | :--- |
+| **Database & Auth** | Supabase (PostgreSQL 15+) | [supabase.com/dashboard](https://supabase.com/dashboard) | `NEXT_PUBLIC_SUPABASE_URL`<br>`NEXT_PUBLIC_SUPABASE_ANON_KEY`<br>`SUPABASE_SERVICE_ROLE_KEY`<br>`DATABASE_URL` | Free tier covers 500MB database, 50,000 monthly active users, RLS policies. |
+| **UK Open Banking AISP** | Truelayer (or Plaid UK) | [console.truelayer.com](https://console.truelayer.com/) | `TRUELAYER_CLIENT_ID`<br>`TRUELAYER_CLIENT_SECRET`<br>`TRUELAYER_WEBHOOK_SECRET` | Free developer sandbox. Pay-per-active-bank-connection in production (~£0.20–£0.40/month/conn vs Xero £30/mo). |
+| **Document OCR AI** | Mindee Financial API (or AWS Textract) | [platform.mindee.com](https://platform.mindee.com/) | `MINDEE_API_KEY` | 250 free pages per month. Fast extraction for UK receipts and invoices. |
+| **Card & Apple Pay** | Stripe Connect | [dashboard.stripe.com/apikeys](https://dashboard.stripe.com/apikeys) | `STRIPE_SECRET_KEY`<br>`NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`<br>`STRIPE_WEBHOOK_SECRET` | 0 monthly subscription. Standard 1.5% + 20p transaction fee per card payment. |
+| **Alternative Payments** | PayPal REST API | [developer.paypal.com](https://developer.paypal.com/) | `PAYPAL_CLIENT_ID`<br>`PAYPAL_CLIENT_SECRET` | 0 monthly subscription. Standard merchant processing fee. |
+| **HMRC MTD Tax API** | HMRC Developer Hub | [developer.service.hmrc.gov.uk](https://developer.service.hmrc.gov.uk/) | `HMRC_CLIENT_ID`<br>`HMRC_CLIENT_SECRET`<br>`HMRC_SERVER_TOKEN` | Free official UK Government API for VAT (MTD Form 100) and Corporation Tax. |
+| **Transactional Email** | Resend (or Postmark) | [resend.com/api-keys](https://resend.com/api-keys) | `RESEND_API_KEY` | 3,000 emails/month free. Used for invoice dispatch and weekly receipt chasers. |
 
 ---
 
-### 2. Deep-Dive: Phase-by-Phase Technical Blueprint
+### 2. Ready-to-Copy `.env.local` Configuration Template
 
+Place these keys into your local `.env.local` or host dashboard (e.g. Vercel Project Settings > Environment Variables):
+
+```bash
+# -------------------------------------------------------------
+# 1. DATABASE & MULTI-TENANT AUTH (SUPABASE)
+# -------------------------------------------------------------
+NEXT_PUBLIC_SUPABASE_URL="https://your-project.supabase.co"
+NEXT_PUBLIC_SUPABASE_ANON_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+SUPABASE_SERVICE_ROLE_KEY="eyJhbGciOiJIUzI1NiIsInR5cCI6..."
+DATABASE_URL="postgresql://postgres:[PASSWORD]@db.your-project.supabase.co:5432/postgres"
+
+# -------------------------------------------------------------
+# 2. UK OPEN BANKING AISP FEEDS (TRUELAYER)
+# -------------------------------------------------------------
+TRUELAYER_CLIENT_ID="wealthwise-accountants-live-xxxx"
+TRUELAYER_CLIENT_SECRET="sec_live_xxxxxxxxxxxxxxxx"
+TRUELAYER_WEBHOOK_SECRET="whsec_xxxxxxxxxxxxxxxx"
+TRUELAYER_ENVIRONMENT="sandbox" # Flip to "live" when FCA compliance approved
+
+# -------------------------------------------------------------
+# 3. AI DOCUMENT OCR (MINDEE)
+# -------------------------------------------------------------
+MINDEE_API_KEY="mindee_live_xxxxxxxxxxxxxxxx"
+
+# -------------------------------------------------------------
+# 4. CARD & APPLE PAY CHECKOUT (STRIPE)
+# -------------------------------------------------------------
+STRIPE_SECRET_KEY="sk_test_xxxxxxxxxxxxxxxx" # sk_live_ in production
+NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY="pk_test_xxxxxxxxxxxxxxxx"
+STRIPE_WEBHOOK_SECRET="whsec_xxxxxxxxxxxxxxxx"
+
+# -------------------------------------------------------------
+# 5. PAYPAL REST PAYMENTS (OPTIONAL RAIL)
+# -------------------------------------------------------------
+PAYPAL_CLIENT_ID="your_paypal_client_id"
+PAYPAL_CLIENT_SECRET="your_paypal_client_secret"
+
+# -------------------------------------------------------------
+# 6. HMRC MAKING TAX DIGITAL (MTD FORM 100)
+# -------------------------------------------------------------
+HMRC_CLIENT_ID="hmrc_client_id_xxxx"
+HMRC_CLIENT_SECRET="hmrc_secret_xxxx"
+HMRC_SERVER_TOKEN="hmrc_server_token_xxxx"
+HMRC_ENVIRONMENT="sandbox" # Flip to "production" when agent credentials verified
+
+# -------------------------------------------------------------
+# 7. TRANSACTIONAL DISPATCH (RESEND)
+# -------------------------------------------------------------
+RESEND_API_KEY="re_xxxxxxxxxxxxxxxx"
+FROM_EMAIL="support@wealthwiseaccountants.co.uk"
 ```
-┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
-│                               WEALTH WISE STANDALONE PLATFORM ARCHITECTURE                      │
-├──────────────────────────┬──────────────────────────────────────┬───────────────────────────────┤
-│ PHASE 1 & 2 (COMPLETED)  │ PHASE 3 (BANKING RAILS)              │ PHASE 4 & 5 (OCR, VAT & MTD)  │
-├──────────────────────────┼──────────────────────────────────────┼───────────────────────────────┤
-│ • Next.js App Router     │ • Truelayer / Yapily Open Banking    │ • Supabase S3 Encrypted Vault │
-│ • PostgreSQL 15+ Schema  │ • Automated Webhook Statement Sync   │ • Mindee AI Document Parser   │
-│ • Double-Entry Invariants│ • 2-Column Rule-Based Reconciliation │ • 9-Box VAT Form 100 Engine   │
-│ • Practice CRM & RBAC    │ • Confidence Scoring (99% Match)     │ • Stripe Connect Invoicing    │
-│ • Multi-Tenant Switcher  │ • Invariant General Ledger Posting   │ • HMRC Developer Portal Rails │
-└──────────────────────────┴──────────────────────────────────────┴───────────────────────────────┘
-```
 
 ---
 
-### 3. Banking Rails & Open Banking Deep Dive (Phase 3)
+### 3. Model Context Protocol (MCP) Connections for Antigravity
 
-#### A. Regulatory Context (UK Open Banking)
-To pull live banking data from Barclays, NatWest, HSBC, Lloyds, Monzo, and Revolut in the UK:
-- The software connects via an FCA-regulated **Account Information Services Provider (AISP)** aggregator:
-  - **Option 1 (Recommended): Truelayer Data API.** Truelayer acts as the regulated technical service provider, handling bank OAuth redirection, 90-day consent renewals, and SCA (Strong Customer Authentication).
-  - **Option 2: Yapily.** Pure developer API for enterprise Open Banking with no end-user branding.
-  - **Option 3: Plaid UK.** Turnkey drop-in Link component for instant sandbox-to-production deployment.
+To enable autonomous debugging, database migration checks, and HMRC sandbox inspection in Antigravity, the following MCP servers are recommended:
 
-#### B. Architectural Flow
-1. **Consent Redirection:** The client clicks "Connect Bank" -> Redirects to their banking app (e.g. Barclays mobile app) via OAuth 2.0 PKCE.
-2. **Nightly Automated Webhook Ingestion:**
-   ```
-   Bank API ──► Truelayer Webhook (`/api/webhooks/banking`) ──► Decrypt Payload ──► INSERT `bank_statement_lines`
-   ```
-3. **Smart Rule Engine:**
-   - Evaluates incoming description against regex and historical supplier maps.
-   - If description matches existing rule (e.g. `/AWS|Amazon Web Services/i`), assigns Nominal Code `7040` (Computer Software) and VAT Rate `20% STANDARD`.
-4. **Two-Column Interactive Reconciler:**
-   - Left Column: Bank Statement Line (Amount, Date, Payee).
-   - Right Column: Matched Sales Invoice, Purchase Bill, or Rule.
-   - One-click confirmation posts:
-     $$\text{Debit } 1000 \text{ (Bank Current Account)} \quad \text{Credit } 1100 \text{ (Trade Debtors)}$$
+1. **`github-mcp-server` (Active):**
+   - Powers branch management, multi-branch pull requests (`phase-2-auth-crm` -> `main`), releases, and issues.
+2. **`postgres-mcp-server` (Recommended for Phase 3):**
+   - Grants Antigravity direct visibility into the Supabase database schema to test Row-Level Security policies, inspect double-entry trial balance tables, and verify foreign key cascading.
+   - Command:
+     ```json
+     {
+       "mcpServers": {
+         "postgres": {
+           "command": "npx",
+           "args": ["-y", "@modelcontextprotocol/server-postgres", "postgresql://postgres:[PASSWORD]@db.your-project.supabase.co:5432/postgres"]
+         }
+       }
+     }
+     ```
+3. **`fetch / browser MCP`:**
+   - Enables live API call inspection to verify Truelayer bank webhooks and HMRC OAuth 2.0 PKCE redirection.
 
 ---
 
-### 4. Automated VAT Calculation & Quarterly Tracking Engine (Phase 5)
+### 4. Step-by-Step Acquisition Guide for Non-Technical Users
 
-#### A. The UK 9-Box VAT Architecture
-Every transaction posted to the General Ledger tags its VAT control element:
-- **Box 1:** $\sum \text{VAT on Sales}$ from Nominal `4000`/`4100` invoices.
-- **Box 4:** $\sum \text{VAT on Purchases}$ from Nominal `5000`–`7999` qualifying expenses.
-- **Box 5:** $\text{Net VAT Payable / Reclaimable} = \text{Box 1} - \text{Box 4}$.
-- **Box 6:** $\sum \text{Total Value of Sales Excl. VAT}$.
-- **Box 7:** $\sum \text{Total Value of Purchases Excl. VAT}$.
+If you are collecting keys on behalf of Wealth Wise Accountants:
 
-#### B. Quarterly Deadline Tracker (Practice CRM)
-- Calculates client VAT quarter periods automatically (e.g. Stagger 1: Mar/Jun/Sep/Dec; Stagger 2: Apr/Jul/Oct/Jan; Stagger 3: May/Aug/Nov/Feb).
-- Displays remaining days until filing deadline (1 month and 7 days after period end).
-- Direct digital submission to **HMRC Making Tax Digital (MTD) API** using Fraud Prevention Headers.
-
----
-
-### 5. Document Ingestion Vault & AI OCR Pipeline (Phase 4)
-
-#### A. Architecture
-- **Private Encrypted Storage:** Files stored in Supabase Storage (`client-vault`) or AWS S3.
-- **Signed URLs:** Time-limited 15-minute access URLs prevent public URL indexing.
-- **OCR Engine:** Mindee Financial Document API parses the uploaded PDF/image:
-  - Supplier / Merchant Name
-  - Invoice Date
-  - Total Gross Amount (in pence)
-  - Total VAT Amount (in pence)
-  - Extracted Line Items
-- **Automated Missing Document Chaser:** When a bank payment has no receipt, the system prompts the client director directly in their weekly portal update view.
-
----
-
-### 6. Master API & MCP Connections Matrix
-
-| Integration Domain | Recommended Provider | Environment Variables Required | What It Powers |
-| :--- | :--- | :--- | :--- |
-| **Database & Auth** | Supabase | `NEXT_PUBLIC_SUPABASE_URL`<br>`NEXT_PUBLIC_SUPABASE_ANON_KEY`<br>`SUPABASE_SERVICE_ROLE_KEY`<br>`DATABASE_URL` | Multi-tenancy, Row-Level Security, user sessions, audit trail. *(Already in `.env`)* |
-| **Open Banking** | Truelayer or Plaid UK | `TRUELAYER_CLIENT_ID`<br>`TRUELAYER_CLIENT_SECRET`<br>`TRUELAYER_WEBHOOK_SECRET` | Automated bank feeds for Barclays, NatWest, HSBC, Monzo, Revolut. |
-| **AI Document OCR** | Mindee Financial API | `MINDEE_API_KEY` | Instant receipt/invoice data extraction into draft ledger bills. |
-| **Card Payments** | Stripe Connect | `STRIPE_SECRET_KEY`<br>`STRIPE_PUBLISHABLE_KEY`<br>`STRIPE_WEBHOOK_SECRET` | "Pay Online" links on client invoices with instant ledger reconciliation. |
-| **HMRC Tax Gateway** | HMRC Developer Hub | `HMRC_CLIENT_ID`<br>`HMRC_CLIENT_SECRET`<br>`HMRC_SERVER_TOKEN` | Digital 9-Box VAT Return submission (MTD Form 100). |
-| **Email Delivery** | Resend | `RESEND_API_KEY` | Branded invoice delivery and weekly document reminder emails. |
-
-#### MCP Servers to Use in Antigravity:
-1. **`github-mcp-server`**: For branch management, releases, and CI/CD pipelines.
-2. **`postgres-mcp-server`**: For database migration inspection, running test queries, and RLS validation.
-3. **`fetch / browser MCP`**: For live test verification against HMRC sandbox and Open Banking mock environments.
+1. **Supabase (5 mins):** Sign in at [supabase.com](https://supabase.com), create a new organization "Wealth Wise", click "Settings" > "API", and copy the **Project URL**, **anon key**, and **service_role key**.
+2. **Stripe (5 mins):** Register at [stripe.com](https://stripe.com), go to "Developers" > "API Keys", and copy the **Secret key** (`sk_test_...`) and **Publishable key** (`pk_test_...`).
+3. **TrueLayer (10 mins):** Register at [truelayer.com](https://truelayer.com), create an application named "Wealth Wise Accounting OS", select "Data API" (Account Information Services), and copy the **Client ID** and **Client Secret**.
+4. **Mindee (3 mins):** Register at [mindee.com](https://mindee.com), enable the "Invoice & Receipt OCR" API, and copy your API Token.
+5. **HMRC Developer Hub:** Register at [developer.service.hmrc.gov.uk](https://developer.service.hmrc.gov.uk), create an application for "Making Tax Digital for VAT", and request sandbox test credentials.

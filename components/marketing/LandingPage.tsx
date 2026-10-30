@@ -12,8 +12,11 @@ import {
   Menu,
   X,
   CheckCircle2,
+  MessageCircle,
+  Calculator,
 } from "lucide-react";
 import { BRAND } from "@/lib/brand";
+import { TaxSavingsCalculator } from "@/components/marketing/TaxSavingsCalculator";
 
 export function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -58,10 +61,25 @@ export function LandingPage() {
     setFormSubmitted(true);
   };
 
+  const handleApplySavingsFromCalc = (details: {
+    turnover: number;
+    expenses: number;
+    structure: "LTD" | "SOLE_TRADER";
+    annualSavings: number;
+    recommendedPlan: string;
+  }) => {
+    setFormData((prev) => ({
+      ...prev,
+      service: details.structure === "LTD" ? "Corporation Tax & Year-End" : "Self Assessment & Tax Returns",
+      message: `I ran the Tax Optimizer on my £${details.turnover.toLocaleString()} turnover and £${details.expenses.toLocaleString()} expenses (estimated ~£${details.annualSavings.toLocaleString()}/yr savings). I would like to discuss the ${details.recommendedPlan}.`,
+    }));
+    setActiveTab("CONSULTATION");
+  };
+
   return (
     <div className="min-h-screen bg-[#F0F5FA] text-[#111111] font-sans antialiased selection:bg-[#C0A262] selection:text-white">
       {/* 1. Header: Black header with the gold framed logo, exact nav, Contact Us button, and Platform Demo button */}
-      <header className="sticky top-0 z-50 bg-[#000000] text-white border-b border-[#222222] shadow-sm">
+      <header className="sticky top-0 z-40 bg-[#000000] text-white border-b border-[#222222] shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2">
@@ -76,7 +94,11 @@ export function LandingPage() {
           </Link>
 
           {/* Desktop Navigation */}
-          <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-[#D1D5DB]">
+          <nav className="hidden md:flex items-center gap-7 text-sm font-medium text-[#D1D5DB]">
+            <a href="#calculator" className="hover:text-[#C0A262] transition-colors min-h-[44px] flex items-center gap-1.5">
+              <Calculator className="w-3.5 h-3.5 text-[#C0A262]" />
+              <span>Tax Calculator</span>
+            </a>
             <a href="#services" className="hover:text-[#C0A262] transition-colors min-h-[44px] flex items-center">
               Services
             </a>
@@ -89,8 +111,19 @@ export function LandingPage() {
           </nav>
 
           {/* Header Action Buttons */}
-          <div className="flex items-center gap-3">
-            {/* The One Addition: Unobtrusive Platform Demo Button */}
+          <div className="flex items-center gap-2.5 sm:gap-3">
+            {/* WhatsApp Direct Action */}
+            <a
+              href="https://wa.me/447737014274?text=Hello%20Wealthwise%20Accountants,%20I%20would%20like%20to%20enquire%20about%20accounting%20and%20tax%20services"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hidden lg:inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-emerald-400 bg-emerald-950/40 hover:bg-emerald-950/60 border border-emerald-800/60 rounded-md transition-colors min-h-[44px]"
+            >
+              <MessageCircle className="w-3.5 h-3.5" />
+              <span>WhatsApp</span>
+            </a>
+
+            {/* Platform Demo Link */}
             <Link
               href="/demo"
               className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-semibold text-[#C0A262] hover:text-white bg-[#111111] hover:bg-[#222222] border border-[#C0A262]/60 rounded-md transition-colors min-h-[44px]"
@@ -130,6 +163,14 @@ export function LandingPage() {
               onClick={(e) => e.stopPropagation()}
             >
               <a
+                href="#calculator"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2.5 text-white hover:text-[#C0A262] font-medium border-b border-[#1E1E1E] min-h-[44px] flex items-center gap-2"
+              >
+                <Calculator className="w-4 h-4 text-[#C0A262]" />
+                <span>Tax &amp; Retainer Calculator</span>
+              </a>
+              <a
                 href="#services"
                 onClick={() => setMobileMenuOpen(false)}
                 className="block py-2.5 text-white hover:text-[#C0A262] font-medium border-b border-[#1E1E1E] min-h-[44px] flex items-center"
@@ -155,9 +196,19 @@ export function LandingPage() {
                 onClick={() => setMobileMenuOpen(false)}
                 className="py-2.5 text-[#C0A262] font-semibold flex items-center justify-between border-b border-[#1E1E1E] min-h-[44px]"
               >
-                <span>Platform Demo</span>
+                <span>Interactive Platform Demo</span>
                 <ArrowRight className="w-4 h-4" />
               </Link>
+              <a
+                href="https://wa.me/447737014274?text=Hello%20Wealthwise%20Accountants,%20I%20would%20like%20to%20enquire%20about%20accounting%20and%20tax%20services"
+                target="_blank"
+                rel="noopener noreferrer"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2.5 text-emerald-400 font-semibold flex items-center justify-between border-b border-[#1E1E1E] min-h-[44px]"
+              >
+                <span>Chat on WhatsApp</span>
+                <MessageCircle className="w-4 h-4" />
+              </a>
               <a
                 href="#contact"
                 onClick={() => setMobileMenuOpen(false)}
@@ -197,12 +248,13 @@ export function LandingPage() {
               </div>
 
               {/* Action Buttons */}
-              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 max-w-md">
+              <div className="pt-2 flex flex-col sm:flex-row items-stretch sm:items-center gap-3.5 max-w-lg">
                 <a
-                  href="#contact"
-                  className="px-6 py-3.5 rounded-md bg-[#000000] hover:bg-[#222222] text-white font-medium text-sm text-center transition-colors min-h-[48px] flex items-center justify-center shadow-sm"
+                  href="#calculator"
+                  className="px-6 py-3.5 rounded-md bg-[#000000] hover:bg-[#222222] text-white font-medium text-sm text-center transition-colors min-h-[48px] flex items-center justify-center gap-2 shadow-sm"
                 >
-                  Schedule a free consultation
+                  <Calculator className="w-4 h-4 text-[#C0A262]" />
+                  <span>Estimate Tax Savings</span>
                 </a>
                 <a
                   href="#contact"
@@ -245,7 +297,14 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 4. WHAT WE DO: 6 Services (Exact text & descriptions) */}
+      {/* 4. Interactive Tax Savings & Fee Calculator */}
+      <section id="calculator" className="py-16 sm:py-20 bg-[#F0F5FA] border-b border-[#E2E8F0]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <TaxSavingsCalculator onApplySavings={handleApplySavingsFromCalc} />
+        </div>
+      </section>
+
+      {/* 5. WHAT WE DO: 6 Services (Exact text & descriptions) */}
       <section id="services" className="py-20 bg-[#FFFFFF] border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center max-w-3xl mx-auto mb-16">
@@ -276,7 +335,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 5. Statistics Section (Exact from live site) */}
+      {/* 6. Statistics Section (Exact from live site) */}
       <section id="whyus" className="py-16 bg-[#000000] text-white">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
@@ -294,7 +353,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 6. HOW WE WORK: 3 Steps with side photo */}
+      {/* 7. HOW WE WORK: 3 Steps with side photo */}
       <section id="process" className="py-20 bg-[#F0F5FA] border-b border-[#E2E8F0]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
@@ -345,7 +404,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 7. QUESTIONS (The 4 FAQs, exact text) */}
+      {/* 8. QUESTIONS (The 4 FAQs, exact text) */}
       <section className="py-20 bg-[#FFFFFF] border-b border-[#E2E8F0]">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-14">
@@ -386,7 +445,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 8. GET STARTED: Exact Contact Form & Tabs */}
+      {/* 9. GET STARTED: Exact Contact Form & Tabs */}
       <section id="contact" className="py-20 bg-[#F0F5FA] text-[#111111]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-start">
@@ -413,6 +472,22 @@ export function LandingPage() {
                   <div>
                     <div className="text-xs text-[#666666]">Phone</div>
                     <div className="font-bold text-sm">{BRAND.phone.display}</div>
+                  </div>
+                </a>
+
+                {/* WhatsApp Direct Link */}
+                <a
+                  href="https://wa.me/447737014274?text=Hello%20Wealthwise%20Accountants,%20I%20would%20like%20to%20enquire%20about%20accounting%20and%20tax%20services"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-3 text-[#111111] hover:text-emerald-700 transition-colors min-h-[44px]"
+                >
+                  <div className="w-10 h-10 rounded-full bg-emerald-900 text-emerald-300 flex items-center justify-center shrink-0">
+                    <MessageCircle className="w-4 h-4" />
+                  </div>
+                  <div>
+                    <div className="text-xs text-[#666666]">WhatsApp</div>
+                    <div className="font-bold text-sm text-emerald-800">Chat with Senior Accountant</div>
                   </div>
                 </a>
 
@@ -602,7 +677,7 @@ export function LandingPage() {
         </div>
       </section>
 
-      {/* 9. Footer: Exact Logo, Description, Contact, Direct Link to live Privacy Policy */}
+      {/* 10. Footer: Exact Logo, Description, Contact, Direct Link to live Privacy Policy */}
       <footer className="bg-[#000000] text-[#D1D5DB] py-14 text-xs border-t border-[#222222]">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8">
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 pb-8 border-b border-[#222222]">
@@ -622,6 +697,9 @@ export function LandingPage() {
             </div>
 
             <div className="flex flex-wrap items-center gap-4 text-xs">
+              <a href="#calculator" className="hover:text-[#C0A262] transition-colors min-h-[44px] flex items-center">
+                Tax Calculator
+              </a>
               <a href="#services" className="hover:text-[#C0A262] transition-colors min-h-[44px] flex items-center">
                 Services
               </a>

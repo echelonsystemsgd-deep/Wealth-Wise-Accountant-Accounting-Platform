@@ -1,17 +1,17 @@
 # Wealth Wise Accountant — Master Autonomous Implementation & Engineering Plan
 ## Complete Phased Blueprint: Autonomous Architecture to Replace Xero, QuickBooks & Dext
 
-**Document Version:** 4.0.0  
-**Status:** Phase 1 & Phase 2 Complete (24/24 Passing Tests, 0 Build Errors)  
-**Active Working Branch:** `phase-2-auth-crm`  
+**Document Version:** 4.2.0  
+**Status:** Phase 1 & Phase 2 Complete (24/24 Passing Tests, 0 Build Errors, Production Prerendered)  
+**Active Working Branch:** `phase-2-auth-crm` (Mirrored to `main`)  
 **Target Delivery Date for Platform Foundations:** November 2026  
-**Core Frameworks:** Next.js (App Router, Turbopack), TypeScript 5.9, Tailwind CSS v4, Supabase (PostgreSQL 15+, Auth, RLS, Storage), Truelayer Open Banking, Mindee OCR, Stripe Connect, HMRC MTD API
+**Core Frameworks:** Next.js 16 (App Router, Turbopack), TypeScript 5.9, Tailwind CSS v4, Supabase (PostgreSQL 15+, Auth, RLS, Storage), Truelayer Open Banking, Mindee OCR, Stripe Connect, HMRC MTD API
 
 ---
 
 ## 1. Complete Architecture Brainstorm & Problem Analysis
 
-Following the client discovery call on 12 October 2026, the software is engineered around 5 core operational pillars that transform Wealth Wise into an independent software owner:
+Following the client discovery and iterative architecture upgrades, the software is engineered around 5 core operational pillars that transform Wealth Wise into an independent software owner:
 
 ```
 ┌─────────────────────────────────────────────────────────────────────────────────────────────────┐
@@ -20,12 +20,18 @@ Following the client discovery call on 12 October 2026, the software is engineer
 │                                     TIER 1: USER INTERFACES                                     │
 │  ┌──────────────────────────────────────────────┐     ┌──────────────────────────────────────┐  │
 │  │     ACCOUNTANT HUB & PRACTICE CRM            │     │       CLIENT BUSINESS PORTAL         │  │
+│  │  • Dedicated Responsive Sidebar (Collapsible)│     │  • Dedicated Client Sidebar & Drawer │  │
 │  │  • Portfolio Overview (All UK Entities)      │     │  • Sandboxed Single-Company View     │  │
 │  │  • Workspace Switcher (Apex, Kensington, etc)│     │  • Live Operating Cash Position      │  │
 │  │  • Statutory Deadline Monitor (VAT/CoHouse)  │     │  • Weekly Document & Receipt Dropzone│  │
 │  │  • 2-Column Bank Rule Matcher                │     │  • Sales Invoicing & Card Checkout   │  │
 │  │  • General Ledger & Trial Balance Inspector  │     │  • Direct Accountant Chat & Queries  │  │
 │  └──────────────────────────────────────────────┘     └──────────────────────────────────────┘  │
+│  ┌───────────────────────────────────────────────────────────────────────────────────────────┐  │
+│  │  PROTOTYPE REVIEW SWITCHER & INTERACTIVE TAX CALCULATOR                                   │  │
+│  │  • 3-Environment Review Bar: Public Portal ◄► Partner Practice OS ◄► Client Vault         │  │
+│  │  • Dynamic UK Small Business & Ltd Tax Optimizer (£25k–£500k+ turnover & retainer)        │  │
+│  └───────────────────────────────────────────────────────────────────────────────────────────┘  │
 ├─────────────────────────────────────────────────────────────────────────────────────────────────┤
 │                                  TIER 2: ENGINE & ACCESS CONTROL                                │
 │  ┌───────────────────────────────────────────────────────────────────────────────────────────┐  │
@@ -48,7 +54,7 @@ Following the client discovery call on 12 October 2026, the software is engineer
 
 ---
 
-## 2. Granular Implementation Roadmap: Phases 1 Through 5
+## 2. Granular Implementation Roadmap & Deliverables
 
 ### Phase 1: Data Architecture & Production DAL (COMPLETED ✅)
 - **Status:** Verified with 20 / 20 tests passing.
@@ -60,7 +66,7 @@ Following the client discovery call on 12 October 2026, the software is engineer
   - Responsive mobile dual-views for Invoices and General Ledger (stacked cards on `< sm`, dense tables on `sm:`).
 
 ### Phase 2: Multi-Tenant Auth, Session RLS & Practice CRM (COMPLETED ✅)
-- **Branch:** `phase-2-auth-crm` (24 / 24 tests passing).
+- **Branch:** `phase-2-auth-crm` (24 / 24 tests passing, 0 build errors).
 - **Deliverables:**
   - Unified Session Provider (`lib/auth/AuthContext.tsx`) with Role-Based Access Control (RBAC):
     - `PRACTICE_ADMIN`: Senior Partner with full practice-wide metrics and billing authority.
@@ -70,6 +76,14 @@ Following the client discovery call on 12 October 2026, the software is engineer
   - Multi-Tenant Client Workspace Switcher (`components/auth/ClientWorkspaceSwitcher.tsx`) in the sticky navigation header.
   - Practice CRM Portfolio Hub (`components/crm/PracticeCrmView.tsx`) with statutory deadlines (Nov 07 VAT, Year-End accounts), fee analytics (£1,190/mo retainers vs £9–£19/mo SaaS), and client workload health.
   - Bi-directional action checklists with explicit placeholders for accountant sign-offs and client director uploads.
+  - **NEW: Responsive Dashboard Sidebar Navigation:**
+    - **Partner Practice OS (`components/dashboard/AccountantDashboard.tsx`)**: High-contrast desktop sidebar collapsible between 260px (full labels) and 80px (icon-only widescreen mode for financial tables); mobile off-canvas drawer with body scroll lock (`overflow = hidden`), Escape key listener, and active badge counters (`48` clients, `2 Due` unmatched bank feeds, `OCR Ingest`).
+    - **Client Dropzone & Vault (`components/portal/ClientPortal.tsx`)**: Dedicated sidebar with quick "Upload Receipt" action, categorized navigation, active client CRN display, assigned senior accountant badge, and 1-tap WhatsApp accountant support.
+  - **NEW: Interactive UK Ltd Tax Savings Calculator (`components/marketing/TaxSavingsCalculator.tsx`):**
+    - Dynamic turnover & expense sliders comparing Sole Trader taxation against UK Limited Company structure (Optimal £12,570 Director Salary, 19/25% Corporation Tax, Dividend Allowance).
+    - Highlights annual savings (£2,400 to £14,000+/yr) and recommended Wealthwise monthly retainer. Pre-fills consultation form directly.
+  - **NEW: 3-Environment Prototype Review Bar (`components/demo/PrototypeReviewBar.tsx`):**
+    - Sticky top control bar across all pages enabling 1-tap review switching between Public Marketing Portal (`/`), Partner Practice OS (`/demo/accountant`), and Client Vault (`/demo/client`).
 
 ---
 
@@ -78,7 +92,7 @@ Following the client discovery call on 12 October 2026, the software is engineer
 - **Objective:** Eliminate manual bank statement CSV imports by connecting directly to UK banks.
 - **Detailed Engineering Steps:**
   1. **Open Banking Consent Flow (Self-Service):**
-     - Integrate Truelayer Data API client.
+     - Integrate Truelayer Data API client or Plaid UK.
      - Implement OAuth 2.0 PKCE redirection allowing SME directors to authenticate directly with Barclays, NatWest, HSBC, Lloyds, Monzo, or Revolut.
      - Implement 90-day consent renewal tracking with automated client reminders.
   2. **Automated Statement Ingestion Pipeline:**
@@ -153,6 +167,6 @@ Following the client discovery call on 12 October 2026, the software is engineer
 ## 4. Master Verification & Quality Assurance Summary
 
 - **Automated Test Suite:** **24 passed out of 24 tests** across 5 test files (`vitest run`).
-- **Production Compilation:** `next build` passes with **0 TypeScript and 0 Turbopack errors**.
-- **Mobile Usability:** 100% verified with min 40–44px touch targets, horizontal touch scrolling, and zero viewport overflow.
-- **Git Repository Branch:** `phase-2-auth-crm` is cleanly committed and ready for client demonstration.
+- **Production Compilation:** `next build` passes with **0 TypeScript and 0 Turbopack errors** across all 17 routes.
+- **Mobile Usability:** 100% verified with min 40–44px touch targets, horizontal touch scrolling, modal body scroll locks, and zero viewport overflow.
+- **Git Repository Branch:** `phase-2-auth-crm` and `main` synchronized and ready for production deployment.
