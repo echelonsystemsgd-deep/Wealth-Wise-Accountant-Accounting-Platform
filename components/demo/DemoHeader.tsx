@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { ArrowLeft, ShieldAlert, User, LogOut, Check } from "lucide-react";
@@ -18,6 +18,18 @@ export function DemoHeader({ activeView, title }: DemoHeaderProps) {
   const { user, role, switchRole, logout, isAccountant } = useAuth();
   const [isRoleDropdownOpen, setIsRoleDropdownOpen] = useState(false);
 
+  // Close dropdown on Escape key
+  useEffect(() => {
+    if (!isRoleDropdownOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsRoleDropdownOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isRoleDropdownOpen]);
+
   const rolesList: { role: UserRole; label: string; desc: string }[] = [
     { role: "PRACTICE_ADMIN", label: "Practice Admin", desc: "Senior Partner, full portfolio & billing" },
     { role: "SENIOR_ACCOUNTANT", label: "Senior Accountant", desc: "Sarah Jenkins, ACCA — Sign off filings" },
@@ -33,7 +45,7 @@ export function DemoHeader({ activeView, title }: DemoHeaderProps) {
           <div className="flex items-center gap-2">
             <ShieldAlert className="w-4 h-4 text-[#C0A262] shrink-0" />
             <span className="font-semibold text-white">
-              Phase 2 Preview: Multi-Tenant Auth & Practice CRM
+              Phase 2 Preview: Multi-Tenant Auth &amp; Practice CRM
             </span>
             <span className="hidden md:inline text-[#D1D5DB]">
               — Row-Level Security (RLS) active for {user?.activeOrganisationName || "Apex Digital"}
@@ -109,7 +121,7 @@ export function DemoHeader({ activeView, title }: DemoHeaderProps) {
                 type="button"
                 onClick={() => setIsRoleDropdownOpen(!isRoleDropdownOpen)}
                 className="w-9 h-9 rounded-full bg-[#181920] border border-[#3e3422] flex items-center justify-center text-[#C0A262] hover:bg-[#25241f] transition-colors"
-                title="Active User Profile & Role Guard"
+                title="Active User Profile &amp; Role Guard"
                 aria-label="User profile and role menu"
               >
                 <User className="w-4 h-4" />

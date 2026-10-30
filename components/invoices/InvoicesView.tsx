@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAccounting } from "@/lib/accounting/AccountingContext";
 import { formatGBP, calculateVatPence } from "@/lib/utils";
 import { 
@@ -13,7 +13,7 @@ import {
   Scale, 
   AlertCircle,
   CreditCard,
-  ExternalLink
+  X
 } from "lucide-react";
 import { InvoicePaymentModal } from "@/components/payments/InvoicePaymentModal";
 
@@ -26,6 +26,26 @@ export function InvoicesView() {
   const [netAmountPounds, setNetAmountPounds] = useState(1500);
   const [vatTreatment, setVatTreatment] = useState<"STANDARD_20" | "REDUCED_5" | "ZERO_0">("STANDARD_20");
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Lock body scroll and handle Escape key for create invoice modal
+  useEffect(() => {
+    if (!showCreateModal) return;
+
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowCreateModal(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showCreateModal]);
 
   const handleCreateInvoice = (e: React.FormEvent) => {
     e.preventDefault();
@@ -294,19 +314,28 @@ export function InvoicesView() {
 
       {/* Modal for Invoice Creation */}
       {showCreateModal && (
-        <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-4 sm:p-6 space-y-4 my-auto max-h-[92vh] overflow-y-auto">
+        <div 
+          className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto"
+          onClick={() => setShowCreateModal(false)}
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="create-invoice-title"
+        >
+          <div 
+            className="bg-white rounded-2xl border border-slate-200 shadow-xl max-w-md w-full p-4 sm:p-6 space-y-4 my-auto max-h-[92vh] overflow-y-auto animate-in fade-in zoom-in-95 duration-150"
+            onClick={(e) => e.stopPropagation()}
+          >
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
-              <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
+              <h4 id="create-invoice-title" className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <FileCheck className="w-4 h-4 text-slate-700 shrink-0" />
                 <span>Create Sales Invoice &amp; Post to Ledger</span>
               </h4>
               <button
                 onClick={() => setShowCreateModal(false)}
-                className="text-slate-400 hover:text-slate-600 p-1.5 rounded-lg text-sm"
+                className="text-slate-400 hover:text-slate-600 p-2 rounded-lg text-sm min-h-[44px] min-w-[44px] flex items-center justify-center"
                 aria-label="Close modal"
               >
-                ✕
+                <X className="w-5 h-5" />
               </button>
             </div>
 

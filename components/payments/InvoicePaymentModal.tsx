@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { formatGBP } from "@/lib/utils";
 import { 
   CreditCard, 
@@ -36,6 +36,24 @@ export function InvoicePaymentModal({
   const [isPaid, setIsPaid] = useState(false);
   const [receiptToken, setReceiptToken] = useState<string | null>(null);
 
+  // Lock body scroll and handle Escape key while modal is active
+  useEffect(() => {
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        onClose();
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [onClose]);
+
   const amountToPay = invoice.amountDuePence ?? invoice.totalPence;
 
   const handleProcessPayment = async (e: React.FormEvent) => {
@@ -59,10 +77,10 @@ export function InvoicePaymentModal({
       setTimeout(() => {
         setIsProcessing(false);
         setIsPaid(true);
-        setReceiptToken(`STRIPE_CH_${Date.now().toString().slice(-6)}`);
+        setReceiptToken(data.receiptToken || `STRIPE_CH_${Date.now().toString().slice(-6)}`);
         onPaymentSuccess(invoice.id);
       }, 1000);
-    } catch (err) {
+    } catch {
       setTimeout(() => {
         setIsProcessing(false);
         setIsPaid(true);
@@ -73,17 +91,25 @@ export function InvoicePaymentModal({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
-      <div className="bg-[#101218] border border-[#2B2D3A] rounded-2xl max-w-lg w-full p-5 sm:p-7 space-y-5 text-white shadow-2xl relative my-auto">
-        
+    <div 
+      className="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="invoice-modal-title"
+    >
+      <div 
+        className="bg-[#101218] border border-[#2B2D3A] rounded-2xl max-w-lg w-full p-5 sm:p-7 space-y-5 text-white shadow-2xl relative my-auto animate-in fade-in zoom-in-95 duration-150"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* Header */}
         <div className="flex items-center justify-between border-b border-[#21232E] pb-4">
           <div className="flex items-center gap-2.5">
-            <div className="w-8 h-8 rounded-lg bg-[#C0A262]/20 border border-[#C0A262]/40 text-[#C0A262] flex items-center justify-center">
+            <div className="w-9 h-9 rounded-lg bg-[#C0A262]/20 border border-[#C0A262]/40 text-[#C0A262] flex items-center justify-center shrink-0">
               <CreditCard className="w-4 h-4" />
             </div>
             <div>
-              <h3 className="text-sm sm:text-base font-bold text-white">
+              <h3 id="invoice-modal-title" className="text-sm sm:text-base font-bold text-white">
                 Invoice Payment Checkout
               </h3>
               <p className="text-[11px] text-[#A1A1AA]">
@@ -93,9 +119,10 @@ export function InvoicePaymentModal({
           </div>
           <button
             onClick={onClose}
-            className="p-1 text-[#71717A] hover:text-white rounded-lg transition-colors"
+            className="p-2 text-[#71717A] hover:text-white rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+            aria-label="Close payment modal"
           >
-            <X className="w-4 h-4" />
+            <X className="w-5 h-5" />
           </button>
         </div>
 
@@ -106,7 +133,7 @@ export function InvoicePaymentModal({
             </div>
             <div>
               <h4 className="text-lg font-bold text-white">Payment Confirmed</h4>
-              <p className="text-xs text-[#9CA3AF] mt-1">
+              <p className="text-xs text-[#9CA3AF] mt-1 max-w-sm mx-auto">
                 {formatGBP(amountToPay)} settled successfully. Balancing double-entry journal posted to General Ledger (Dr Bank 1200 / Cr AR 1100).
               </p>
               <div className="mt-3 inline-block px-3 py-1 bg-[#151722] border border-[#262838] rounded-md font-mono text-[11px] text-[#C0A262]">
@@ -115,9 +142,9 @@ export function InvoicePaymentModal({
             </div>
             <button
               onClick={onClose}
-              className="w-full py-2.5 bg-[#C0A262] text-black font-bold text-xs rounded-xl hover:bg-[#D4B876] transition-colors"
+              className="w-full py-3 bg-[#C0A262] text-black font-bold text-xs sm:text-sm rounded-xl hover:bg-[#D4B876] transition-colors min-h-[44px]"
             >
-              Done & Return to Invoices
+              Done &amp; Return to Invoices
             </button>
           </div>
         ) : (
@@ -147,13 +174,13 @@ export function InvoicePaymentModal({
                 <button
                   type="button"
                   onClick={() => setSelectedMethod("CARD")}
-                  className={`p-3 rounded-xl border text-left flex items-center gap-2.5 transition-all ${
+                  className={`p-3 rounded-xl border text-left flex items-center gap-2.5 transition-all min-h-[52px] ${
                     selectedMethod === "CARD"
-                      ? "border-[#C0A262] bg-[#C0A262]/10 text-white"
+                      ? "border-[#C0A262] bg-[#C0A262]/10 text-white shadow-xs"
                       : "border-[#242735] bg-[#12141C] text-[#A1A1AA] hover:border-[#383C4E]"
                   }`}
                 >
-                  <CreditCard className="w-4 h-4 text-[#C0A262]" />
+                  <CreditCard className="w-4 h-4 text-[#C0A262] shrink-0" />
                   <div>
                     <span className="text-xs font-bold block">Credit / Debit Card</span>
                     <span className="text-[10px] text-[#71717A]">Visa, Mastercard, Amex</span>
@@ -163,13 +190,13 @@ export function InvoicePaymentModal({
                 <button
                   type="button"
                   onClick={() => setSelectedMethod("APPLE_PAY")}
-                  className={`p-3 rounded-xl border text-left flex items-center gap-2.5 transition-all ${
+                  className={`p-3 rounded-xl border text-left flex items-center gap-2.5 transition-all min-h-[52px] ${
                     selectedMethod === "APPLE_PAY"
-                      ? "border-[#C0A262] bg-[#C0A262]/10 text-white"
+                      ? "border-[#C0A262] bg-[#C0A262]/10 text-white shadow-xs"
                       : "border-[#242735] bg-[#12141C] text-[#A1A1AA] hover:border-[#383C4E]"
                   }`}
                 >
-                  <Smartphone className="w-4 h-4 text-[#C0A262]" />
+                  <Smartphone className="w-4 h-4 text-[#C0A262] shrink-0" />
                   <div>
                     <span className="text-xs font-bold block">Apple / Google Pay</span>
                     <span className="text-[10px] text-[#71717A]">1-Tap Mobile Checkout</span>
@@ -179,13 +206,13 @@ export function InvoicePaymentModal({
                 <button
                   type="button"
                   onClick={() => setSelectedMethod("BANK_TRANSFER")}
-                  className={`p-3 rounded-xl border text-left flex items-center gap-2.5 transition-all ${
+                  className={`p-3 rounded-xl border text-left flex items-center gap-2.5 transition-all min-h-[52px] ${
                     selectedMethod === "BANK_TRANSFER"
-                      ? "border-[#C0A262] bg-[#C0A262]/10 text-white"
+                      ? "border-[#C0A262] bg-[#C0A262]/10 text-white shadow-xs"
                       : "border-[#242735] bg-[#12141C] text-[#A1A1AA] hover:border-[#383C4E]"
                   }`}
                 >
-                  <Building2 className="w-4 h-4 text-[#C0A262]" />
+                  <Building2 className="w-4 h-4 text-[#C0A262] shrink-0" />
                   <div>
                     <span className="text-xs font-bold block">Instant Bank Pay</span>
                     <span className="text-[10px] text-[#71717A]">Open Banking AISP</span>
@@ -195,13 +222,13 @@ export function InvoicePaymentModal({
                 <button
                   type="button"
                   onClick={() => setSelectedMethod("PAYPAL")}
-                  className={`p-3 rounded-xl border text-left flex items-center gap-2.5 transition-all ${
+                  className={`p-3 rounded-xl border text-left flex items-center gap-2.5 transition-all min-h-[52px] ${
                     selectedMethod === "PAYPAL"
-                      ? "border-[#C0A262] bg-[#C0A262]/10 text-white"
+                      ? "border-[#C0A262] bg-[#C0A262]/10 text-white shadow-xs"
                       : "border-[#242735] bg-[#12141C] text-[#A1A1AA] hover:border-[#383C4E]"
                   }`}
                 >
-                  <ShieldCheck className="w-4 h-4 text-[#C0A262]" />
+                  <ShieldCheck className="w-4 h-4 text-[#C0A262] shrink-0" />
                   <div>
                     <span className="text-xs font-bold block">PayPal Checkout</span>
                     <span className="text-[10px] text-[#71717A]">Buyer Protection</span>
@@ -219,7 +246,7 @@ export function InvoicePaymentModal({
                     type="text"
                     required
                     defaultValue="4242 •••• •••• 4242"
-                    className="w-full px-3 py-2 bg-[#141620] border border-[#2B2D3A] rounded-lg text-white font-mono text-xs focus:outline-none focus:border-[#C0A262]"
+                    className="w-full px-3 py-2.5 bg-[#141620] border border-[#2B2D3A] rounded-lg text-white font-mono text-xs focus:outline-none focus:border-[#C0A262] min-h-[42px]"
                   />
                 </div>
                 <div className="grid grid-cols-2 gap-2">
@@ -229,7 +256,7 @@ export function InvoicePaymentModal({
                       type="text"
                       required
                       defaultValue="12/28"
-                      className="w-full px-3 py-2 bg-[#141620] border border-[#2B2D3A] rounded-lg text-white font-mono text-xs focus:outline-none focus:border-[#C0A262]"
+                      className="w-full px-3 py-2.5 bg-[#141620] border border-[#2B2D3A] rounded-lg text-white font-mono text-xs focus:outline-none focus:border-[#C0A262] min-h-[42px]"
                     />
                   </div>
                   <div>
@@ -238,7 +265,7 @@ export function InvoicePaymentModal({
                       type="password"
                       required
                       defaultValue="888"
-                      className="w-full px-3 py-2 bg-[#141620] border border-[#2B2D3A] rounded-lg text-white font-mono text-xs focus:outline-none focus:border-[#C0A262]"
+                      className="w-full px-3 py-2.5 bg-[#141620] border border-[#2B2D3A] rounded-lg text-white font-mono text-xs focus:outline-none focus:border-[#C0A262] min-h-[42px]"
                     />
                   </div>
                 </div>
@@ -247,7 +274,7 @@ export function InvoicePaymentModal({
 
             {/* Security Notice */}
             <div className="flex items-center gap-2 text-[11px] text-[#71717A]">
-              <Lock className="w-3.5 h-3.5 text-[#C0A262]" />
+              <Lock className="w-3.5 h-3.5 text-[#C0A262] shrink-0" />
               <span>256-bit TLS bank encryption. PCI-DSS Tier-1 Compliant.</span>
             </div>
 
@@ -255,7 +282,7 @@ export function InvoicePaymentModal({
             <button
               type="submit"
               disabled={isProcessing}
-              className="w-full py-3 bg-[#C0A262] text-black font-bold text-xs sm:text-sm rounded-xl hover:bg-[#D4B876] transition-all flex items-center justify-center gap-2 shadow-lg min-h-[46px]"
+              className="w-full py-3.5 bg-[#C0A262] text-black font-bold text-xs sm:text-sm rounded-xl hover:bg-[#D4B876] transition-all flex items-center justify-center gap-2 shadow-lg min-h-[48px]"
             >
               {isProcessing ? (
                 <>

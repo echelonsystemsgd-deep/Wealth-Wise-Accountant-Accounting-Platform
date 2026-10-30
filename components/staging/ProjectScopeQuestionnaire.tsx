@@ -55,6 +55,25 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
   const [submissionsList, setSubmissionsList] = useState<any[]>([]);
   const [loadingSubmissions, setLoadingSubmissions] = useState(false);
 
+  // Lock body scroll and handle Escape key while dev modal is active
+  useEffect(() => {
+    if (!showDevModal) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setShowDevModal(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [showDevModal]);
+
   // --------------------------------------------------------------------------
   // 3. QUESTIONNAIRE FORM STATE
   // --------------------------------------------------------------------------
@@ -296,8 +315,8 @@ export function ProjectScopeQuestionnaire({ onUnlockPreview }: ProjectScopeQuest
 
       {/* DEVELOPER ACCESS MODAL (PASSCODE PROTECTED: Gurtej@2008#) */}
       {showDevModal && (
-        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4">
-          <div className="bg-[#12131A] border border-[#2B2D3A] rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative">
+        <div className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex items-center justify-center p-4 overflow-y-auto" onClick={() => setShowDevModal(false)} role="dialog" aria-modal="true">
+          <div className="bg-[#12131A] border border-[#2B2D3A] rounded-3xl max-w-2xl w-full p-6 sm:p-8 space-y-6 shadow-2xl relative my-auto animate-in fade-in zoom-in-95 duration-150" onClick={(e) => e.stopPropagation()}>
             <div className="flex items-center justify-between border-b border-[#21232E] pb-4">
               <div className="flex items-center gap-2 text-white">
                 <Shield className="w-5 h-5 text-[#C0A262]" />

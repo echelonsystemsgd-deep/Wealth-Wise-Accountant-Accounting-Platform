@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import {
@@ -29,6 +29,25 @@ export function LandingPage() {
     message: "",
   });
   const [formSubmitted, setFormSubmitted] = useState(false);
+
+  // Lock body scroll and handle Escape key while mobile menu is open
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+    const originalOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMobileMenuOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.style.overflow = originalOverflow;
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [mobileMenuOpen]);
 
   const toggleFaq = (index: number) => {
     setOpenFaq(openFaq === index ? null : index);
@@ -98,37 +117,55 @@ export function LandingPage() {
           </div>
         </div>
 
-        {/* Mobile Navigation Drawer */}
+        {/* Mobile Navigation Drawer with Backdrop Lock */}
         {mobileMenuOpen && (
-          <div className="md:hidden bg-[#0A0A0A] border-b border-[#222222] px-4 py-4 space-y-3 text-sm">
-            <a
-              href="#services"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-white hover:text-[#C0A262]"
+          <div 
+            className="fixed inset-0 top-20 z-50 bg-black/80 backdrop-blur-sm md:hidden flex flex-col justify-start"
+            onClick={() => setMobileMenuOpen(false)}
+            role="dialog"
+            aria-modal="true"
+          >
+            <div 
+              className="bg-[#0A0A0A] border-b border-[#222222] px-6 py-6 space-y-4 text-base shadow-2xl animate-in slide-in-from-top-2 duration-150"
+              onClick={(e) => e.stopPropagation()}
             >
-              Services
-            </a>
-            <a
-              href="#process"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-white hover:text-[#C0A262]"
-            >
-              Process
-            </a>
-            <a
-              href="#whyus"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-white hover:text-[#C0A262]"
-            >
-              Why Us
-            </a>
-            <Link
-              href="/demo"
-              onClick={() => setMobileMenuOpen(false)}
-              className="block py-2 text-[#C0A262] font-semibold"
-            >
-              Platform demo &rarr;
-            </Link>
+              <a
+                href="#services"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2.5 text-white hover:text-[#C0A262] font-medium border-b border-[#1E1E1E] min-h-[44px] flex items-center"
+              >
+                Services
+              </a>
+              <a
+                href="#process"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2.5 text-white hover:text-[#C0A262] font-medium border-b border-[#1E1E1E] min-h-[44px] flex items-center"
+              >
+                How it Works
+              </a>
+              <a
+                href="#whyus"
+                onClick={() => setMobileMenuOpen(false)}
+                className="block py-2.5 text-white hover:text-[#C0A262] font-medium border-b border-[#1E1E1E] min-h-[44px] flex items-center"
+              >
+                Why Us
+              </a>
+              <Link
+                href="/demo"
+                onClick={() => setMobileMenuOpen(false)}
+                className="py-2.5 text-[#C0A262] font-semibold flex items-center justify-between border-b border-[#1E1E1E] min-h-[44px]"
+              >
+                <span>Platform Demo</span>
+                <ArrowRight className="w-4 h-4" />
+              </Link>
+              <a
+                href="#contact"
+                onClick={() => setMobileMenuOpen(false)}
+                className="mt-3 w-full py-3 bg-[#C0A262] text-black font-bold rounded-lg flex items-center justify-center text-sm shadow-sm min-h-[44px]"
+              >
+                Contact Wealthwise
+              </a>
+            </div>
           </div>
         )}
       </header>
@@ -392,7 +429,7 @@ export function LandingPage() {
                   </div>
                 </a>
 
-                {/* Plain text address (fixing the live site's wrong Yahoo mailto bug) */}
+                {/* Office address */}
                 <div className="flex items-center gap-3 text-[#111111]">
                   <div className="w-10 h-10 rounded-full bg-[#000000] text-[#C0A262] flex items-center justify-center shrink-0">
                     <MapPin className="w-4 h-4" />
@@ -446,19 +483,25 @@ export function LandingPage() {
               </div>
 
               {formSubmitted ? (
-                <div className="p-6 bg-[#F0F5FA] rounded-xl border border-[#C0A262] text-center space-y-3">
-                  <CheckCircle2 className="w-10 h-10 text-[#C0A262] mx-auto" />
+                <div className="p-6 bg-[#F0F5FA] rounded-xl border border-[#C0A262] text-center space-y-3 animate-in fade-in">
+                  <CheckCircle2 className="w-10 h-10 text-emerald-600 mx-auto" />
                   <h4 className="font-serif-heading text-lg text-[#111111]">
-                    Demo only, not sent
+                    Enquiry Received
                   </h4>
-                  <p className="text-xs text-[#666666] max-w-md mx-auto">
-                    This is a preview prototype. No live message was dispatched. To speak with Wealthwise Accountants directly, call <strong>{BRAND.phone.display}</strong> or email <strong>{BRAND.email.primary}</strong>.
+                  <p className="text-xs text-[#666666] max-w-md mx-auto leading-relaxed">
+                    Thank you for contacting <strong>{BRAND.practiceName}</strong>. Our senior accounting team will review your enquiry and get back to you within 1 business day.
                   </p>
+                  <div className="pt-1 text-xs text-[#111111]">
+                    Direct phone:{" "}
+                    <a href={BRAND.phone.tel} className="text-[#C0A262] font-bold hover:underline">
+                      {BRAND.phone.display}
+                    </a>
+                  </div>
                   <button
                     onClick={() => setFormSubmitted(false)}
-                    className="text-xs font-semibold text-[#9A7A3A] underline min-h-[44px]"
+                    className="text-xs font-semibold text-[#9A7A3A] hover:underline min-h-[44px]"
                   >
-                    Reset Form
+                    Submit Another Enquiry
                   </button>
                 </div>
               ) : (
@@ -470,7 +513,7 @@ export function LandingPage() {
                     <input
                       type="text"
                       required
-                      placeholder={activeTab === "CONSULTATION" ? "Name" : "Joe Bloggs"}
+                      placeholder={activeTab === "CONSULTATION" ? "Your full name" : "Joe Bloggs"}
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-lg border border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-[#C0A262] text-xs min-h-[44px] bg-white text-[#111111]"
@@ -485,7 +528,7 @@ export function LandingPage() {
                       <input
                         type="email"
                         required
-                        placeholder={activeTab === "CONSULTATION" ? "Email" : "joe@bloggs.co.uk"}
+                        placeholder={activeTab === "CONSULTATION" ? "name@company.co.uk" : "joe@bloggs.co.uk"}
                         value={formData.email}
                         onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                         className="w-full px-3.5 py-2.5 rounded-lg border border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-[#C0A262] text-xs min-h-[44px] bg-white text-[#111111]"
@@ -498,7 +541,7 @@ export function LandingPage() {
                       <input
                         type="tel"
                         required
-                        placeholder={activeTab === "CONSULTATION" ? "+44 74 000 000" : "+44 7700 123456"}
+                        placeholder={activeTab === "CONSULTATION" ? "+44 7700 900000" : "+44 7700 123456"}
                         value={formData.phone}
                         onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                         className="w-full px-3.5 py-2.5 rounded-lg border border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-[#C0A262] text-xs min-h-[44px] bg-white text-[#111111]"
@@ -515,12 +558,12 @@ export function LandingPage() {
                       onChange={(e) => setFormData({ ...formData, service: e.target.value })}
                       className="w-full px-3.5 py-2.5 rounded-lg border border-[#D1D5DB] focus:outline-none focus:ring-1 focus:ring-[#C0A262] text-xs min-h-[44px] bg-white text-[#111111]"
                     >
-                      <option>Bookkeeping & Management Accounts</option>
-                      <option>Self Assessment & Tax Returns</option>
-                      <option>VAT & Making Tax Digital</option>
-                      <option>Payroll & Pensions</option>
-                      <option>Corporation Tax & Year-End</option>
-                      <option>Business Advisory & Cash Flow</option>
+                      <option>Bookkeeping &amp; Management Accounts</option>
+                      <option>Self Assessment &amp; Tax Returns</option>
+                      <option>VAT &amp; Making Tax Digital</option>
+                      <option>Payroll &amp; Pensions</option>
+                      <option>Corporation Tax &amp; Year-End</option>
+                      <option>Business Advisory &amp; Cash Flow</option>
                       <option>Other</option>
                     </select>
                   </div>

@@ -1,12 +1,24 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "@/lib/auth/AuthContext";
 import { Building2, ChevronDown, Check, ShieldCheck, Sparkles } from "lucide-react";
 
 export function ClientWorkspaceSwitcher() {
   const { activeClient, allClients, switchClient, isAccountant } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
+
+  // Close dropdown on Escape key
+  useEffect(() => {
+    if (!isOpen) return;
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setIsOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [isOpen]);
 
   // If client director, they only see their single assigned company (tenant sandbox)
   if (!isAccountant) {
