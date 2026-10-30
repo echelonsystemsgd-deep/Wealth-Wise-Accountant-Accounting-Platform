@@ -3,11 +3,13 @@
 import React, { useState } from "react";
 import { useAccounting } from "@/lib/accounting/AccountingContext";
 import { formatGBP } from "@/lib/utils";
-import { Download, Calendar } from "lucide-react";
+import { Download, Calendar, ShieldCheck, Send } from "lucide-react";
+import { HmrcMtdFilingModal } from "@/components/hmrc/HmrcMtdFilingModal";
 
 export function FinancialReportsView() {
   const { trialBalance, financialSummary } = useAccounting();
   const [reportType, setReportType] = useState<"PNL" | "BALANCE_SHEET" | "TAX_SUMMARY">("PNL");
+  const [isMtdModalOpen, setIsMtdModalOpen] = useState(false);
 
   // Filter accounts for P&L
   const revenueRows = trialBalance.rows.filter((r) => r.accountType === "REVENUE" && r.creditPence > 0);
@@ -100,86 +102,96 @@ export function FinancialReportsView() {
             </span>
           </div>
 
-          <div className="divide-y divide-slate-100 text-xs">
+          <div className="space-y-3 text-xs">
             {/* Turnover */}
-            <div className="py-2.5 font-bold text-slate-900 flex justify-between uppercase tracking-wider text-[11px] bg-slate-50/50 px-2 rounded">
-              <span>Operating Turnover / Revenue</span>
-              <span></span>
-            </div>
-            {revenueRows.length > 0 ? (
-              revenueRows.map((r) => (
-                <div key={r.accountCode} className="py-2 pl-4 pr-2 flex justify-between text-slate-700">
+            <div className="p-3 bg-slate-50 rounded border border-slate-200 space-y-2">
+              <span className="font-bold text-slate-900 uppercase text-[11px] block">
+                Turnover / Revenue (Cr)
+              </span>
+              {revenueRows.map((r) => (
+                <div key={r.accountCode} className="flex justify-between text-slate-700">
                   <span>
                     {r.accountCode} - {r.accountName}
                   </span>
                   <span className="font-mono font-medium">{formatGBP(r.creditPence)}</span>
                 </div>
-              ))
-            ) : (
-              <div className="py-2 pl-4 text-slate-400">No revenue posted for this period.</div>
-            )}
-            <div className="py-2.5 px-2 flex justify-between font-bold text-slate-900 border-t border-slate-200">
-              <span>Total Operating Revenue</span>
-              <span className="font-mono">{formatGBP(totalRevenue)}</span>
-            </div>
-
-            {/* Direct Costs */}
-            <div className="py-2.5 font-bold text-slate-900 flex justify-between uppercase tracking-wider text-[11px] bg-slate-50/50 px-2 rounded mt-3">
-              <span>Cost of Sales (Direct Costs)</span>
-              <span></span>
-            </div>
-            {directCostRows.map((r) => (
-              <div key={r.accountCode} className="py-2 pl-4 pr-2 flex justify-between text-slate-700">
-                <span>
-                  {r.accountCode} - {r.accountName}
-                </span>
-                <span className="font-mono font-medium">{formatGBP(r.debitPence)}</span>
+              ))}
+              <div className="pt-2 border-t border-slate-200 font-bold flex justify-between text-slate-900">
+                <span>Total Turnover</span>
+                <span className="font-mono">{formatGBP(totalRevenue)}</span>
               </div>
-            ))}
-            <div className="py-2.5 px-2 flex justify-between font-bold text-slate-900 border-t border-slate-200">
-              <span>Gross Profit</span>
-              <span className="font-mono text-emerald-700">{formatGBP(grossProfit)}</span>
             </div>
 
-            {/* Overheads */}
-            <div className="py-2.5 font-bold text-slate-900 flex justify-between uppercase tracking-wider text-[11px] bg-slate-50/50 px-2 rounded mt-3">
-              <span>Administrative & Operating Overheads</span>
-              <span></span>
-            </div>
-            {overheadRows.map((r) => (
-              <div key={r.accountCode} className="py-2 pl-4 pr-2 flex justify-between text-slate-700">
-                <span>
-                  {r.accountCode} - {r.accountName}
-                </span>
-                <span className="font-mono font-medium">{formatGBP(r.debitPence)}</span>
-              </div>
-            ))}
-
-            {/* Net Operating Profit */}
-            <div className="py-3 px-2 flex justify-between text-sm font-bold text-slate-900 bg-slate-100/70 rounded mt-3">
-              <span>Net Profit (Pre-Tax)</span>
-              <span
-                className={`font-mono ${
-                  netProfit >= 0 ? "text-emerald-800" : "text-rose-800"
-                }`}
-              >
-                {formatGBP(netProfit)}
+            {/* Cost of Sales */}
+            <div className="p-3 bg-slate-50 rounded border border-slate-200 space-y-2">
+              <span className="font-bold text-slate-900 uppercase text-[11px] block">
+                Cost of Sales (Dr)
               </span>
+              {directCostRows.length === 0 ? (
+                <div className="text-slate-400 italic">No direct cost postings</div>
+              ) : (
+                directCostRows.map((r) => (
+                  <div key={r.accountCode} className="flex justify-between text-slate-700">
+                    <span>
+                      {r.accountCode} - {r.accountName}
+                    </span>
+                    <span className="font-mono font-medium">{formatGBP(r.debitPence)}</span>
+                  </div>
+                ))
+              )}
+              <div className="pt-2 border-t border-slate-200 font-bold flex justify-between text-slate-900">
+                <span>Total Direct Costs</span>
+                <span className="font-mono">{formatGBP(totalDirectCosts)}</span>
+              </div>
+            </div>
+
+            {/* Gross Profit */}
+            <div className="p-3 bg-slate-100 rounded flex justify-between font-bold text-slate-900 text-xs">
+              <span>Gross Profit</span>
+              <span className="font-mono">{formatGBP(grossProfit)}</span>
+            </div>
+
+            {/* Administrative Expenses */}
+            <div className="p-3 bg-slate-50 rounded border border-slate-200 space-y-2">
+              <span className="font-bold text-slate-900 uppercase text-[11px] block">
+                Administrative Expenses / Overheads (Dr)
+              </span>
+              {overheadRows.map((r) => (
+                <div key={r.accountCode} className="flex justify-between text-slate-700">
+                  <span>
+                    {r.accountCode} - {r.accountName}
+                  </span>
+                  <span className="font-mono font-medium">{formatGBP(r.debitPence)}</span>
+                </div>
+              ))}
+              <div className="pt-2 border-t border-slate-200 font-bold flex justify-between text-slate-900">
+                <span>Total Administrative Expenses</span>
+                <span className="font-mono">{formatGBP(totalOverheads)}</span>
+              </div>
+            </div>
+
+            {/* Operating Profit */}
+            <div className="p-3 bg-slate-900 text-white rounded flex justify-between font-bold text-xs">
+              <span>Net Operating Profit / (Loss) Before Tax</span>
+              <span className="font-mono text-emerald-400">{formatGBP(netProfit)}</span>
             </div>
           </div>
         </div>
       )}
 
       {reportType === "BALANCE_SHEET" && (
-        <div className="space-y-4 text-xs">
-          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center text-slate-500 pb-2 gap-1">
-            <span>Accounting Equation: Net Assets = Total Equity</span>
-            <span className="font-mono text-[11px] text-emerald-700 font-bold">
-              Ledger State: In Balance
+        <div className="space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between text-xs text-slate-500 gap-1">
+            <span className="flex items-center gap-1 font-medium">
+              <Calendar className="w-3.5 h-3.5 text-slate-400" />
+              As at Today (Financial Year 2026/27)
+            </span>
+            <span className="bg-slate-50 border border-slate-200 px-2 py-0.5 rounded font-mono text-[11px] self-start sm:self-auto">
+              Accounting Basis: Accruals
             </span>
           </div>
 
-          <div className="space-y-3">
+          <div className="space-y-3 text-xs">
             {/* Current Assets */}
             <div className="p-3 bg-slate-50 rounded border border-slate-200 space-y-2">
               <span className="font-bold text-slate-900 uppercase text-[11px] block">
@@ -252,42 +264,65 @@ export function FinancialReportsView() {
 
       {reportType === "TAX_SUMMARY" && (
         <div className="space-y-4 text-xs">
-          <div className="p-4 bg-emerald-50/50 border border-emerald-200/80 rounded-lg">
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-2 gap-1">
-              <span className="font-bold text-emerald-950 text-sm">
-                HMRC Making Tax Digital (VAT Account 2200)
-              </span>
-              <span className="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded self-start sm:self-auto">
-                Draft VAT Return
-              </span>
+          <div className="p-4 bg-emerald-50/50 border border-emerald-200/80 rounded-xl flex flex-col md:flex-row md:items-center justify-between gap-3">
+            <div>
+              <div className="flex flex-wrap items-center gap-2 mb-1">
+                <span className="font-bold text-emerald-950 text-sm">
+                  HMRC Making Tax Digital (VAT Account 2200)
+                </span>
+                <span className="text-[11px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded">
+                  Quarter Period 2026-Q3
+                </span>
+                <span className="text-[11px] bg-white text-emerald-700 border border-emerald-300 font-semibold px-2 py-0.5 rounded flex items-center gap-1">
+                  <ShieldCheck className="w-3 h-3 text-emerald-600" />
+                  Anti-Fraud Headers Ready
+                </span>
+              </div>
+              <p className="text-[11px] text-emerald-800">
+                Official statutory 9-box VAT Form 100 derived from double-entry sales and expense nominal accounts.
+              </p>
             </div>
-            <p className="text-[11px] text-emerald-800">
-              Derived directly from posted VAT Control account lines (Dr Input VAT, Cr Output VAT).
-            </p>
+
+            <button
+              onClick={() => setIsMtdModalOpen(true)}
+              className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 bg-emerald-700 hover:bg-emerald-800 text-white font-bold rounded-lg shadow-sm transition-all min-h-[42px] whitespace-nowrap self-start md:self-auto"
+            >
+              <Send className="w-3.5 h-3.5" />
+              Prepare &amp; Submit MTD Return
+            </button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-            <div className="p-3 rounded border border-slate-200 bg-white">
+            <div className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-xs">
               <span className="text-slate-400 block text-[11px]">Box 1: Output VAT on Sales</span>
               <div className="text-base font-bold font-mono text-slate-900 mt-1">
                 {formatGBP(financialSummary.netVatLiabilityPence)}
               </div>
+              <span className="text-[10px] text-slate-400 mt-0.5 block">Standard 20% on invoiced work</span>
             </div>
-            <div className="p-3 rounded border border-slate-200 bg-white">
+            <div className="p-3.5 rounded-xl border border-slate-200 bg-white shadow-xs">
               <span className="text-slate-400 block text-[11px]">Box 4: Input VAT on Purchases</span>
               <div className="text-base font-bold font-mono text-slate-900 mt-1">
                 {formatGBP(12417)}
               </div>
+              <span className="text-[10px] text-slate-400 mt-0.5 block">Reclaimable business expenses</span>
             </div>
-            <div className="p-3 rounded border border-slate-200 bg-slate-50">
+            <div className="p-3.5 rounded-xl border border-slate-200 bg-slate-50 shadow-xs">
               <span className="text-slate-500 block text-[11px] font-bold">Box 5: Net VAT Payable to HMRC</span>
               <div className="text-base font-bold font-mono text-slate-900 mt-1">
                 {formatGBP(financialSummary.netVatLiabilityPence - 12417)}
               </div>
+              <span className="text-[10px] text-emerald-600 font-medium mt-0.5 block">Direct Debit authorization eligible</span>
             </div>
           </div>
         </div>
       )}
+
+      {/* HMRC MTD Statutory 9-Box VAT Filing Modal */}
+      <HmrcMtdFilingModal
+        isOpen={isMtdModalOpen}
+        onClose={() => setIsMtdModalOpen(false)}
+      />
     </div>
   );
 }

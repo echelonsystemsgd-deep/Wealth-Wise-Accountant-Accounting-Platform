@@ -10,13 +10,16 @@ import {
   ArrowRight,
   Split,
   Search,
-  ArrowDown,
+  Building2,
+  RefreshCw,
 } from "lucide-react";
+import { OpenBankingModal } from "@/components/banking/OpenBankingModal";
 
 export function ReconciliationView() {
   const { bankStatements, reconcileBankLine } = useAccounting();
   const [selectedTxId, setSelectedTxId] = useState<string>(bankStatements[0]?.id || "");
   const [searchQuery, setSearchQuery] = useState("");
+  const [isBankingModalOpen, setIsBankingModalOpen] = useState(false);
 
   const selectedTx = bankStatements.find((t) => t.id === selectedTxId);
 
@@ -45,20 +48,35 @@ export function ReconciliationView() {
             <span className="text-xs bg-slate-100 text-slate-700 px-2 py-0.5 rounded font-mono font-medium">
               BARCLAYS CURRENT 9021
             </span>
+            <span className="text-xs bg-emerald-50 text-emerald-700 border border-emerald-200 px-2 py-0.5 rounded font-medium flex items-center gap-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              Live Feed Active
+            </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Compare imported bank transactions against invoices, bills, and nominal ledger accounts.
+            Real-time UK Open Banking AISP transactions automatically paired with sales invoices and expense vouchers.
           </p>
         </div>
-        <div className="relative w-full sm:w-auto">
-          <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
-          <input
-            type="text"
-            placeholder="Filter transactions..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-8 pr-3 py-2 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 focus:bg-white w-full sm:w-56 min-h-[40px] sm:min-h-[38px]"
-          />
+
+        <div className="flex flex-col xs:flex-row items-stretch xs:items-center gap-2 w-full sm:w-auto">
+          <div className="relative w-full xs:w-52">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+            <input
+              type="text"
+              placeholder="Filter transactions..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 pr-3 py-2 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 focus:bg-white w-full min-h-[40px] sm:min-h-[38px]"
+            />
+          </div>
+
+          <button
+            onClick={() => setIsBankingModalOpen(true)}
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-2 bg-slate-900 hover:bg-slate-800 text-white rounded-lg text-xs font-semibold shadow-xs transition-colors min-h-[40px] sm:min-h-[38px] whitespace-nowrap"
+          >
+            <Building2 className="w-3.5 h-3.5 text-amber-400" />
+            Open Banking Hub
+          </button>
         </div>
       </div>
 
@@ -249,6 +267,12 @@ export function ReconciliationView() {
           )}
         </div>
       </div>
+
+      {/* UK Open Banking AISP Connection Hub */}
+      <OpenBankingModal
+        isOpen={isBankingModalOpen}
+        onClose={() => setIsBankingModalOpen(false)}
+      />
     </div>
   );
 }

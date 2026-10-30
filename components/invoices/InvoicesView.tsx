@@ -3,11 +3,24 @@
 import React, { useState } from "react";
 import { useAccounting } from "@/lib/accounting/AccountingContext";
 import { formatGBP, calculateVatPence } from "@/lib/utils";
-import { Plus, Check, Clock, Send, FileCheck, Search, Scale, AlertCircle } from "lucide-react";
+import { 
+  Plus, 
+  Check, 
+  Clock, 
+  Send, 
+  FileCheck, 
+  Search, 
+  Scale, 
+  AlertCircle,
+  CreditCard,
+  ExternalLink
+} from "lucide-react";
+import { InvoicePaymentModal } from "@/components/payments/InvoicePaymentModal";
 
 export function InvoicesView() {
   const { invoices, createInvoice, payInvoice } = useAccounting();
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedPayInvoice, setSelectedPayInvoice] = useState<any | null>(null);
   const [customerName, setCustomerName] = useState("");
   const [itemDesc, setItemDesc] = useState("");
   const [netAmountPounds, setNetAmountPounds] = useState(1500);
@@ -30,7 +43,7 @@ export function InvoicesView() {
       contactId: `cnt-${Date.now()}`,
       contactName: customerName,
       issueDate: new Date().toISOString().split("T")[0],
-      dueDate: "2026-10-31",
+      dueDate: "2026-11-30",
       items: [
         {
           id: `item-${Date.now()}`,
@@ -65,14 +78,14 @@ export function InvoicesView() {
         <div>
           <div className="flex flex-wrap items-center gap-2">
             <h3 className="text-base font-bold text-slate-900 tracking-tight">
-              Sales Invoicing & Accounts Receivable (Dr 1100 / Cr 4000)
+              Sales Invoicing, Online Card Checkout &amp; Receivables
             </h3>
             <span className="text-xs bg-slate-100 text-slate-700 font-mono font-medium px-2 py-0.5 rounded">
-              GENERAL LEDGER LINKED
+              STRIPE &amp; PAYPAL RAILS
             </span>
           </div>
           <p className="text-xs text-slate-500 mt-0.5">
-            Every issued invoice automatically posts a balanced double-entry journal entry to the general ledger.
+            Issue VAT compliant sales invoices with instant card, Apple Pay, and UK bank checkout links.
           </p>
         </div>
 
@@ -92,7 +105,7 @@ export function InvoicesView() {
             className="px-3.5 py-2.5 sm:py-2 text-xs font-semibold text-white bg-slate-900 hover:bg-slate-800 rounded-lg transition-colors flex items-center justify-center gap-1.5 shadow-sm whitespace-nowrap min-h-[42px] sm:min-h-[38px]"
           >
             <Plus className="w-4 h-4 sm:w-3.5 sm:h-3.5" />
-            Create & Post Invoice
+            Create &amp; Post Invoice
           </button>
         </div>
       </div>
@@ -160,15 +173,24 @@ export function InvoicesView() {
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-[11px] text-slate-500">
+            <div className="flex items-center justify-between text-[11px] text-slate-500 pt-1">
               <span>Due: {inv.dueDate}</span>
               {inv.status !== "PAID" && (
-                <button
-                  onClick={() => payInvoice(inv.id)}
-                  className="px-3 py-1.5 text-xs font-bold text-slate-900 bg-slate-100 hover:bg-slate-200 rounded-lg min-h-[36px] transition-colors"
-                >
-                  Record Payment
-                </button>
+                <div className="flex items-center gap-1.5">
+                  <button
+                    onClick={() => setSelectedPayInvoice(inv)}
+                    className="px-2.5 py-1.5 text-xs font-bold text-white bg-slate-900 hover:bg-slate-800 rounded-lg min-h-[36px] transition-colors flex items-center gap-1"
+                  >
+                    <CreditCard className="w-3 h-3 text-[#C0A262]" />
+                    <span>Pay Online</span>
+                  </button>
+                  <button
+                    onClick={() => payInvoice(inv.id)}
+                    className="px-2 py-1.5 text-[11px] font-semibold text-slate-600 hover:text-slate-900 bg-slate-100 rounded-lg min-h-[36px]"
+                  >
+                    Settle
+                  </button>
+                </div>
               )}
             </div>
           </div>
@@ -236,12 +258,21 @@ export function InvoicesView() {
                 </td>
                 <td className="py-3 pr-2 text-right">
                   {inv.status !== "PAID" && (
-                    <button
-                      onClick={() => payInvoice(inv.id)}
-                      className="px-2.5 py-1 text-[11px] font-bold text-slate-700 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded transition-colors"
-                    >
-                      Record Payment
-                    </button>
+                    <div className="flex items-center justify-end gap-1.5">
+                      <button
+                        onClick={() => setSelectedPayInvoice(inv)}
+                        className="px-2.5 py-1 text-[11px] font-bold text-white bg-slate-900 hover:bg-slate-800 rounded transition-colors flex items-center gap-1 shadow-2xs"
+                      >
+                        <CreditCard className="w-3 h-3 text-[#C0A262]" />
+                        <span>Pay Online</span>
+                      </button>
+                      <button
+                        onClick={() => payInvoice(inv.id)}
+                        className="px-2 py-1 text-[11px] font-medium text-slate-600 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 rounded transition-colors"
+                      >
+                        Manual Settle
+                      </button>
+                    </div>
                   )}
                 </td>
               </tr>
@@ -250,6 +281,17 @@ export function InvoicesView() {
         </table>
       </div>
 
+      {/* Online Payment Modal */}
+      {selectedPayInvoice && (
+        <InvoicePaymentModal
+          invoice={selectedPayInvoice}
+          onClose={() => setSelectedPayInvoice(null)}
+          onPaymentSuccess={(id) => {
+            payInvoice(id);
+          }}
+        />
+      )}
+
       {/* Modal for Invoice Creation */}
       {showCreateModal && (
         <div className="fixed inset-0 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-3 sm:p-4 z-50 overflow-y-auto">
@@ -257,7 +299,7 @@ export function InvoicesView() {
             <div className="flex items-center justify-between pb-3 border-b border-slate-100">
               <h4 className="text-sm font-bold text-slate-900 flex items-center gap-2">
                 <FileCheck className="w-4 h-4 text-slate-700 shrink-0" />
-                <span>Create Sales Invoice & Post to Ledger</span>
+                <span>Create Sales Invoice &amp; Post to Ledger</span>
               </h4>
               <button
                 onClick={() => setShowCreateModal(false)}
@@ -286,7 +328,7 @@ export function InvoicesView() {
                 <input
                   type="text"
                   required
-                  placeholder="e.g. Monthly Retainer & Consulting"
+                  placeholder="e.g. Monthly Retainer &amp; Consulting"
                   value={itemDesc}
                   onChange={(e) => setItemDesc(e.target.value)}
                   className="w-full p-2.5 text-base sm:text-xs bg-slate-50 border border-slate-200 rounded-lg text-slate-900 focus:outline-none focus:ring-1 focus:ring-slate-900 min-h-[42px] sm:min-h-[38px]"
